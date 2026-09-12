@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Studies - Maddama</title>
+<script>
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index.html#welcomeSection';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
+
+    // Fermer le menu si on clique sur un lien
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
+  }
+});
+
+</script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color:#000;
+    color:#fff;
+  }
+
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.9s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.9s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ===== HEADER ===== */
+header { 
+  position: fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  padding: 17.5px 35px; 
+  z-index: 1000; 
+  color:#fff; 
+  mix-blend-mode: difference; 
+}
+
+header .logo { 
+  font-weight:bold; 
+  letter-spacing:3px; 
+  font-size:14px; 
+  position: absolute; 
+  left: 35px; 
+}
+
+header .logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header nav { 
+  display:flex; 
+  gap:28px; 
+  font-size:10px; 
+  letter-spacing:1px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+}
+  
+header nav a { 
+  color:#fff; 
+  text-decoration:none;
+  opacity: 1;
+}
+  
+header .boutique { 
+  font-size:10px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;  
+  position: absolute; 
+  right: 35px;
+  opacity: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+header .lang-switch {
+  font-size: 10px;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  position: absolute;
+  right: 95px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 1;
+}
+
+  /* ===== CASE STUDIES PAGE HEADER ===== */
+  .cs-page-header {
+    padding: 160px 50px 60px;
+    text-align:center;
+  }
+  .cs-page-header h1 {
+    font-size:56px;
+    font-weight:700;
+    letter-spacing:-1px;
+    margin-bottom:20px;
+  }
+  .cs-page-header p {
+    font-size:15px;
+    color:#999;
+    max-width:600px;
+    margin:0 auto;
+    line-height:1.6;
+  }
+
+  /* ===== FILTRES ===== */
+  .cs-filters {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    padding: 0 50px 60px;
+  }
+
+  .cs-filter-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.6);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .cs-filter-btn:hover {
+    border-color: rgba(255,255,255,0.6);
+    color: #fff;
+  }
+
+  .cs-filter-btn.active {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
+
+  /* ===== GRID (colonnes réelles indépendantes) ===== */
+  .cs-grid {
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap:24px;
+    padding: 0 50px 100px;
+    align-items:start;
+  }
+
+  .cs-column {
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+
+  .cs-item {
+    width:100%;
+    text-decoration:none;
+    color:#fff;
+    cursor:pointer;
+    background:#000;
+    position:relative;
+    display:block;
+    opacity: 0;
+    animation: fadeInItem 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .cs-item.filtered-out {
+    display:none;
+  }
+
+  @keyframes fadeInItem {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .cs-item-image {
+    width:100%;
+    overflow:hidden;
+    background:#111;
+    margin-bottom: 14px;
+    border-radius: 12px;
+  }
+
+  .cs-item-image img {
+    width:100%;
+    height:auto;
+    display:block;
+    transition: transform 0.6s ease;
+  }
+
+  .cs-item:hover .cs-item-image img {
+    transform: scale(1.04);
+  }
+
+  .cs-item-info {
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+
+  .cs-item-title {
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.3px;
+  }
+
+  .cs-item-category {
+    font-size:12px;
+    color:#777;
+    font-weight:400;
+  }
+
+  .cs-item-index {
+    font-size:11px;
+    color:#555;
+    font-variant-numeric: tabular-nums;
+    margin-right: 10px;
+  }
+
+  .cs-item-info-left {
+    display:flex;
+    align-items:baseline;
+    gap: 10px;
+  }
+
+  /* ===== EXPANDABLE PANEL ===== */
+  .cs-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cs-panel-inner {
+    padding-top: 18px;
+    padding-bottom: 6px;
+  }
+
+  .cs-tags {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:8px;
+    margin-bottom:16px;
+  }
+
+  .cs-tag {
+    font-size:10px;
+    letter-spacing:1px;
+    font-weight:700;
+    padding: 10px 10px;
+    border-radius: 20px;
+    background: #333;
+    color: #777;
+    opacity: 0.5;
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .cs-tag.active {
+    background:#fff;
+    color:#000;
+    opacity: 1;
+  }
+
+  .cs-challenge {
+    font-size:16px;
+    font-weight:700;
+    line-height:1.2;
+    margin-bottom:16px;
+    color:#fff;
+  }
+
+  .cs-services {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:16px;
+  }
+
+  .cs-service-line {
+    font-size:11px;
+    color:#aaa;
+    letter-spacing:0.3px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+
+  .cs-service-line::before {
+    content:"";
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:#fff;
+    flex-shrink:0;
+  }
+
+  .cs-deliverable-label {
+    font-size:10px;
+    letter-spacing:1px;
+    color:#666;
+    text-transform:uppercase;
+    margin-bottom:5px;
+  }
+
+  .cs-deliverable-text {
+    font-size:12px;
+    color:#ccc;
+    line-height:1.2;
+  }
+
+  @media (max-width: 1400px) {
+    .cs-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 1100px) {
+    .cs-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 750px) {
+    .cs-grid { grid-template-columns: repeat(2, 1fr); }
+    .cs-page-header h1 { font-size:38px; }
+  }
+  @media (max-width: 480px) {
+    .cs-grid { grid-template-columns: 1fr; }
+  }
+
+/* ============================================= */
+/* ===== HEADER MOBILE (caché sur desktop) ===== */
+/* ============================================= */
+
+.mobile-header {
+  display: none;
+}
+
+.mobile-menu-panel {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  header:not(.mobile-header) {
+    display: none !important;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 20px;
+    z-index: 1000;
+    background: transparent;
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+
+  .mobile-logo {
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .mobile-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mobile-lang {
+    font-size: 11px;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle.open .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  .mobile-menu-panel {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+  }
+
+  .mobile-menu-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .mobile-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ===== FILTRES MOBILE ===== */
+  .cs-page-header {
+    padding: 120px 24px 40px;
+  }
+
+  .cs-filters {
+    justify-content:center;
+    overflow-x:visible;
+    flex-wrap:wrap;
+    padding: 0 24px 40px;
+    gap: 12px;
+  }
+
+  .cs-filter-btn {
+    flex-shrink:1;
+  }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER DESKTOP -->
+<header>
+<div class="logo"><a href="index.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+<a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+<a href="Services.html">SERVICES</a>
+<a href="case-studies.html">CASE STUDIES</a>
+<a href="index.html#testimonials">TESTIMONIALS</a>
+  </nav>
+<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">FR</a>
+<a href="Contact.html" class="boutique">CONTACT</a>
+</header>
+
+<!-- ===== HEADER MOBILE ===== -->
+<header class="mobile-header">
+  <a href="index-fr.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
+  <div class="mobile-header-right">
+    <a href="#" onclick="switchLanguage(event)" class="mobile-lang">FR</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+      <span class="toggle-icon">+</span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu-panel" id="mobileMenuPanel">
+  <nav class="mobile-nav">
+    <a href="index-fr.html#welcomeSection" onclick="goToHome(event)">A propos</a>
+    <a href="Services-fr.html">Services</a>
+    <a href="case-studies-fr.html">Case Studies</a>
+    <a href="index-fr.html#testimonials" onclick="goToTestimonials(event)">Témoignages</a>
+    <a href="Contact-fr.html">Contact</a>
+  </nav>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="cs-page-header">
+  <h1>CASE STUDIES</h1>
+  <p>A curated selection of brands and their challenges <br> that we've had the pleasure to support over the years.</p>
+</div>
+
+<!-- ===== FILTRES ===== -->
+<div class="cs-filters">
+  <button class="cs-filter-btn active" data-filter="all">ALL</button>
+  <button class="cs-filter-btn" data-filter="intel">INTEL</button>
+  <button class="cs-filter-btn" data-filter="foresight">FORESIGHT</button>
+  <button class="cs-filter-btn" data-filter="studio">STUDIO</button>
+  <button class="cs-filter-btn" data-filter="lab">LAB</button>
+</div>
+
+<div class="cs-grid" id="csGrid">
+
+<!-- ============ CASE 1 - NATURACTIVE ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="01-NATURACTIVE.jpg" alt="Naturactive">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">01</span>
+        <span class="cs-item-title">NATURACTIVE</span>
+      </div>
+      <span class="cs-item-category">Health</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">NAMING CHALLENGE: CRAFT AN ELEVATING & DIFFERENTIATING NAME FOR THEIR MONO-INGREDIENTS RANGE</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">NATIONAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">STRATEGIC BENCHMARK</span>
+          <span class="cs-service-line">NAMING PLATFORMS</span>
+          <span class="cs-service-line">IDEATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">ONE-DAY TEAM BUILDING EXPERIENCE & A CURATED LIST OF NAMES</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 2 - NUTRITION SANTE ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="02-NUTRITION-SANTE.jpg" alt="Nutrition Santé">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">02</span>
+        <span class="cs-item-title">NUTRITION SANTE</span>
+      </div>
+      <span class="cs-item-category">Nutrition</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">INNOVATION CHALLENGE: CRAFTING THE NEXT GENERATION OF MEAL REPLACEMENT</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">STRATEGIC BENCHMARK</span>
+          <span class="cs-service-line">INNOVATION PLATFORMS</span>
+          <span class="cs-service-line">INNOVATION BENCHMARK</span>
+          <span class="cs-service-line">CO-CREATED IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">ONE-DAY TEAM BUILDING EXPERIENCE & A CURATED LIST OF PRODUCT CONCEPTS READY TO BE TESTED</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 3 - BJORG ============ -->
+<div class="cs-item" data-services="intel lab">
+    <div class="cs-item-image">
+      <img src="03-BJORG.jpg" alt="Bjorg">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">03</span>
+        <span class="cs-item-title">BJORG</span>
+      </div>
+      <span class="cs-item-category">Food</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">INNOVATION CHALLENGE: CRAFTING THE NEXT GENERATION OF BREAKFAST CEREALS</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">STRATEGIC BENCHMARK</span>
+          <span class="cs-service-line">INNOVATION PLATFORMS</span>
+          <span class="cs-service-line">INNOVATION BENCHMARK</span>
+          <span class="cs-service-line">CO-CREATED IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">ONE-DAY TEAM BUILDING EXPERIENCE & A CURATED LIST OF PRODUCT CONCEPTS READY TO BE TESTED</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 4 - WONDERBOX ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="04-WONDERBOX.jpg" alt="Wonderbox">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">04</span>
+        <span class="cs-item-title">WONDERBOX</span>
+      </div>
+      <span class="cs-item-category">Gifting & Experience</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">FUTUROLOGY CHALLENGE: PROJECTING IN 2050 TO CRAFT FUTURE GIFTING's EXPERIENCES</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">NATIONAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">STRATEGIC BENCHMARK</span>
+          <span class="cs-service-line">INNOVATION PLATFORMS</span>
+          <span class="cs-service-line">INNOVATION BENCHMARK</span>
+          <span class="cs-service-line">CO-CREATED IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">ONE-DAY TEAM BUILDING EXPERIENCE & A CURATED LIST OF PRODUCT CONCEPTS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 5 - ALVALLE ============ -->
+<div class="cs-item" data-services="intel foresight studio">
+    <div class="cs-item-image">
+      <img src="05-ALVALLE.jpg" alt="Alvalle">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">05</span>
+        <span class="cs-item-title">ALVALLE</span>
+      </div>
+      <span class="cs-item-category">Food</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag active">STUDIO</span>
+          <span class="cs-tag">LAB</span>
+        </div>
+        <p class="cs-challenge">BRAND ACTIVATION CHALLENGE: CRAFT A SHOPPER MARKETING CONCEPT TO REIGNITE PASSION FOR ALVALLE's RANGE</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">NATIONAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">TARGET ANALYSIS</span>
+          <span class="cs-service-line">ACTIVATION CAMPAIGN BENCHMARK</span>
+          <span class="cs-service-line">BIG IDEA & ACTIVATION STRATEGY</span>
+          <span class="cs-service-line">ACTIVATION PLAN</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A READY TO SET SHOPPER MARKETING CONCEPT & AMPLIFICATION IDEAS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 6 - VALENTINO ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="06-VALENTINO.jpg" alt="Valentino">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">06</span>
+        <span class="cs-item-title">VALENTINO</span>
+      </div>
+      <span class="cs-item-category">Luxury & Beauty</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">RETAIL CHALLENGE: CRAFTING THE NEW WAY OF SHOPPING VALENTINO'S BEAUTY RANGES</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">TARGET ANALYSIS</span>
+          <span class="cs-service-line">INSPIRATIONAL BENCHMARK</span>
+          <span class="cs-service-line">CO-CREATED IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">STRATEGIC RECOMMENDATIONS & PIVOTAL RETAIL IDEAS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 7 - YVES ROCHER ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="07-YVES-ROCHER.jpg" alt="Yves Rocher">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">07</span>
+        <span class="cs-item-title">YVES ROCHER</span>
+      </div>
+      <span class="cs-item-category">Beauty</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">FUTUROLOGY CHALLENGE: PROJECTING IN 2050 TO CRAFT THE FUTURE OF DESIRABLE YET SUSTAINABLE BEAUTY</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">TARGET ANALYSIS</span>
+          <span class="cs-service-line">EXPERTS INTERVIEW</span>
+          <span class="cs-service-line">CONSUMERS LONG-RUN INTERVIEW</span>
+          <span class="cs-service-line">POSSIBLE FUTURE EXTRAPOLATION</span>
+          <span class="cs-service-line">INSPIRATIONAL & TECHNOLOGIC BENCHMARK</span>
+          <span class="cs-service-line">INNOVATION PLATFORMS</span>
+          <span class="cs-service-line">CO-CREATED IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A CURATED LIST OF INSIGHTS & FUTURE SOLUTIONS TO TEST</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 8 - GENERALE D'OPTIQUE ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="08-GENERALE-DOPTIQUE.jpg" alt="Générale d'Optique">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">08</span>
+        <span class="cs-item-title">GENERAL D'OPTIQUE</span>
+      </div>
+      <span class="cs-item-category">Optics</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">BRAND STRATEGY CHALLENGE: CRAFTING TWO NEW BRANDS' PLATFORMS FOR GENERALE D'OPTIQUE & GRAND OPTICAL</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">NATIONAL MARKET ANALYSIS</span>
+          <span class="cs-service-line">TARGET ANALYSIS</span>
+          <span class="cs-service-line">SEMIOTIC ANALYSIS</span>
+          <span class="cs-service-line">CONSUMERS INTERVIEW (by JUNE MARKETING)</span>
+          <span class="cs-service-line">TWO BRAND PLATFORMS' PRE-CRAFT</span>
+          <span class="cs-service-line">CO-CREATED STRATEGIC & IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">TWO READY TO USE BRAND NEW BRAND PLATFORMS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 9 - POM'POTES ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="09-POMPOTES.jpg" alt="Pom'Potes">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">09</span>
+        <span class="cs-item-title">POM'POTES</span>
+      </div>
+      <span class="cs-item-category">Food</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">CATEGORY CHALLENGE: INVESTING NEW CATEGORY OPPORTUNITIES TO TACKLE</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">NATIONAL MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">TARGET ANALYSIS</span>
+          <span class="cs-service-line">SEMIOTIC ANALYSIS</span>
+          <span class="cs-service-line">CONSUMERS INTERVIEW (by JUNE MARKETING)</span>
+          <span class="cs-service-line">BLUE OCEAN ANALYSIS & OPPORTUNITY MAPPING</span>
+          <span class="cs-service-line">CO-CREATED STRATEGIC & IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">OPPORTUNITY MAPPING & A CURATED LIST OF PRODUCTS' CONCEPTS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 10 - BIC ============ -->
+<div class="cs-item" data-services="intel foresight">
+    <div class="cs-item-image">
+      <img src="10-BIC.jpg" alt="Bic">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">10</span>
+        <span class="cs-item-title">BIC</span>
+      </div>
+      <span class="cs-item-category">Sustainability</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag">LAB</span>
+        </div>
+        <p class="cs-challenge">SUSTAINABILITY CHALLENGE: CRAFTING THE WAY TO EXPRESS BIC'S SUSTAINABILITY PROGRAMS AMONGST ALL TOUCHPOINTS</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL TARGET ANALYSIS</span>
+          <span class="cs-service-line">CROSSED-MARKET SYNTHESIS</span>
+          <span class="cs-service-line">SHOPPER MARKETING STRATEGY</span>
+          <span class="cs-service-line">SUSTAINABILITY BENCHMARK</span>
+          <span class="cs-service-line">BIG IDEA & ACTIVATION IDEAS</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A WHOLE GLOBAL STRATEGIC CAMPAIGN ACROSS ALL WORLD & TOUCHPOINTS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 11 - KRESSMANN ============ -->
+<div class="cs-item" data-services="intel">
+    <div class="cs-item-image">
+      <img src="11-KRESSMANN.jpg" alt="Kressmann">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">11</span>
+        <span class="cs-item-title">KRESSMANN</span>
+      </div>
+      <span class="cs-item-category">Wine & Spirits</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag">LAB</span>
+        </div>
+        <p class="cs-challenge">MARKET OPPORTUNITY CHALLENGE: UNCOVER THE LATEST GENZ TRENDS TO UNLOCK NEW DRINKING OPPORTUNITIES FOR THE WINE CATEGORY TOMORROW</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGES ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">GLOBAL & NATIONAL GENERATION Z ANALYSIS</span>
+          <span class="cs-service-line">GENZ TREND REPORT</span>
+          <span class="cs-service-line">ACTIVATION & INNOVATION IDEAS</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A CURATED LIST OF IDEAS TO UNLOCK WINE's NEW POTENTIAL</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 12 - DEUXIEME SOUFFLE ============ -->
+<div class="cs-item" data-services="intel foresight studio lab">
+    <div class="cs-item-image">
+      <img src="12-DEUXIEME-SOUFFLE.jpg" alt="Deuxième Souffle">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">12</span>
+        <span class="cs-item-title">DEUXIEME SOUFFLE</span>
+      </div>
+      <span class="cs-item-category">Sport</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag active">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">BRAND STRATEGY CHALLENGE: RE-CRAFTING BRAND'S IDENTITY & PLATFORM TO HELP IT GET TO THE NEXT LEVEL</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & COMM' ANALYSIS</span>
+          <span class="cs-service-line">MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">THREE TYPE TARGETS ANALYSIS</span>
+          <span class="cs-service-line">REAL LIFE INVESTIGATION</span>
+          <span class="cs-service-line">BRAND STRATEGY REVAMP</span>
+          <span class="cs-service-line">ACTIVATION IDEAS</span>
+          <span class="cs-service-line">BUSINESS COUNSELING</span>
+          <span class="cs-service-line">STRATEGIC WORKSHOP's CREATION & MODERATION</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">REVAMPED BRAND PLATFORMS, STRATEGY & ASSETS</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 13 - ROYAL CANIN ============ -->
+<div class="cs-item" data-services="intel foresight studio">
+    <div class="cs-item-image">
+      <img src="13-ROYAL-CANIN.jpg" alt="Royal Canin">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">13</span>
+        <span class="cs-item-title">ROYAL CANIN</span>
+      </div>
+      <span class="cs-item-category">Pet Care</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag active">STUDIO</span>
+          <span class="cs-tag">LAB</span>
+        </div>
+        <p class="cs-challenge">ADVERTISING CHALLENGE: CRAFTING A SIMPLE WAY TO HIGHLIGHT NEXT CAT'S FOOD TECHNOLOGICAL COMPLEXITY</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & COMM' ANALYSIS</span>
+          <span class="cs-service-line">MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">TARGETS ANALYSIS</span>
+          <span class="cs-service-line">STRATEGIC BENCHMARK</span>
+          <span class="cs-service-line">CAMPAIGN STRATEGY & BIG IDEA</span>
+          <span class="cs-service-line">CREATIVE BRIEF</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A READY TO PRESENT STRATEGIC INTRODUCTION & BIG IDEA</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 14 - LINDT ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="14-LINDT.jpg" alt="Lindt">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">14</span>
+        <span class="cs-item-title">LINDT</span>
+      </div>
+      <span class="cs-item-category">Confectionery</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">ARCHITECTURE CHALLENGE: CRAFT THE NEXT PORTFOLIO ARCHITECTURE OF LINDT EXCELLENCE</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRAND & RANGE ANALYSIS</span>
+          <span class="cs-service-line">MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">CONSUMERS' INTERVIEW (by JUNE MARKETING)</span>
+          <span class="cs-service-line">PORTFOLIO ARCHITECTURE RECOMMENDATIONS</span>
+          <span class="cs-service-line">CO-CREATED STRATEGIC & IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A CLEAR & READY TO USE PORTFOLIO ARCHITECTURE</p>
+      </div>
+    </div>
+  </div>
+
+<!-- ============ CASE 15 - CARAMBAR ============ -->
+<div class="cs-item" data-services="intel foresight lab">
+    <div class="cs-item-image">
+      <img src="15-CARAMBAR.jpg" alt="Carambar">
+    </div>
+    <div class="cs-item-info">
+      <div class="cs-item-info-left">
+        <span class="cs-item-index">15</span>
+        <span class="cs-item-title">CARAMBAR</span>
+      </div>
+      <span class="cs-item-category">Confectionery</span>
+    </div>
+    <div class="cs-panel">
+      <div class="cs-panel-inner">
+        <div class="cs-tags">
+          <span class="cs-tag active">INTEL</span>
+          <span class="cs-tag active">FORESIGHT</span>
+          <span class="cs-tag">STUDIO</span>
+          <span class="cs-tag active">LAB</span>
+        </div>
+        <p class="cs-challenge">ARCHITECTURE CHALLENGE: CRAFT THE NEXT PORTFOLIO ARCHITECTURE OF CARAMBAR's CANDY BRANDS</p>
+        <div class="cs-services">
+          <span class="cs-service-line">BRANDS & PORTFOLIO ANALYSIS</span>
+          <span class="cs-service-line">MARKET & CATEGORY ANALYSIS</span>
+          <span class="cs-service-line">CONSUMERS' INTERVIEW (by JUNE MARKETING)</span>
+          <span class="cs-service-line">PORTFOLIO ARCHITECTURE RECOMMENDATIONS</span>
+          <span class="cs-service-line">CO-CREATED STRATEGIC & IDEATION WORKSHOP</span>
+          <span class="cs-service-line">CO-MODERATION WORKSHOP</span>
+        </div>
+        <div class="cs-deliverable-label">OUTPUT</div>
+        <p class="cs-deliverable-text">A CLEAR & READY TO USE INTER-BRANDS PORTFOLIO ARCHITECTURE</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+let allItemsMaster = [];
+let currentColumnCount = getColumnCount();
+
+function distributeIntoColumns(numColumns) {
+  const grid = document.getElementById('csGrid');
+  const items = allItemsMaster.filter(item => !item.classList.contains('filtered-out'));
+
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
+
+  const columns = [];
+  for (let i = 0; i < numColumns; i++) {
+    const col = document.createElement('div');
+    col.className = 'cs-column';
+    grid.appendChild(col);
+    columns.push(col);
+  }
+
+  items.forEach((item, index) => {
+    columns[index % numColumns].appendChild(item);
+  });
+}
+
+function getColumnCount() {
+  const width = window.innerWidth;
+  if (width <= 480) return 1;
+  if (width <= 750) return 2;
+  if (width <= 1100) return 3;
+  if (width <= 1400) return 4;
+  return 5;
+}
+
+function attachClickListeners() {
+  document.querySelectorAll('.cs-item').forEach(item => {
+    if (item.dataset.listenerAttached) return;
+    item.dataset.listenerAttached = 'true';
+
+    const panel = item.querySelector('.cs-panel');
+
+    item.addEventListener('click', () => {
+      const isOpen = panel.classList.contains('is-open');
+
+      document.querySelectorAll('.cs-panel.is-open').forEach(p => {
+        if (p !== panel) {
+          p.classList.remove('is-open');
+          p.style.maxHeight = '0px';
+        }
+      });
+
+      if (isOpen) {
+        panel.classList.remove('is-open');
+        panel.style.maxHeight = '0px';
+      } else {
+        panel.classList.add('is-open');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+}
+
+/* ===== FILTRE ===== */
+function applyFilter(filter) {
+  allItemsMaster.forEach(item => {
+    const services = (item.dataset.services || '').split(' ');
+    if (filter === 'all' || services.includes(filter)) {
+      item.classList.remove('filtered-out');
+    } else {
+      item.classList.add('filtered-out');
+    }
+  });
+
+  distributeIntoColumns(currentColumnCount);
+  attachClickListeners();
+}
+
+function initFilters() {
+  const filterBtns = document.querySelectorAll('.cs-filter-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter(btn.dataset.filter);
+    });
+  });
+}
+
+/* ===== INITIALISATION ===== */
+allItemsMaster = Array.from(document.querySelectorAll('#csGrid .cs-item'));
+distributeIntoColumns(currentColumnCount);
+attachClickListeners();
+initFilters();
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    const newCount = getColumnCount();
+    if (newCount !== currentColumnCount) {
+      currentColumnCount = newCount;
+      distributeIntoColumns(newCount);
+      attachClickListeners();
+    }
+  }, 200);
+});
+
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+</script>
+
+</body>
+</html>

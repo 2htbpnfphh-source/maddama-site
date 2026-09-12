@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index-fr.html#welcomeSection';
+  }
+}
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
+
+    // Fermer le menu si on clique sur un lien
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
+  }
+});
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADDAMA</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+/* ===== VARIABLES ===== */
+:root {
+    --image-height-active: 700px;
+    --tools-offset: 650px;
+}
+
+body { 
+    font-family: 'Helvetica Neue', Arial, sans-serif; 
+    overflow-x:hidden; 
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.services-container {
+    flex: 1;
+}
+header { 
+  position: fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  padding: 17.5px 35px; 
+  z-index: 1000; 
+  color:#fff; 
+  mix-blend-mode: difference; 
+}
+
+header .logo { 
+  font-weight:bold; 
+  letter-spacing:3px; 
+  font-size:14px; 
+  position: absolute; 
+  left: 35px; 
+}
+
+header .logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header nav { 
+  display:flex; 
+  gap:28px; 
+  font-size:10px; 
+  letter-spacing:1px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+}
+  
+header nav a { 
+  color:#fff; 
+  text-decoration:none;
+  opacity: 1;
+}
+  
+header .boutique { 
+  font-size:10px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;  
+  position: absolute; 
+  right: 35px;
+  opacity: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+header .lang-switch {
+  font-size: 10px;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  position: absolute;
+  right: 95px; /* ajuste cette valeur selon la largeur de "CONTACT" + l'espace voulu */
+  color: inherit;
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* ===== HERO SECTION ===== */
+.services-hero {
+    width: 100%;
+    height: 800px;
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-image {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    object-position: center 80%;
+    transform: scaleX(-1);
+    display: block;
+}
+
+.hero-title-wrapper {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-label {
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+    line-height: 1.1;
+}
+
+.hero-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0;
+    line-height: 1.1;
+}
+
+.hero-description {
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    line-height: 1.1;
+    margin-top: -130px;
+    margin-bottom: -40;
+}
+
+.hero-description {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.hero-line {
+  height: 1px;
+  width: 50px;
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+/* ===== SERVICES CONTAINER ===== */
+.services-container {
+    background-color: #000;
+    padding: 50px 50px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.tools-label {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #999;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+/* ===== SERVICE ITEM ===== */
+.service-item {
+    margin-bottom: 50px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.service-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.service-header {
+    display: grid;
+    grid-template-columns: 120px 1.3fr 1fr;
+    gap: 50px;
+    align-items: stretch;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.service-number {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 70px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+}
+
+.service-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 2px;
+    transition: height 0.5s ease; 
+}
+
+.service-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+}
+
+.service-title {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+}
+
+.service-subtitle {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #999;
+    font-style: italic;
+}
+
+.service-description {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    max-width: 900px;
+    color: #ccc;
+}
+
+/* ===== SERVICE DISCOVER TOOLS ===== */
+.tools-discover {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 40px;
+    padding-bottom: 10px;
+    align-self: start;  
+}
+
+.service-item.active .service-image {
+    height: var(--image-height-active);
+}
+
+/* ===== SERVICE DETAILS (caché par défaut) ===== */
+.service-details {
+    position: relative;  
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: 150px 1fr 1fr;
+    gap: 100px;
+    align-items: start;
+}
+
+.service-item.active .service-details {
+    max-height: var(--image-height-active);
+    margin-top: 60px;
+    overflow: visible;
+}
+
+/* ===== TOOLS LIST ALIGNEMENT ===== */
+.tools-list {
+    display: contents;
+}
+
+.tools-label-details {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #999;
+    text-transform: uppercase;
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0; 
+}
+
+.tools-content {
+    grid-column: 3;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-top: -340px;
+}
+
+.tools-list-items {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: #ccc;
+    text-transform: uppercase;
+    list-style: none;
+}
+
+.tools-list-items li {
+    margin-bottom: 4px;
+}
+
+/* HOVER EFFECT */
+.service-item:hover {
+    border-bottom-color: #555;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  position: static;
+  width: 100%;
+  background: transparent;
+  color: white;
+  padding: 15px 20px;        
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: auto;
+  transition: opacity 0.01s ease;
+  margin-bottom: -30px; 
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-content p {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* ============================================= */
+/* ===== HEADER MOBILE (caché sur desktop) ===== */
+/* ============================================= */
+
+.mobile-header {
+  display: none;
+}
+
+.mobile-menu-panel {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  /* On cache le header desktop */
+  header:not(.mobile-header) {
+    display: none;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 20px;
+    z-index: 1000;
+    background: transparent;
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+
+  .mobile-logo {
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .mobile-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mobile-lang {
+    font-size: 11px;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle.open .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  /* Panneau plein écran */
+  .mobile-menu-panel {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+  }
+
+  .mobile-menu-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .mobile-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+}
+
+/* ============================================
+   MOBILE (768px) — SERVICES PAGE
+   ============================================ */
+
+@media (max-width: 768px) {
+
+  /* ---- HERO ---- */
+  .services-hero {
+    height: 500px;
+  }
+
+  .hero-image {
+    height: 400px;
+  }
+
+  .hero-label {
+    font-size: 16px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+    padding: 0 20px;
+  }
+
+  .hero-description {
+    font-size: 11px;
+    margin-top: -60px;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .hero-line {
+    width: 25px;
+  }
+
+  /* ---- CONTAINER ---- */
+  .services-container {
+    padding: 30px 20px;
+    margin-top: 0;
+  }
+
+  .tools-label {
+    font-size: 11px;
+    margin-bottom: 25px;
+  }
+
+  /* ---- SERVICE ITEM : bandeau image full-width ---- */
+  .service-item {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+  }
+
+  .service-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Image en bandeau, plus large que haute */
+  .service-image {
+    width: 100%;
+    height: 180px;
+    order: 1;
+  }
+
+  .service-item.active .service-image {
+    height: 180px; /* on ne l'agrandit plus sur mobile */
+  }
+
+  /* Grid 1 : le chiffre */
+  .service-number {
+    font-size: 40px;
+    order: 2;
+  }
+
+  /* Grid 2 : titre / sous-titre / description */
+  .service-content {
+    order: 3;
+    gap: 14px;
+  }
+
+  .service-title {
+    font-size: 22px;
+  }
+
+  .service-subtitle {
+    font-size: 15px;
+  }
+
+  .service-description {
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 100%;
+  }
+
+  .tools-discover {
+    font-size: 15px;
+    margin-top: 15px;
+  }
+
+  /* ---- TOOLS LIST déployée ---- */
+  .service-details {
+    display: block; /* on annule le grid desktop */
+    grid-template-columns: none;
+    gap: 0;
+  }
+
+  .service-item.active .service-details {
+    max-height: 1000px; /* assez grand pour tout contenir */
+    margin-top: 20px;
+  }
+
+  .tools-list {
+    display: block;
+  }
+
+  .tools-label-details {
+    display: none; /* déjà invisible en desktop, on confirme ici */
+  }
+
+  .tools-content {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .tools-list-items {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+}
+
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo"><a href="index-fr.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+<a href="index-fr.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
+<a href="Services-fr.html">SERVICES</a>
+<a href="case-studies-fr.html">CASE STUDIES</a>
+<a href="index-fr.html#testimonials" onclick="goToTestimonials(event)">TEMOIGNAGES</a>
+  </nav>
+<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">EN</a>
+<a href="Contact-fr.html" class="boutique">CONTACT</a>
+</header>
+
+<!-- ===== HEADER MOBILE ===== -->
+<header class="mobile-header">
+  <a href="index.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
+  <div class="mobile-header-right">
+    <a href="#" onclick="switchLanguage(event)" class="mobile-lang" id="mobileLangSwitchBtn">EN</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+      <span class="toggle-icon">+</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== PANNEAU MENU MOBILE ===== -->
+<div class="mobile-menu-panel" id="mobileMenuPanel">
+  <nav class="mobile-nav">
+    <a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+    <a href="Services.html">SERVICES</a>
+    <a href="case-studies.html">CASE STUDIES</a>
+    <a href="index.html#testimonials" onclick="goToTestimonials(event)">TESTIMONIALS</a>
+    <a href="Contact.html">CONTACT</a>
+  </nav>
+</div>
+
+<!-- HERO SECTION -->
+<div class="services-hero">
+    <img src="HERO-BOTTEGA.jpg" alt="Bottega" class="hero-image">
+    <div class="hero-title-wrapper">
+        <div class="hero-label">BIENVENUE A</div>
+        <h1 class="hero-title">BOTTEGA MADDAMA</h1>
+    </div>
+</div>
+        <div class="hero-description">
+          <span class="hero-line"></span>
+          Où la matière devient sens
+          <span class="hero-line"></span>
+        </div>
+
+</div>
+
+<!-- SERVICES CONTAINER -->
+<div class="services-container">
+    <div class="tools-label">NOS SERVICES:</div>
+
+<!-- SERVICE 01 -->
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.01</div>
+        <img src="MOSAIC-INTEL.jpg" alt="Intel" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Intel - Marché, Insights & Tendances</div>
+            <div class="service-subtitle">Rendre l'inconnu connu</div>
+            <p class="service-description">Comment affirmer que cette voie est la bonne si vous n'avez jamais exploré celles d'à côté ? Et s'il existait un chemin plus juste, plus adapté ? Pour être certain de se diriger tout droit vers son objectif, il faut d'abord accepter de se perdre dans l'infini des possibilités. Tel un couturier face à un étal de tissus sans fin en quête de la pièce rare, il nous faut tout regarder, tout évaluer, tout ressentir, imaginer chaque assemblage possible pour être en capacité, au final, de faire un choix éclairé.</p>
+            <p class="tools-discover">Découvrir nos outils →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Veille stratégique</li>
+                    <li>Analyse de marché & concurrence</li>
+                    <li>Analyse consommateurs & définition de cibles, personae</li>
+                    <li>Interview consommateurs</li>
+                    <li>Parcours consommateurs</li>
+                    <li>Rapport de tendances</li>
+                    <li>Rapport d'innovation</li>
+                    <li>Audit de marque (+ option: itw parties prenantes / consos)</li>
+                    <li>Benchmark stratégique (produit, service, campagne, concurrence)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.02</div>
+        <img src="FORESIGHT-DIAMOND.jpg" alt="Foresight" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Foresight - Strategie & Innovation</div>
+            <div class="service-subtitle">Un pas en arrière, 3 bonds en avant. </div>
+            <p class="service-description">Tout artisan connaît le danger d'agir avant de réfléchir : couper trop vite, trop près de la matière, c'est risquer d'en gâcher le potentiel plutôt que de le révéler. Pour façonner & affiner sa vision, il faut prendre le temps, du recul et observer la pièce dans son ensemble : sa texture, sa structure, la direction qu'elle veut naturellement prendre. La stratégie fonctionne de la même manière. Ce n'est qu'avec cette distance que l'on peut entrevoir le chemin qui transformera la matière brute en un objet singulier, digne d'intérêt.</p>
+            <p class="tools-discover">Découvrir nos outils →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Stratégie de marque</li>
+                    <li>Stratégie d'activation / ciblage</li>
+                    <li>Positionnement de marque</li>
+                    <li>Plateforme de marque</li>
+                    <li>Manifesto de marque/li>
+                    <li>Architecture de marque / gamme</li>
+                    <li>Exploration Blue Ocean</li>
+                    <li>Adaptation de marque (nouveau marché, cibles)</li>
+                    <li>Futurs scénarios & anticipation de besoins</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.03</div>
+        <img src="FABRIC-STUDIO.jpg" alt="Studio" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Studio - Concepts & Visuels</div>
+            <div class="service-subtitle">De la pensée à la réalité: donner corps aux idées. </div>
+            <p class="service-description">Vos idées ne devraient pas rester enfermées dans un coin de votre tête. Elles méritent d'exister en réel, en visuels, en expériences que l'on peut voir, vivre & ressentir. Que ce soit (re)construire une identité visuelle ou sémantique qui vous ressemble enfin, concevoir une campagne qui sort du lot, imaginer un concept qui fait déjà parler de vous ou renouer avec votre audience via un rebranding qui reflète ce que vous êtes devenus: le Studio, c'est exactement là où le tissu se taille, se coud & se façonne pour devenir palpable.</p>
+            <p class="tools-discover">Découvrir nos outils →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Communication interne & Marque employeur</li>
+                    <li>Communication externe & Publicité</li>
+                    <li>Logotype & Animation de logotype</li>
+                    <li>Conception graphique & identité visuelle</li>
+                    <li>Branding / Rebranding</li>
+                    <li>Développement d'éléments de communication</li>
+                    <li>Templates de marque</li>
+                    <li>Réalisation de Pitch Deck (fond & forme)</li>
+                    <li>Brand Book & Charte graphique</li>
+                    <li>Big idea</li>
+                    <li>Concept publicitaire & d'activation</li>
+                    <li>Hierarchie de message</li>
+                    <li>Motion Design & Création vidéo</li>
+                    <li>Brief créatif</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.04</div>
+        <img src="ARGILE-LAB.jpg" alt="Lab" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Lab - Workshops</div>
+            <div class="service-subtitle">Boostez vos idées à l'intelligence collective. </div>
+            <p class="service-description">Si les bonnes idées peuvent surgir de n'importe où, nous ne comptons pas sur le hasard pour les trouver. Nous réunissons les bonnes personnes, brisons les silos & enrichissons les idées pour façonner des projets que vous serez réellement impatients de concrétiser. Qu'il s'agisse d'un atelier stratégique pour bâtir une vision commune & aligner vos équipes, d'une session d'innovation ou créative pour explorer des territoires inédits : le Lab est là où l'énergie et les idées se créent et sont conçues pour prospérer.</p>
+            <p class="tools-discover">Découvrir nos outils →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Participant actif - collaboratif au workshop</li>
+                    <li>Brainstorming stratégique / créatif</li>
+                    <li>Création & animation de workshops</li>
+                    <li>Workshop créatif / stratégique / d'innovation</li>
+                    <li>Innovation service / produit</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <p>© 2026 MADDAMA. ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+
+<script>
+    function toggleService(header) {
+        const serviceItem = header.closest('.service-item');
+
+        document.querySelectorAll('.service-item').forEach(item => {
+            if (item !== serviceItem) {
+                item.classList.remove('active');
+            }
+        });
+
+        serviceItem.classList.toggle('active');
+    }
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    // On est en FR, on repasse en EN
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    // On est en EN, on passe en FR
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+</script>
+
+</body>
+</html>

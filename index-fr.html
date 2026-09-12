@@ -1,0 +1,3256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToWelcomeState();
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index.html#welcomeSection';
+  }
+}
+
+function resetToWelcomeState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = false;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = false;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+
+  // On remet les éléments d'animation dans leur état "avant carousel"
+  if (blackRectContainer) blackRectContainer.style.left = '100%';
+  if (blackRectContent) blackRectContent.style.left = '100%';
+  if (imageWrapper) imageWrapper.style.opacity = 0;
+  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '-100vh';
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
+
+    // Fermer le menu si on clique sur un lien
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
+  }
+});
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADDAMA</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; overflow-x:hidden; }
+
+  body.locked {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+header { 
+  position: fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  padding: 17.5px 35px; 
+  z-index: 10000; 
+  color:#fff; 
+  mix-blend-mode: difference; 
+}
+
+header .logo { 
+  font-weight:bold; 
+  letter-spacing:3px; 
+  font-size:14px; 
+  position: absolute; 
+  left: 35px; 
+}
+
+header .logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header nav { 
+  display:flex; 
+  gap:28px; 
+  font-size:10px; 
+  letter-spacing:1px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+}
+  
+header nav a { 
+  color:#fff; 
+  text-decoration:none;
+  opacity: 0;
+  animation: fadeInNav 0.6s ease forwards;
+}
+  
+header .boutique { 
+  font-size:10px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;  
+  position: absolute; 
+  right: 35px;
+  opacity: 0;
+  color: inherit;
+  text-decoration: none;
+  animation: fadeInNav 0.6s ease forwards;
+}
+
+header .lang-switch {
+  font-size: 10px;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  position: absolute;
+  right: 95px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeInNav 0.6s ease forwards;
+  animation-delay: 9.96s; 
+}
+
+@keyframes fadeInNav {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+header nav a:nth-child(1) { animation-delay: 9s; }
+header nav a:nth-child(2) { animation-delay: 9.24s; }
+header nav a:nth-child(3) { animation-delay: 9.48s; }
+header nav a:nth-child(4) { animation-delay: 9.72s; }
+header .lang-switch { animation-delay: 9.96s; }
+
+header .boutique { animation-delay: 10.20s; }
+
+  .hero { position: relative; width: 100vw; height: 100vh; overflow: hidden; background:#000; }
+  .set { position: absolute; top:0; left:0; width:100%; height:100%; display:flex; opacity:0; transition: opacity 0.6s ease; pointer-events:none; z-index:2; }
+  .set.active { opacity:1; pointer-events:auto; }
+  .set .half { width:50%; height:100%; overflow:hidden; position:relative; }
+  .set .half img { width:100%; height:100%; object-fit:cover; display:block; }
+  
+  #set5 .half { width:50%; height:100%; overflow:hidden; position:relative; transition: transform 1s cubic-bezier(.77,0,.18,1); }
+  #set5 .half img { position:absolute; top:0; width:200%; height:100%; object-fit:cover; }
+  #set5 .half-left img { left:0; }
+  #set5 .half-right img { right:0; }
+  #set5.split .half-left { transform: translateX(-100%); }
+  #set5.split .half-right { transform: translateX(100%); }
+
+  .scroll-indicator { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:#fff; font-size:12px; letter-spacing:2px; z-index:10; transition:opacity 0.5s ease; opacity:0; }
+
+  .welcome-section { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; transition: background 0.8s ease; z-index:5; pointer-events:none; }
+  .welcome-section.bg-white { background:#fff; }
+  .welcome-to { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; font-style: normal; font-weight: 400; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color:#000; opacity:0; transform: translateY(-10px); transition: opacity 0.8s ease, transform 0.8s ease; margin-bottom: 15px; }
+  .welcome-to.visible { opacity:1; transform: translateY(0); }
+  .maddama-reveal { display:flex; flex-direction:column; align-items:center; opacity:0; transform: translateY(60px); transition: opacity 0.9s ease, transform 0.9s ease; }
+  .maddama-reveal.revealed { opacity:1; transform: translateY(0); }
+  .maddama-reveal img { width: 400px; max-width: 60vw; height:auto; display:block; }
+  .maddama-baseline { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; margin-top: 15px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color:#000; text-align:center; max-width: 600px; line-height:1.3; }
+  
+  .brand-section { width: 100%; display:flex; background:#000; padding: 70px; gap: 60px; align-items: center; }
+  .brand-section .image-side { position: relative; width: 45%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
+  .brand-section .image-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand-section .image-title { position: absolute; bottom: 40px; left: 40px; right: 40px; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; text-align: right; }
+  .brand-section .image-title .make { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 400; margin-bottom: -5px; }
+  .brand-section .image-title .big-title { font-size: 60px; font-weight: 800; text-transform: uppercase; line-height: 1.05; letter-spacing: -1px; }
+  .brand-section .image-title .big-title .strike { text-decoration: line-through; text-decoration-thickness: 4px; }
+  .brand-section .text-side { flex: 1; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+  .brand-section .divider { width: 100px; height: 3px; background: #fff; margin-bottom: 30px; }
+  .brand-section .divider.bottom { margin-top: 30px; margin-bottom: 0; }
+  .brand-section .body-text { font-size: 18px; line-height: 1.5; font-weight: 400; }
+  .brand-section .body-text p { margin-bottom: 30px; }
+  .brand-section .body-text p:last-child { margin-bottom: 0; }
+  .brand-section .body-text em { font-style: italic; }
+  .brand-section .body-text .closing { font-weight: 700; font-style: italic; }
+  
+  @font-face {
+    font-family: 'Aptos';
+    src: local('Aptos');
+  }
+
+  body { background: #ffffff; color: #111111; }
+
+.about-hero {
+  position: relative;
+  background: #ffffff;
+  min-height: 400px;      /* hauteur fixe au lieu de min-height */
+  overflow: hidden;
+  padding: 36px;
+  display: flex;
+  margin-bottom: 30px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.about-hero-inner { position: relative; background: #f2f2f2; padding: 24px; width: 100%; overflow: hidden; }
+.about-hero-top { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+.about-label { font-size: 9.6px; font-weight: 700; letter-spacing: 0.6px; color: #111; }
+.about-bg-logo { position: absolute; bottom: -234px; right: 21.6px; width: 921.6px; height: 576px; z-index: 0; user-select: none; pointer-events: none; opacity: 0.02; }
+.about-bg-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+.about-hero-content { position: relative; display: flex; align-items: center; gap: 36px; z-index: 1; flex: 1; }
+.about-photo-wrapper { position: relative; flex-shrink: 0; width: 252px; display: flex; align-items: flex-end; margin-left: 38.4px; }
+.about-photo-circle-bg { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); left: -36px; top: 12px; z-index: 0; }
+.about-photo-placeholder { position: relative; z-index: 1; width: 252px; height: 336px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-left: 25.2px; margin-bottom: -56.4px; }
+.about-photo-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(100%); }
+.about-photo-labels { position: absolute; left: -36px; bottom: 0; z-index: 2; display: flex; flex-direction: column; }
+.about-photo-labels .creative { position: absolute; left: -4.8px; bottom: -6px; font-size: 8.4px; font-weight: 700; letter-spacing: 0.6px; color: #111; }
+.about-photo-labels .strategist { position: absolute; left: 80.4px; bottom: -15.6px; font-size: 8.4px; font-weight: 700; letter-spacing: 0.6px; color: #ffffff; background: transparent; }
+
+.about-text-block { display: flex; align-items: center; gap: 18px; max-width: 420px; margin-left: 151.2px; margin-top: -78px; }
+.about-bar { width: 1.8px; height: 78px; background: #111; flex-shrink: 0; }
+.about-main-text { font-size: 15.6px; line-height: 1.5; font-weight: 400; color: #111; letter-spacing: 0.18px; }
+.about-main-text b { font-weight: 800; }
+
+  .content-section { max-width: 1000px; margin: 30px auto; text-align: center; padding: 0 0px; }
+  .content-section p { font-size: 16px; line-height: 1.5; color: #111; margin-bottom: 30px; word-spacing: 0.05em; }
+  .content-section p:first-child { font-size: 16px; }
+  .content-section p:nth-child(2) { max-width: 1000px; }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .symbol-divider { width: 30px; height: 30px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+  .symbol-divider img { width: 100%; height: 100%; object-fit: contain; }
+
+  .scroll-buffer { width: 100%; height: 600px; }
+
+.black-rect-container {
+  position: fixed;
+  width: 112.5%;
+  height: 840px;
+  background: black;
+  top: calc(50vh - 40px);   /* équivalent stable à "50% + 380px" + translateY(-50%) */
+  left: 100%;
+  z-index: 50;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.black-rect-content {
+  position: fixed;
+  width: 100vw;
+  height: 840px;
+  top: calc(50vh - 30px);   /* équivalent stable à "50% + 390px" + translateY(-50%) */
+  left: 100%;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+  padding: 60px 40px;
+  margin-bottom: 1500px;
+}
+
+.hidden-after-intro {
+  display: none !important;
+}
+
+  .what-we-do-title { 
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+    font-size: 14px; 
+    font-weight: 300; 
+    text-transform: uppercase; 
+    color: #fff; 
+    letter-spacing: 2px; 
+    margin: 0; 
+    text-align: center; 
+    width: 100%; 
+    margin-top: -45px;
+  }
+
+  .symbols-container {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    z-index: 1;
+    margin-top: 10px;
+    transform: translateY(110px);
+  }
+
+  .symbols-container img:nth-child(1) {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(45deg);
+  }
+
+  .symbols-container img:nth-child(2) {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(-45deg);
+  }
+  .services-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px 300px; 
+    max-width: 100%; 
+    width: 100%; 
+    color: #fff;
+    margin-top: 0px;
+  }
+
+  .service-item { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+  .service-item .service-name { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; line-height: 0.8; }
+
+  .services-grid > :nth-child(odd) .service-name { text-align: right; }
+  .services-grid > :nth-child(even) .service-name { text-align: left; }
+
+  .bottom-text {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 1000px;
+    line-height: 1.5;
+  }
+
+  .image-section-container {
+    position: relative;
+    width: 100%;
+    height: 800px;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 0;
+  }
+
+  .image-wrapper {
+    width: 70%;
+    height: 120%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .image-wrapper.visible {
+    opacity: 1;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: rotate(-90deg);
+    display: block;
+  }
+
+
+.black-rect-slideup {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  left: 0;
+  top: 100vh; /* remplace la logique JS top:100vh -> 0vh, mais fixé en dur ici */
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 80px 40px 40px 40px;
+}
+
+.black-rect-slideup img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 0;
+  display: block;
+  justify-content: center;
+}
+  .carousel-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-container {
+    width: 100%;
+    overflow: hidden;
+    margin-top: -30px;
+    padding: 0px 0;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 15px;
+    animation: scroll-infinite 50s linear infinite;
+  }
+
+  .carousel-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes scroll-infinite {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-380px * 12 - 30px * 12));
+    }
+  }
+
+  .carousel-item {
+    flex-shrink: 0;
+    width: 270px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    height: 400px;
+  }
+
+  .carousel-text {
+    padding: 0;
+  }
+
+  .carousel-brand {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 2.5px;
+  }
+
+  .carousel-description {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: #ccc;
+  }
+
+  .carousel-bottom-text {
+    text-align: center;
+    font-size: 16px;
+    color: #fff;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  .they-trusted-us {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-top: 60px;
+    width: 100%;
+  margin-bottom: 40px;
+  }
+
+  .clients-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -80px;
+    padding: 40px;
+  width: 100%;
+  }
+
+.clients-wrapper img {
+  max-width: 2000px;
+  width: 100%;
+}
+
+.stars { color: #f5a623; margin-bottom: 15px; }
+.t-quote { font-size: 16px; line-height: 1.6; }
+.t-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+.t-author img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.t-name { font-weight: 700; font-size: 14px; }
+.t-role { font-size: 13px; color: #888; }
+
+.black-rect-slideup-2 {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  top: auto;
+  bottom: -100vh;   
+  background: #000;
+  z-index: 9999;
+  transition: none;
+  display: block;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.testimonial-section {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  color: #0a0a0a;
+  padding: 70px 80px 40px;   
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: inherit;
+}
+
+.testimonial-topline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex: 0 0 auto;
+  padding-bottom: 20px;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.topline-sep {
+  flex: 1 1 160px;
+  min-width: 24px;
+  max-width: 400px;
+  height: 1.2px;
+  background: #000;
+}
+
+.testimonial-body {
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.testimonial-photo-wrap {
+  position: relative;
+  flex: 0 0 360px;
+  width: 360px;
+  height: 440px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ddd;
+}
+
+.testimonial-photo {
+  width: 105% !important;
+  height: 105% !important;
+  object-fit: cover !important;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.testimonial-photo.loaded {
+  opacity: 1;
+}
+
+.testimonial-logo {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.testimonial-quote {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 800px;
+  max-height: 100%;
+  margin: 0 0 0 auto;
+  padding: 8px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-align: right;
+  font-style: italic;
+  font-weight: 500;
+  font-family: "Aptos", "Helvetica Neue", Arial, sans-serif;
+  font-size: 22px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+}
+
+.testimonial-quote.fading {
+  opacity: 0;
+}
+
+.testimonial-divider {
+  width: min(700px, 100%);
+  height: 1.2px;
+  flex: 0 0 auto;
+  background: #000;
+  margin: 0 0 16px auto;
+}
+
+.testimonial-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.testimonial-right-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 40px;
+  min-width: 0;
+}
+
+.testimonial-nav {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #f2f2f2;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+.nav-btn:hover {
+  background: #e4e4e4;
+  transform: scale(1.05);
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+.author-photo {
+  width: 140px;
+  height: 70px;
+  border-radius: 4px;
+  object-fit: contain;
+  background: transparent;
+}
+.author-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+}
+.author-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+.author-role {
+  font-size: 13px;
+  color: #888;
+}
+
+.testimonial-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-number {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.stat-sub {
+  font-size: 13px;
+  color: #888;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .testimonial-section { padding-left: 40px; padding-right: 40px; }
+  .testimonial-body { gap: 32px; }
+  .testimonial-photo-wrap { flex-basis: 300px; width: 300px; height: 380px; }
+  .testimonial-right-group { gap: 20px; }
+}
+
+@media (max-width: 900px) {
+  .testimonial-section {
+    min-height: 100vh;
+    padding: 24px 24px 32px;
+    justify-content: flex-start;
+    gap: 24px;
+  }
+  .testimonial-topline { gap: 12px; width: 100%; font-size: 11px; }
+  .topline-sep { flex-basis: auto; max-width: none; }
+  .testimonial-body {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    overflow: visible;
+  }
+  .testimonial-photo-wrap {
+    flex: 0 0 auto;
+    width: min(400px, 100%);
+    height: min(440px, 55vh);
+  }
+  .testimonial-quote {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 800px;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    text-align: center;
+  }
+  .testimonial-divider { width: 100%; margin: 0; }
+  .testimonial-footer {
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .testimonial-right-group {
+    flex: 1 1 520px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .testimonial-label { position: static; transform: none; }
+}
+
+@media (max-width: 600px) {
+  .testimonial-section { padding: 20px 16px 28px; gap: 20px; }
+  .testimonial-topline { gap: 7px; font-size: 9px; letter-spacing: 0.02em; }
+  .testimonial-photo-wrap { width: min(300px, 100%); height: min(360px, 52vh); }
+  .testimonial-body { gap: 20px; }
+  .testimonial-footer,
+  .testimonial-right-group {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .testimonial-nav { justify-content: center; }
+  .testimonial-right-group { flex: 0 0 auto; align-items: center; }
+  .testimonial-author,
+  .testimonial-stat { width: 100%; align-items: center; text-align: center; }
+  .author-photo-frame { width: 150px; height: 80px; }
+  .stat-number { font-size: 28px; }
+}
+.final-section {
+  width: 100%;
+  height: 100vh;              
+  overflow: hidden;           
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  gap: 10px;                  
+  margin-top: 0;
+  transform: none;
+  padding: 40px 0;       
+  box-sizing: border-box;
+}
+
+  .ambition-symbol-top {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+  margin-top: 40px;  
+  }
+
+  .ambition-symbol-top img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ambition-text {
+    max-width: 800px;
+    text-align: center;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    margin-bottom: 20px;      
+    margin-top: 0;            
+  }
+
+  .ambition-text p {
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;      
+  }
+
+  .ambition-text p:first-child {
+    font-weight: 700;
+    margin-bottom: 20px;     
+  }
+
+  .ambition-text p:nth-child(2) {
+    font-weight: 400;
+    margin-bottom: 20px;      
+  }
+
+  .ambition-text p:last-child {
+    font-weight: 700;
+  }
+
+  .cta-images {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;  
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .cta-image {
+    width: 450px;
+    height: 250px;           
+    margin-top: -30px;          
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .cta-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+.cta-item:nth-child(3) .cta-image img {
+  transform: scaleX(-1);
+}
+
+a.cta-item {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cta-text-wrapper {
+  margin-top: -40px;             
+  position: relative;
+  z-index: 10;
+  text-align: right;
+  margin-right: 10px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;  
+}
+
+.cta-image-text {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;                
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cta-subtitle {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;                
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+  .ambition-symbol-bottom {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -60px;   
+  }
+
+  .ambition-symbol-bottom img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+footer {
+  position: static;
+  width: 100%;
+  background: transparent;
+  color: white;
+  padding: 15px 20px;        
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: auto;
+  transition: opacity 0.01s ease;
+  margin-bottom: -30px; 
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-content p {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* ============================================= */
+/* ===== HEADER MOBILE (caché sur desktop) ===== */
+/* ============================================= */
+
+.mobile-header {
+  display: none;
+}
+
+.mobile-menu-panel {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  /* On cache le header desktop */
+  header:not(.mobile-header) {
+    display: none;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 20px;
+    z-index: 1000;
+    background: transparent;
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+
+  .mobile-logo {
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .mobile-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mobile-lang {
+    font-size: 11px;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle.open .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  /* Panneau plein écran */
+  .mobile-menu-panel {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+  }
+
+  .mobile-menu-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .mobile-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  /* ============================
+     1. HERO INTRO - SETS D'IMAGES
+     ============================ */
+
+  /* Décalage de la femme diamant vers la droite */
+  #set2 .half:last-child img {
+    object-position: 75% center;
+  }
+
+  /* Nouveau logo pierre mobile - remplace set5 */
+  #set5 .half { 
+    width: 50%; 
+    height: 100%; 
+    overflow: hidden; 
+    position: relative; 
+    transition: transform 1s cubic-bezier(.77,0,.18,1); 
+  }
+  #set5 .half img { 
+    position: absolute; 
+    top: 0; 
+    width: 200%; 
+    height: 100%; 
+    object-fit: cover; 
+  }
+  #set5 .half-left img { 
+    left: 0; 
+    content: url('LOGO-MADDAMA-MOBILE.png');
+  }
+  #set5 .half-right img { 
+    right: 0; 
+    content: url('LOGO-MADDAMA-MOBILE.png');
+  }
+
+  /* ============================
+     2. WELCOME SECTION (textes)
+     ============================ */
+
+  .welcome-to {
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+
+  .maddama-reveal img {
+    width: 260px;
+    max-width: 70vw;
+  }
+
+  .maddama-baseline {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    max-width: 85vw;
+    line-height: 1.4;
+    padding: 0 20px;
+  }
+
+  /* ============================
+     3. BRAND SECTION
+     ============================ */
+
+  .brand-section {
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 30px;
+  }
+
+  .brand-section .image-side {
+    width: 100%;
+    aspect-ratio: 1/1;
+  }
+
+  .brand-section .image-title {
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    text-align: center;
+  }
+
+  .brand-section .image-title .make {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+
+  .brand-section .image-title .big-title {
+    font-size: 32px;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-section .divider {
+    width: 60px;
+    height: 2px;
+    margin: 0 auto 20px auto;
+  }
+
+  .brand-section .divider.bottom {
+    margin-top: 20px;
+  }
+
+  .brand-section .body-text {
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .brand-section .body-text p {
+    margin-bottom: 20px;
+  }
+
+  /* ============================
+     4. ABOUT HERO
+     ============================ */
+
+  .about-hero {
+    padding: 16px;
+    min-height: auto;
+  }
+
+  .about-hero-inner {
+    padding: 12px;
+  }
+
+  .about-hero-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .about-photo-wrapper {
+    width: 100%;
+    max-width: 280px;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .about-photo-circle-bg {
+    width: 220px;
+    height: 220px;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+  }
+
+  .about-photo-placeholder {
+    width: 200px;
+    height: 260px;
+    margin: 0 auto;
+    margin-bottom: -30px;
+  }
+
+  .about-photo-labels {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+  }
+
+  .about-photo-labels .creative {
+    left: 0;
+    bottom: -4px;
+    font-size: 9px;
+  }
+
+  .about-photo-labels .strategist {
+    left: auto;
+    right: 0;
+    bottom: -12px;
+    font-size: 9px;
+  }
+
+  /* Nouveau bloc texte en dessous de la photo, entre 2 traits */
+  .about-text-block {
+    flex-direction: row;
+    max-width: 100%;
+    margin-left: 0;
+    margin-top: 30px;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .about-bar {
+    width: 2px;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .about-main-text {
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: 0.1px;
+  }
+
+  .about-bg-logo {
+    display: none;
+  }
+
+  /* ============================
+     5. CONTENT SECTION + SYMBOLS
+     ============================ */
+
+  .content-section {
+    padding: 0 24px;
+    margin: 24px auto;
+  }
+
+  .content-section p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .symbol-divider {
+    width: 24px;
+    height: 24px;
+    margin: 16px auto;
+  }
+
+  /* ============================
+     6. BLACK RECT / WHAT WE DO
+     ============================ */
+
+  .scroll-buffer {
+    display: none;
+  }
+
+  .black-rect-container {
+    display: none;
+  }
+
+  .black-rect-content {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: auto;
+    left: auto;
+    background: #000;
+    z-index: auto;
+    pointer-events: auto;
+    padding: 50px 24px 60px 24px;
+    margin-bottom: 0;
+  }
+
+  .what-we-do-title {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-top: 0;
+    order: 2;
+  }
+
+  .symbols-container {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    margin: 0 auto 16px auto;
+    transform: none;
+    order: 1;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 30px;
+    order: 3;
+  }
+
+  .services-grid > .service-item .service-name {
+    text-align: center !important;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .bottom-text {
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    line-height: 1.6;
+    order: 4;
+  }
+
+  /* Réorganisation flex pour respecter l'ordre demandé */
+  .black-rect-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ============================
+     7. IMAGE SECTION FINALE
+     ============================ */
+
+  .image-section-container {
+    height: 400px;
+  }
+
+  .image-wrapper {
+    width: 90%;
+    height: 100%;
+  }
+
+}
+
+/* ============================================
+   DESKTOP (inchangé)
+   ============================================ */
+
+.black-rect-slideup {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  left: 0;
+  top: 100vh;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 80px 40px 40px 40px;
+}
+
+.black-rect-slideup img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 0;
+  display: block;
+  justify-content: center;
+}
+
+.carousel-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  margin-top: -30px;
+  padding: 0px 0;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 15px;
+  animation: scroll-infinite 50s linear infinite;
+}
+
+.carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-infinite {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-380px * 12 - 30px * 12)); }
+}
+
+.carousel-item {
+  flex-shrink: 0;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel-item img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  height: 400px;
+}
+
+.carousel-text { padding: 0; }
+
+.carousel-brand {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 2.5px;
+}
+
+.carousel-description {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: #ccc;
+}
+
+.carousel-bottom-text {
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.they-trusted-us {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-top: 60px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.clients-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -80px;
+  padding: 40px;
+  width: 100%;
+}
+
+.clients-wrapper img {
+  max-width: 2000px;
+  width: 100%;
+}
+
+.stars { color: #f5a623; margin-bottom: 15px; }
+.t-quote { font-size: 16px; line-height: 1.6; }
+.t-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+.t-author img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.t-name { font-weight: 700; font-size: 14px; }
+.t-role { font-size: 13px; color: #888; }
+
+.black-rect-slideup-2 {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  top: auto;
+  bottom: -100vh;
+  background: black;
+  z-index: 9999;
+  transition: none;
+  display: block;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.testimonial-section {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  color: #0a0a0a;
+  padding: 70px 80px 40px;   
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: inherit;
+}
+
+.testimonial-topline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex: 0 0 auto;
+  padding-bottom: 20px;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.topline-sep {
+  flex: 1 1 160px;
+  min-width: 24px;
+  max-width: 400px;
+  height: 1.2px;
+  background: #000;
+}
+
+.testimonial-body {
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.testimonial-photo-wrap {
+  position: relative;
+  flex: 0 0 360px;
+  width: 360px;
+  height: 440px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ddd;
+}
+
+.testimonial-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.testimonial-photo.loaded { opacity: 1; }
+
+.testimonial-logo {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.testimonial-divider {
+  width: 700px;
+  height: 1.2px;
+  background: #000;
+  margin: 0 0 40px auto;
+}
+
+.testimonial-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+.testimonial-right-group {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.testimonial-nav {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #f2f2f2;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+.nav-btn:hover {
+  background: #e4e4e4;
+  transform: scale(1.05);
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+.author-photo {
+  width: 140px;
+  height: 70px;
+  border-radius: 4px;
+  object-fit: contain;
+  background: transparent;
+}
+.author-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+}
+.author-name { font-weight: 700; font-size: 16px; }
+.author-role { font-size: 13px; color: #888; }
+
+.testimonial-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-number { font-size: 34px; font-weight: 800; line-height: 1.1; }
+.stat-label { font-size: 14px; font-weight: 600; }
+.stat-sub { font-size: 13px; color: #888; }
+
+
+/* ============================================
+   TABLETTE (900px) — inchangé, gardé tel quel
+   ============================================ */
+
+@media (max-width: 900px) {
+  .testimonial-section { padding: 24px 24px; }
+
+  .testimonial-body {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 60px 0;
+  }
+
+  .testimonial-photo-wrap {
+    position: relative;
+    width: 400px;
+    height: 520px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ddd;
+  }
+  .testimonial-quote {
+    flex: 1;
+    margin: 0;
+    text-align: left;
+    font-size: clamp(18px, 2vw, 28px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+  .testimonial-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  .testimonial-label {
+    position: static;
+    transform: none;
+  }
+}
+
+
+/* ============================================
+   MOBILE (768px) — override complet
+   ============================================ */
+
+@media (max-width: 768px) {
+
+  /* ---- Black slideup container : plus de position fixed cassante ---- */
+  .black-rect-slideup {
+    position: relative;
+    top: 0;
+    height: auto;
+    min-height: 100vh;
+    padding: 40px 20px 20px 20px;
+    align-items: center;
+  }
+
+  /* ---- Carousel adapté mobile ---- */
+  .carousel-container {
+    margin-top: 0;
+  }
+
+  .carousel-track {
+    gap: 12px;
+    animation: scroll-infinite-mobile 40s linear infinite;
+  }
+
+  @keyframes scroll-infinite-mobile {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-190px * 12 - 12px * 12)); }
+  }
+
+  .carousel-item {
+    width: 190px;
+  }
+
+  .carousel-item img {
+    height: 260px;
+  }
+
+  .carousel-brand { font-size: 11px; }
+  .carousel-description { font-size: 9px; }
+
+  /* ---- THEY TRUSTED US ---- */
+  .they-trusted-us {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 12px;
+  }
+
+  /* ---- Clients wrapper : logo vertical mobile ---- */
+  .clients-wrapper {
+    margin-top: 0;
+    padding: 20px;
+  }
+
+  .clients-wrapper img {
+    content: url('LOGO-CLIENTS-MOBILE.jpg');
+    max-width: 320px;
+  }
+
+  /* ---- Black slideup 2 (testimonials) ---- */
+  .black-rect-slideup-2 {
+    position: relative;
+    bottom: 0;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .testimonial-section {
+    padding: 30px 20px;
+    min-height: auto;
+  }
+
+  /* ---- Topline resserrée ---- */
+  .testimonial-topline {
+    gap: 16px;
+    font-size: 10px;
+    padding-bottom: 16px;
+  }
+
+  .topline-sep {
+    flex: 0 1 30px;
+    margin: 0 8px;
+  }
+
+  /* ---- Body : swipe container ---- */
+  .testimonial-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    position: relative;
+  }
+
+  /* ---- Photo en swipe avec flèches indicatrices ---- */
+  .testimonial-photo-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 360px;
+    margin: 0 auto;
+    touch-action: pan-y;
+  }
+
+  .testimonial-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .swipe-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    color: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .swipe-arrow.left {
+    left: 10px;
+    animation: swipe-hint-left 2.2s ease-in-out infinite;
+  }
+  .swipe-arrow.right {
+    right: 10px;
+    animation: swipe-hint-right 2.2s ease-in-out infinite;
+  }
+
+  @keyframes swipe-hint-left {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(-4px); }
+  }
+  @keyframes swipe-hint-right {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(4px); }
+  }
+
+  /* ---- Quote sous la photo ---- */
+  .testimonial-quote {
+    position: static;
+    width: 100%;
+    max-width: 320px;
+    margin: 20px auto 0;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* ---- Divider ---- */
+  .testimonial-divider {
+    width: 80%;
+    max-width: 280px;
+    margin: 24px auto;
+  }
+
+  /* ---- Footer empilé ---- */
+  .testimonial-footer {
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .testimonial-nav {
+    display: none; /* remplacé par le swipe */
+  }
+
+  .testimonial-right-group {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .testimonial-stat {
+    align-items: center;
+    text-align: center;
+  }
+
+  .author-photo {
+    width: 110px;
+    height: 55px;
+  }
+
+  .stat-number { font-size: 26px; }
+  .stat-label { font-size: 12px; }
+  .stat-sub { font-size: 11px; }
+}
+
+@media (max-width: 768px) {
+
+  .final-section {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding: 40px 20px;
+    gap: 20px;
+  }
+
+  .ambition-symbol-top {
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text {
+    max-width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text p {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text p:first-child,
+  .ambition-text p:nth-child(2) {
+    margin-bottom: 15px;
+  }
+
+  /* CTA en colonne, centrées */
+  .cta-images {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  a.cta-item {
+    align-items: center;
+    width: 100%;
+  }
+
+  .cta-image {
+    width: 280px;
+    height: 180px;
+    margin-top: 0;
+  }
+
+  /* on annule le flip sur mobile si tu veux garder l'image normale, sinon laisse tel quel */
+  .cta-item:nth-child(3) .cta-image img {
+    transform: scaleX(-1);
+  }
+
+  .cta-text-wrapper {
+    margin-top: -30px;
+    align-items: center;
+    text-align: center;
+    margin-right: 0;
+    padding: 0 10px;
+  }
+
+  .cta-image-text {
+    font-size: 11px;
+  }
+
+  .cta-subtitle {
+    font-size: 9px;
+  }
+
+  .ambition-symbol-bottom {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
+
+  footer {
+    padding: 15px 20px;
+    margin-bottom: 0;
+  }
+
+  .footer-content p {
+    font-size: 8px;
+  }
+
+}
+</style>
+
+</head>
+
+<body class="locked">
+
+<header>
+<div class="logo"><a href="index-fr.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+<a href="index-fr.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
+<a href="Services-fr.html">SERVICES</a>
+<a href="case-studies-fr.html">CASE STUDIES</a>
+<a href="index-fr.html#testimonials" onclick="goToTestimonials(event)">TEMOIGNAGES</a>
+  </nav>
+<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">EN</a>
+<a href="Contact-fr.html" class="boutique">CONTACT</a>
+</header>
+
+<!-- ===== HEADER MOBILE ===== -->
+<header class="mobile-header">
+  <a href="index-fr.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
+  <div class="mobile-header-right">
+    <a href="#" onclick="switchLanguage(event)" class="mobile-lang" id="mobileLangSwitchBtn">EN</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+      <span class="toggle-icon">+</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== PANNEAU MENU MOBILE ===== -->
+<div class="mobile-menu-panel" id="mobileMenuPanel">
+  <nav class="mobile-nav">
+    <a href="index-fr.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
+    <a href="Services-fr.html">SERVICES</a>
+    <a href="case-studies-fr.html">CASE STUDIES</a>
+    <a href="index-fr.html#testimonials" onclick="goToTestimonials(event)">TEMOIGNAGES</a>
+    <a href="Contact-fr.html">CONTACT</a>
+  </nav>
+</div>
+
+<div class="hero">
+  <div class="set active" id="set1">
+    <div class="half"><img src="FEMME-PIERRE.png" alt="Femme Pierre"></div>
+    <div class="half"><img src="PIERRE.png" alt="Pierre"></div>
+  </div>
+  <div class="set" id="set2">
+    <div class="half"><img src="DIAMANT.png" alt="Diamant"></div>
+    <div class="half"><img src="FEMME-DIAMANT.png" alt="Femme Diamant"></div>
+  </div>
+  <div class="set" id="set3">
+    <div class="half"><img src="FEMME-LIN-BLEU.png" alt="Femme Lin Bleu"></div>
+    <div class="half"><img src="LIN-BLEU.png" alt="Lin Bleu"></div>
+  </div>
+  <div class="set" id="set4">
+    <div class="half"><img src="ARGILE.png" alt="Argile"></div>
+    <div class="half"><img src="FEMME-ARGILE.png" alt="Femme Argile"></div>
+  </div>
+  <div class="set" id="set5">
+    <div class="half half-left"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Gauche"></div>
+    <div class="half half-right"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Droite"></div>
+  </div>
+  <div class="welcome-section" id="welcomeSection">
+    <div class="welcome-to" id="welcomeTo">BIENVENUE CHEZ</div>
+    <div class="maddama-reveal" id="maddamaReveal">
+      <img src="LOGO-MADDAMA-NOIR.png" alt="Logo Maddama">
+      <div class="maddama-baseline">Studio d'artisanat de marque où riment <br> précision stratégique et exigence créative.<br></div>
+    </div>
+  </div>
+</div>
+
+<section class="brand-section" id="about">
+  <div class="image-side">
+    <img src="HOME-1.jpg" alt="Brand visual">
+    <div class="image-title">
+      <div class="make">Make</div>
+      <div class="big-title">Your<br>Brand<br>Matter<span class="strike">s</span></div>
+    </div>
+  </div>
+  <div class="text-side">
+    <div class="divider"></div>
+    <div class="body-text">
+      <p>Toute marque naît d'une idée qui germe et d'une matière qui prend peu à peu forme. À l'image du diamant qui sommeille au cœur d'une pierre brute, chaque marque porte en elle un potentiel riche et n'attend que d'être façonnée pour révéler toute sa valeur. </p>
+      <p>Pour autant, rien n'est jamais gravé dans le marbre. Une marque est une matière malléable : il est possible de la créer, la faire évoluer ou la transformer sans jamais lui faire perdre son essence. Au début, chaque entaille, chaque coup de ciseau peut sembler être un sacrilège fait à la matière. Mais tailler une matière brute avec intention, c'est en réalité raboter ce qui empêche de voir clairement ce qui compte vraiment. <br> Faire naître de nouvelles idées, façonner une singularité qui va durer ou simplement garder la passion des premiers jours intacte : rien de tout ça n'arrive par hasard. <em>C'est un savoir-faire.</em></p>
+      <p>En tant que Planneur Stratégique créative, c'est mon rôle et ma responsabilité d'apporter une vision stratégique limpide & pleine de sens, le savoir-faire créatif pour la concrétiser mais également d'être la gardienne du patrimoine créé.</p>
+      <p class="closing">Chez Maddama, nous façonnons pour faire sens et pour que ça dure.</p>
+    </div>
+    <div class="divider bottom"></div>
+  </div>
+</section>
+
+<section class="about-hero" id="about-hero">
+  <div class="about-hero-inner">
+    <div class="about-hero-top">
+      <div class="about-label">ABOUT MADDAMA</div>
+    </div>
+    <div class="about-hero-content">
+      <div class="about-photo-wrapper">
+        <div class="about-photo-circle-bg"></div>
+        <div class="about-photo-placeholder">
+<img src="PHOTO-PRO.png" alt="Portrait" width="252" height="336">
+        </div>
+        <div class="about-photo-labels">
+          <span class="creative">CREATIVE</span>
+          <span class="strategist">STRATEGIST</span>
+        </div>
+      </div>
+      <div class="about-text-block">
+        <div class="about-bar"></div>
+        <div class="about-main-text">
+          MADDAMA C'EST <b>UN STUDIO D'ARTISANS DE MARQUE</b>, AVEC PRÈS DE <b>10 ANS D'EXPÉRIENCE</b> SUR TOUS LES <b> ENJEUX D'UNE MARQUE</b>.
+        </div>
+        <div class="about-bar"></div>
+      </div>
+    </div>
+    <div class="about-bg-logo">
+      <img src="LOGO-MADDAMA-NOIR.png" alt="Maddama Logo">
+    </div>
+  </div>
+</section>
+
+<div class="symbol-divider">
+  <img src="SYMBOLE-NOIR.png" alt="Symbole">
+</div>
+
+<section class="content-section">
+  <p>Chez Maddama, nous pensons les marques comme des entités vivantes.</p>
+  <p>Elles naissent, se façonnent, évoluent & suivent leur propre chemin, vivent selon leur propre rythme. Et tout au long de ce parcours, elles font face à d'innombrables challenges qui exigent anticipation, clarté stratégique et savoir-faire ingénieux. Notre mission est de les accompagner et guider dans leur évolution naturelle.</p>
+  <p>Les (re)imaginer, les renforcer, les faire grandir, tout en préservant ce qui les rend remarquables.</p>
+</section>
+
+<div class="symbol-divider">
+  <img src="SYMBOLE-NOIR.png" alt="Symbole">
+</div>
+
+<div class="scroll-buffer"></div>
+
+<div class="black-rect-container"></div>
+
+<div class="black-rect-content">
+  <div class="what-we-do-title">CE QU'ON FAIT</div>
+
+  <div class="symbols-container">
+    <img src="SYMBOLE-BLANC.png" alt="Symbole">
+    <img src="SYMBOLE-BLANC.png" alt="Symbole">
+  </div>
+
+  <div class="services-grid">
+    <div class="service-item"><div class="service-name">STRATÉGIE DE MARQUE & POSITIONNEMENT</div></div>
+    <div class="service-item"><div class="service-name">IDENTITÉ DE MARQUE ET TERRITOIRES VISUELS & SÉMANTIQUE</div></div>
+    <div class="service-item"><div class="service-name">ARCHITECTURE DE MARQUE & GAMME</div></div>
+    <div class="service-item"><div class="service-name">ACTIVATION DE MARQUE INC. SHOPPER MARKETING</div></div>
+    <div class="service-item"><div class="service-name">ANTICIPATION & TENDANCES</div></div>
+    <div class="service-item"><div class="service-name">INSIGHTS CONSOMMATEURS</div></div>
+    <div class="service-item"><div class="service-name">INNOVATION PRODUIT & SERVICE</div></div>
+    <div class="service-item"><div class="service-name">CONCEPT, BIG IDEA & DESIGN GRAPHIQUE</div></div>
+    <div class="service-item"><div class="service-name">CRÉATION & ANIMATION DE WORKSHOPS</div></div>
+    <div class="service-item"><div class="service-name">FORMATIONS A LA STRATÉGIE DE MARQUE</div></div>
+  </div>
+
+  <div class="bottom-text">
+    Pour des problématiques nationales comme internationales<br>
+    Des marques niches aux plus populaires<br>
+    Pour de petites marques indépendantes à celles du CAC 40
+  </div>
+</div>
+
+<div class="image-section-container">
+  <div class="image-wrapper" id="imageWrapper">
+  </div>
+</div>
+
+<div class="scroll-buffer"></div>
+
+<div class="black-rect-slideup">
+  <div class="carousel-content">
+    <div class="carousel-container">
+      <div class="carousel-track">
+
+        <div class="carousel-item">
+          <img src="ALCOHOL.jpg" alt="ALCOHOL">
+          <div class="carousel-text">
+            <div class="carousel-brand">ALCOOL</div>
+            <div class="carousel-description">VINS & SPIRITUEUX</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="AUTO.jpg" alt="AUTO">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRANSPORT</div>
+            <div class="carousel-description">MOBILITE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="CHARITY.jpg" alt="CHARITY">
+          <div class="carousel-text">
+            <div class="carousel-brand">CARITATIF</div>
+            <div class="carousel-description">BUT NON LUCRATIF</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="COSMETIC.jpg" alt="COSMETIC">
+          <div class="carousel-text">
+            <div class="carousel-brand">BEAUTE</div>
+            <div class="carousel-description">COSMETIQUE & SOINS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="F&B.jpg" alt="F&B">
+          <div class="carousel-text">
+            <div class="carousel-brand">F&B</div>
+            <div class="carousel-description">FOOD & BOISSONS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FINANCE.jpg" alt="FINANCE">
+          <div class="carousel-text">
+            <div class="carousel-brand">FINANCE</div>
+            <div class="carousel-description">BANQUE & ASSURANCE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FMCG.jpg" alt="FMCG">
+          <div class="carousel-text">
+            <div class="carousel-brand">FMCG</div>
+            <div class="carousel-description">PRODUITS QUOTIDIENS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="HEALTH.jpg" alt="HEALTH">
+          <div class="carousel-text">
+            <div class="carousel-brand">SANTE</div>
+            <div class="carousel-description">BIEN-ËTRE & SOIN</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="INDUSTRY.jpg" alt="INDUSTRY">
+          <div class="carousel-text">
+            <div class="carousel-brand">INDUSTRIE</div>
+            <div class="carousel-description">B2B</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="LUXURY.jpg" alt="LUXURY">
+          <div class="carousel-text">
+            <div class="carousel-brand">LUXE</div>
+            <div class="carousel-description">PREMIUM & EXCLUSIF</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="PET.jpg" alt="PET">
+          <div class="carousel-text">
+            <div class="carousel-brand">ANIMAUX</div>
+            <div class="carousel-description">DE COMPAGNIE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="TRAVEL.jpg" alt="TRAVEL">
+          <div class="carousel-text">
+            <div class="carousel-brand">VOYAGE</div>
+            <div class="carousel-description">TOURISME & LOISIRS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="ALCOHOL.jpg" alt="ALCOHOL">
+          <div class="carousel-text">
+            <div class="carousel-brand">ALCOOL</div>
+            <div class="carousel-description">VINS & SPIRITUEUX</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="AUTO.jpg" alt="AUTO">
+          <div class="carousel-text">
+            <div class="carousel-brand"> TRANSPORT </div>
+            <div class="carousel-description">MOBILITE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="CHARITY.jpg" alt="CHARITY">
+          <div class="carousel-text">
+            <div class="carousel-brand">CARITATIF</div>
+            <div class="carousel-description">BUT NON LUCRATIF</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="COSMETIC.jpg" alt="COSMETIC">
+          <div class="carousel-text">
+            <div class="carousel-brand">BEAUTE</div>
+            <div class="carousel-description">COSMETIQUES & SOINS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="F&B.jpg" alt="F&B">
+          <div class="carousel-text">
+            <div class="carousel-brand">F&B</div>
+            <div class="carousel-description">FOOD & BOISSONS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FINANCE.jpg" alt="FINANCE">
+          <div class="carousel-text">
+            <div class="carousel-brand">FINANCE</div>
+            <div class="carousel-description">BANQUE & ASSURANCE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FMCG.jpg" alt="FMCG">
+          <div class="carousel-text">
+            <div class="carousel-brand">FMCG</div>
+            <div class="carousel-description">PRODUITS QUOTIDIENS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="HEALTH.jpg" alt="HEALTH">
+          <div class="carousel-text">
+            <div class="carousel-brand">SANTE</div>
+            <div class="carousel-description">BIEN-ËTRE & SOIN</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="INDUSTRY.jpg" alt="INDUSTRY">
+          <div class="carousel-text">
+            <div class="carousel-brand">INDUSTRIE</div>
+            <div class="carousel-description">B2B</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="LUXURY.jpg" alt="LUXURY">
+          <div class="carousel-text">
+            <div class="carousel-brand">LUXE</div>
+            <div class="carousel-description">PREMIUM & EXCLUSIF</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="PET.jpg" alt="PET">
+          <div class="carousel-text">
+            <div class="carousel-brand">ANIMAUX</div>
+            <div class="carousel-description">DE COMPAGNIE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="TRAVEL.jpg" alt="TRAVEL">
+          <div class="carousel-text">
+            <div class="carousel-brand">VOYAGE</div>
+            <div class="carousel-description">TOURISME & LOISIRS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="they-trusted-us">
+    ILS NOUS ONT FAIT CONFIANCE
+  </div>
+
+<div class="clients-wrapper">
+  <img src="LOGOS-CLIENTS-DESKTOP.jpg" class="logo-desktop" alt="Nos clients">
+</div>
+</div>
+
+<div class="black-rect-slideup-2" id="testimonialsAnchor">
+<section class="testimonial-section">
+<div class="testimonial-topline">
+  <span class="testimonial-index">CLIENTS</span>
+  <span class="topline-sep"></span>
+  <span class="testimonial-label">TEMOIGNAGES</span>
+  <span class="topline-sep"></span>
+  <span class="testimonial-year">PARTENAIRES</span>
+</div>
+
+<div class="testimonial-body">
+  <div class="testimonial-photo-wrap">
+    <img id="testimonialPhoto" src="" alt="" class="testimonial-photo loaded">
+    <span class="swipe-arrow left">&#8592;</span>
+    <span class="swipe-arrow right">&#8594;</span>
+  </div>
+
+  <blockquote class="testimonial-quote" id="testimonialQuote"></blockquote>
+</div>
+
+<div class="testimonial-divider"></div>
+
+<div class="testimonial-footer">
+  <div class="testimonial-nav">
+    <button class="nav-btn" id="prevBtn">&#8592;</button>
+    <button class="nav-btn" id="nextBtn">&#8594;</button>
+  </div>
+
+  <div class="testimonial-right-group">
+    <div class="testimonial-author">
+      <img id="authorPhoto" src="LOGO-KEEMIA.jpg" alt="Keemia" class="author-photo">
+    </div>
+
+    <div class="testimonial-stat">
+      <span class="stat-number" id="stat1Number">CHAIMA</span>
+      <span class="stat-label" id="stat1Label">KHADI</span>
+      <span class="stat-sub" id="stat1Sub">Directrice Conseil</span>
+    </div>
+
+    <div class="testimonial-stat">
+      <span class="stat-number" id="stat2Number">KEEMIA</span>
+      <span class="stat-label" id="stat2Label">Shopper agency</span>
+      <span class="stat-sub" id="stat2Sub">+100 collaborateurs</span>
+    </div>
+  </div>
+</div>
+</section>
+
+  <div class="final-section">
+
+    <div class="ambition-symbol-top">
+      <img src="SYMBOLE-BLANC.png" alt="Symbole">
+    </div>
+
+    <div class="ambition-text">
+      <p>Vos idées méritent d'être réalisées. </p>
+      <p>Vous avez une idée ou le début d'une idée de marque mais vous ne savez pas comment la concrétiser ? Vous voulez conquérir de nouveaux marchés ? Atteindre de nouvelles audiences ? Lancer un nouveau produit / service ? Repenser totalement votre identité ou la manière de l'exprimer ? Ou tout simplement préparer la suite de votre aventure ?</p>
+      <p>Pour chaque ambition, il y a l'art et la manière de la réaliser. A nous de la trouver. </p>
+    </div>
+<div class="cta-images">
+  <a class="cta-item" href="Services-fr.html">
+    <div class="cta-image">
+      <img src="CRAFT.jpg" alt="Let's craft it">
+    </div>
+    <div class="cta-text-wrapper">
+      <div class="cta-image-text">L'ART & LA MANIERE →</div>
+      <div class="cta-subtitle">NOS SERVICES</div>
+    </div>
+  </a>
+
+  <a class="cta-item" href="case-studies-fr.html">
+    <div class="cta-image">
+      <img src="CASES.jpg" alt="Show me what you got">
+    </div>
+    <div class="cta-text-wrapper">
+      <div class="cta-image-text">DECOUVRIR CE QU'ON FAIT →</div>
+      <div class="cta-subtitle">CASE STUDIES</div>
+    </div>
+  </a>
+
+  <a class="cta-item" href="Contact-fr.html">
+    <div class="cta-image cta-image-flipped">
+      <img src="CONTACT.jpg" alt="Let's get in touch">
+    </div>
+    <div class="cta-text-wrapper">
+      <div class="cta-image-text">ON S'EN PARLE ? →</div>
+      <div class="cta-subtitle">CONTACT</div>
+    </div>
+  </a>
+</div>
+
+    <div class="ambition-symbol-bottom">
+      <img src="SYMBOLE-BLANC.png" alt="Symbole">
+    </div>
+    <footer class="footer">
+      <div class="footer-content">
+        <p>© 2026 MADDAMA. ALL RIGHTS RESERVED.</p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+const sets = ['set1','set2','set3','set4','set5'];
+let currentIndex = 0;
+const interval = 1550;
+let autoplayFinished = false;
+let hasSplit = false;
+
+function showSet(index) {
+  sets.forEach((id, i) => {
+    document.getElementById(id).classList.toggle('active', i === index);
+  });
+}
+
+function nextSet() {
+  currentIndex++;
+  if (currentIndex >= sets.length) {
+    currentIndex = sets.length - 1;
+    autoplayFinished = true;
+    clearInterval(autoplayTimer);
+    return;
+  }
+  showSet(currentIndex);
+}
+
+showSet(currentIndex);
+const autoplayTimer = setInterval(nextSet, interval);
+
+window.addEventListener('wheel', handleFirstScroll, { passive:false });
+window.addEventListener('touchmove', handleFirstScroll, { passive:false });
+
+function handleFirstScroll(e) {
+  if (!autoplayFinished || hasSplit) return;
+  e.preventDefault();
+  hasSplit = true;
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  setTimeout(() => {
+    document.getElementById('maddamaReveal').classList.add('revealed');
+  }, 400);
+  setTimeout(() => {
+    document.body.classList.remove('locked');
+  }, 1600);
+}
+
+const blackRectContainer = document.querySelector('.black-rect-container');
+const blackRectContent = document.querySelector('.black-rect-content');
+const imageWrapper = document.querySelector('#imageWrapper');
+const blackRectSlideup = document.querySelector('.black-rect-slideup');
+const blackRectSlideup2 = document.querySelector('.black-rect-slideup-2');
+const lastSymbol = document.querySelectorAll('img[src*="SYMBOLE-NOIR"]');
+const symbolElement = lastSymbol[lastSymbol.length - 1];
+const body = document.body;
+const html = document.documentElement;
+
+const ambitionSymbolTop = document.querySelector('.ambition-symbol-top');
+const ambitionSymbolBottom = document.querySelector('.ambition-symbol-bottom');
+
+let scrollLocked = false;
+let animationStarted = false;
+let animationScrollDelta = 0;
+let contentFullyVisible = false;
+let imageAnimationStarted = false;
+let imageScrollDelta = 0;
+let carouselAnimationStarted = false;
+let carouselScrollDelta = 0;
+let carouselFinished = false;
+
+// ==========================================================
+// SKIP INTRO SI ARRIVÉE AVEC UNE ANCRE (ex: index-fr.html#about-hero)
+// ==========================================================
+if (window.location.hash === '#about-hero') {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const target = document.getElementById('about-hero');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      history.replaceState(null, '', window.location.pathname);
+    }, 100);
+  });
+}
+
+// ==========================================================
+// SKIP INTRO SI ARRIVÉE AVEC #welcomeSection (juste après l'animation des 5 sets)
+// ==========================================================
+if (window.location.hash === '#welcomeSection') {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = false;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = false;
+
+  animationScrollDelta = 0;
+  imageScrollDelta = 0;
+  carouselScrollDelta = 0;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      history.replaceState(null, '', window.location.pathname);
+    }, 100);
+  });
+}
+
+// ==========================================================
+// SKIP INTRO SI ARRIVÉE AVEC #testimonials
+// ==========================================================
+if (window.location.hash === '#testimonials') {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const target = document.getElementById('testimonialsAnchor');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      history.replaceState(null, '', window.location.pathname);
+    }, 100);
+  });
+}
+
+function isContentFullyVisible() {
+  if (!symbolElement) return false;
+  const symbolRect = symbolElement.getBoundingClientRect();
+  const bottomOfContent = symbolRect.bottom + 80;
+  return bottomOfContent <= window.innerHeight;
+}
+
+window.addEventListener('wheel', (e) => {
+  if (!hasSplit) return;
+
+  if (!contentFullyVisible) {
+    if (isContentFullyVisible()) {
+      contentFullyVisible = true;
+    }
+    return;
+  }
+
+  if (contentFullyVisible && !scrollLocked && !animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+
+    if (e.deltaY < 0 && window.scrollY > 10) {
+      return;
+    }
+
+    e.preventDefault();
+
+    scrollLocked = true;
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+    animationStarted = true;
+    return;
+  }
+
+  // ÉTAPE 1 : black-rect
+  if (animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+    e.preventDefault();
+    animationScrollDelta += e.deltaY;
+    animationScrollDelta = Math.max(0, Math.min(animationScrollDelta, 2000));
+    const progress = animationScrollDelta / 2000;
+    const leftValue = 100 - (progress * 100);
+    blackRectContainer.style.left = leftValue + '%';
+    blackRectContent.style.left = leftValue + '%';
+
+    if (progress >= 1) {
+      animationStarted = false;
+      imageAnimationStarted = true;
+      imageScrollDelta = 0;
+    }
+
+    if (progress <= 0 && e.deltaY < 0) {
+      scrollLocked = false;
+      animationStarted = false;
+      body.style.overflow = 'auto';
+      html.style.overflow = 'auto';
+    }
+    return;
+  }
+
+  // ÉTAPE 2 : image
+  if (imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+    e.preventDefault();
+    imageScrollDelta += e.deltaY;
+    imageScrollDelta = Math.max(0, Math.min(imageScrollDelta, 2000));
+    const progress = imageScrollDelta / 2000;
+    imageWrapper.style.opacity = progress;
+    blackRectSlideup.style.top = (100 - (progress * 100)) + 'vh';
+
+    if (progress >= 1) {
+      imageAnimationStarted = false;
+      carouselAnimationStarted = true;
+      carouselScrollDelta = 0;
+    }
+
+    if (progress <= 0 && e.deltaY < 0) {
+      imageAnimationStarted = false;
+      animationStarted = true;
+      animationScrollDelta = 2000;
+    }
+    return;
+  }
+
+  // ÉTAPE 3 : apparition de slideup-2 (testimonials + ambition/CTA)
+  if (carouselAnimationStarted) {
+    e.preventDefault();
+    carouselScrollDelta += e.deltaY;
+    carouselScrollDelta = Math.max(0, Math.min(carouselScrollDelta, 2000));
+    const progress = carouselScrollDelta / 2000;
+    blackRectSlideup2.style.bottom = (-200 + (progress * 200)) + 'vh';
+
+    if (progress > 0) {
+      ambitionSymbolTop.classList.add('visible');
+      ambitionSymbolBottom.classList.add('visible');
+    } else {
+      ambitionSymbolTop.classList.remove('visible');
+      ambitionSymbolBottom.classList.remove('visible');
+    }
+
+    if (progress >= 1) {
+      carouselAnimationStarted = false;
+      carouselFinished = true;
+      scrollLocked = false;
+      blackRectSlideup2.scrollTop = 0;
+      body.style.overflow = 'hidden';
+      html.style.overflow = 'hidden';
+    }
+
+    if (progress <= 0 && e.deltaY < 0) {
+      carouselAnimationStarted = false;
+      imageAnimationStarted = true;
+      imageScrollDelta = 2000;
+      carouselFinished = false;
+    }
+    return;
+  }
+
+  // ÉTAPE 4 : scroll interne natif dans slideup-2 (testimonials + ambition/CTA)
+  if (carouselFinished) {
+    const atTop = blackRectSlideup2.scrollTop <= 0;
+    const atBottom = blackRectSlideup2.scrollTop + blackRectSlideup2.clientHeight >= blackRectSlideup2.scrollHeight - 2;
+
+    if (e.deltaY < 0 && atTop) {
+      e.preventDefault();
+      carouselFinished = false;
+      carouselAnimationStarted = true;
+      carouselScrollDelta = 1990;
+      return;
+    }
+
+    if (e.deltaY > 0 && atBottom) {
+      body.style.overflow = 'auto';
+      html.style.overflow = 'auto';
+      return;
+    }
+    // sinon on laisse le scroll natif agir DANS blackRectSlideup2
+    return;
+  }
+}, { passive: false });
+
+if (!window.location.hash) {
+  if (blackRectContainer) {
+    blackRectContainer.style.left = '100%';
+  }
+  if (blackRectContent) {
+    blackRectContent.style.left = '100%';
+  }
+  if (blackRectSlideup) {
+    blackRectSlideup.style.top = '100vh';
+  }
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '-200vh';
+  }
+}
+
+// ==========================================================
+// NAVIGATION HEADER : goToHome + reset vers l'état welcome
+// ==========================================================
+function resetToWelcomeState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = false;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = false;
+
+  animationScrollDelta = 0;
+  imageScrollDelta = 0;
+  carouselScrollDelta = 0;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+
+  if (blackRectContainer) blackRectContainer.style.left = '100%';
+  if (blackRectContent) blackRectContent.style.left = '100%';
+  if (imageWrapper) imageWrapper.style.opacity = 0;
+  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '-200vh';
+    blackRectSlideup2.scrollTop = 0;
+  }
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
+}
+
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToWelcomeState();
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index-fr.html#welcomeSection';
+  }
+}
+
+// ==========================================================
+// NAVIGATION HEADER : goToAboutHero + reset vers l'état about-hero
+// ==========================================================
+function resetToAboutHeroState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '0vh';
+    blackRectSlideup2.scrollTop = 0;
+  }
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+}
+
+function goToAboutHero(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToAboutHeroState();
+    setTimeout(() => {
+      const target = document.getElementById('about-hero');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 50);
+  } else {
+    window.location.href = 'index-fr.html#about-hero';
+  }
+}
+
+// ==========================================================
+// NAVIGATION HEADER : goToTestimonials + reset vers l'état testimonials
+// ==========================================================
+function resetToTestimonialsState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '0vh';
+    blackRectSlideup2.scrollTop = 0;
+  }
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+}
+
+function goToTestimonials(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToTestimonialsState();
+    setTimeout(() => {
+      const target = document.getElementById('testimonialsAnchor');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 50);
+  } else {
+    window.location.href = 'index-fr.html#testimonials';
+  }
+}
+
+const testimonials = [
+  {
+    quote: `"J'ai eu le privilège de travailler avec Alice en tant que planneur stratégique, et je tiens à souligner la qualité exceptionnelle de son travail. Son approche stratégique est toujours juste et approfondie. Alice possède une capacité unique à analyser les situations avec finesse et à développer idées qui font la différence.
+
+Ce qui m'a particulièrement impressionné, c'est aussi la présentation soignée et professionnelle de ses idées. Alice a le talent de rendre des concepts complexes accessibles, ce qui facilite grandement la compréhension et l'adhésion.
+ 
+De plus, Alice se distingue par son écoute attentive et sa volonté de prendre en compte toutes les remarques. Elle sait créer un environnement collaboratif. Sa flexibilité et son ouverture d'esprit sont des atouts majeurs.
+
+Enfin, je tiens à souligner la disponibilité constante d'Alice. Elle fait preuve d'un engagement exceptionnel envers ses projets et ses clients, répondant rapidement aux sollicitations et fournissant un soutien continu. Cette disponibilité démontre son dévouement envers la réussite des missions qui lui sont confiées."`,
+    photo: "CHAIMA-KADHI-KEEMIA.jpg",
+    logo: "LOGO-KEEMIA.jpg",
+    stat1Number: "CHAIMA",
+    stat1Label: "KHADI",
+    stat1Sub: "Directrice Conseil",
+    stat2Number: "KEEMIA",
+    stat2Label: "Shopper agency",
+    stat2Sub: "+100 collaborateurs"
+  },
+  {
+    quote: `"Je suis ravi d'écrire cette lettre pour recommander Alice Bronchain, une planneuse stratégique exceptionnelle dont les compétences et le professionnalisme dépassent constamment les attentes.
+
+Alice se distingue par sa rigueur et son engagement envers l'excellence. Sa capacité à livrer non seulement ce qui est demandé, mais aussi à aller au-delà des attentes, est une qualité rare et précieuse. Elle possède un talent remarquable pour s'adapter à une variété de sujets, ce qui lui permet de proposer des solutions innovantes et efficaces à toute problématique de communication.
+
+Ses insights sont toujours pertinents et ses capacités d'analyse sont, sans conteste, parmi les plus remarquables que j'ai eu l'occasion d'observer. Alice a cette faculté unique de saisir rapidement les enjeux stratégiques et de les transformer en stratégies concrètes et réalisables.
+
+Je suis convaincu qu'Alice sera un atout inestimable pour toute organisation cherchant à renforcer sa communication stratégique. Sa vision, sa créativité et son approche rigoureuse sont des atouts qui bénéficieront à toute équipe.
+
+Je recommande vivement Alice Bronchain pour toute position nécessitant expertise, engagement et innovation dans le domaine de la communication stratégique."`,
+    photo: "JULIEN-BOUISSY-JEFF.jpg",
+    logo: "LOGO-JEFF.jpg",
+    stat1Number: "JULIEN",
+    stat1Label: "BOUISSY",
+    stat1Sub: "Co-fondateur",
+    stat2Number: "JEFF AGENCY",
+    stat2Label: "Agence de publicité",
+    stat2Sub: "Récompensée"
+  },
+  {
+    quote: `"Nous avons eu la chance d'avoir Alice au sein de l'équipe pendant un an. J'ai particulièrement apprécié son état d'esprit ainsi que sa contribution aux sujets et aux pitches. C'est une personne brillante, dotée d'une solide culture et de très bonnes références, et une excellente coéquipière. Elle est curieuse et sait structurer sa pensée avec justesse et efficacité. Elle a développé une très bonne compréhension des enjeux de marque et une réelle capacité à faire émerger et à formuler des territoires créatifs riches et pertinents. 
+Une Planneuse stratégique créative, sans aucun doute."`,
+    photo: "CHRYSTELE-VELAYOUDON-VMLYR.jpg",
+    logo: "LOGO-VMLYR.jpg",
+    stat1Number: "CHRYSTÈLE",
+    stat1Label: "VELAYOUDON",
+    stat1Sub: "Directrice de la Stratégie",
+    stat2Number: "VMLY&R",
+    stat2Label: "Agence de publicité",
+    stat2Sub: "Mondialement connue"
+  },
+  {
+    quote: `"Alice a été d'une aide précieuse toutes les fois où nous avons fait appel à ses services. Elle a su apporter un éclairage neuf sur des sujets que nous connaissions pourtant par cœur et nous permettre de marquer des points supplémentaires dans toutes nos compétitions publicitaires où elle intervenait. Un formidable atout !"`,
+    photo: "FLORIAN-CAUQUIL-JEFF.jpg",
+    logo: "LOGO-JEFF.jpg",
+    stat1Number: "FLORIAN",
+    stat1Label: "CAUQUIL",
+    stat1Sub: "Co-fondateur",
+    stat2Number: "JEFF AGENCY",
+    stat2Label: "Agence de publicité",
+    stat2Sub: "Récompensée"
+  },
+  {
+    quote: `"J’ai rencontré Alice il y a plus de cinq ans à l’occasion du plus long entretien d’embauche de tous les temps ! Elle était passionnée, captivante et profondément curieuse. Si notre relation professionnelle a commencé sur une intuition, notre collaboration a été porté par une forte connexion intellectuelle et un véritable plaisir à réfléchir et construire ensemble.
+Nous avons d’abord travaillé ensemble chez June Marketing puis chez Labbrand. Alice est à la fois une très belle personne et une excellente stratège - designer. Elle possède une combinaison de compétences assez unique : elle est capable de penser une marque à la fois sous toutes ses dimensions : linguistique, stratégique et visuelle, et est toujours en maîtrise de son sujet. Elle apporte une énergie communicative et est incroyablement inspirante lorsqu’il s’agit d’anticiper les tendances, d’explorer les territoires d’innovation ou d’imaginer des dizaines de nouveaux concepts produits. Elle n’hésite pas à challenger un brief, une idée ou une direction stratégique. Jamais pour le principe mais toujours pour aller plus loin et s’assurer que nous trouvons la meilleure réflexion, la meilleure idée, la meilleure campagne ou le meilleur produit, celui qui saura vraiment trouver son public et se vendre comme des petits pains ! 
+Avec Alice à mes côtés, je sais que nous allons non seulement prendre beaucoup de plaisir à travailler ensemble mais surtout trouver le meilleur moyen de faire avancer une marque, quelle qu’elle soit. Je suis certaine que nous aurons l’occasion de retravailler ensemble à l’avenir. Alice a ce talent rare de savoir créer de la magie, quelle que soit l’équipe avec laquelle elle travaille ou la marque qu’elle accompagne."`,
+    photo: "AURELIE-PLESSIER-LABBRAND.jpg",
+    logo: "LOGO-LABBRAND.jpg",
+    stat1Number: "AURÉLIE",
+    stat1Label: "PLESSIER",
+    stat1Sub: "CEO",
+    stat2Number: "LABBRAND FRANCE",
+    stat2Label: "Agence de naming",
+    stat2Sub: "Mondialement connue"
+  }
+];
+
+let currentTestimonialIndex = 0;
+
+const testimonialQuoteEl = document.getElementById('testimonialQuote');
+const testimonialPhotoEl = document.getElementById('testimonialPhoto');
+const authorPhotoEl = document.getElementById('authorPhoto');
+const stat1NumberEl = document.getElementById('stat1Number');
+const stat1LabelEl = document.getElementById('stat1Label');
+const stat1SubEl = document.getElementById('stat1Sub');
+const stat2NumberEl = document.getElementById('stat2Number');
+const stat2LabelEl = document.getElementById('stat2Label');
+const stat2SubEl = document.getElementById('stat2Sub');
+
+function adjustQuoteFontSize(el) {
+  const length = el.textContent.length;
+
+  if (length < 300) {
+    el.style.fontSize = "24px";
+  } else if (length < 600) {
+    el.style.fontSize = "21px";
+  } else if (length < 900) {
+    el.style.fontSize = "19px";
+  } else if (length < 1300) {
+    el.style.fontSize = "17px";
+  } else {
+    el.style.fontSize = "15px";
+  }
+}
+
+function renderTestimonial(index) {
+  const t = testimonials[index];
+
+  testimonialQuoteEl.textContent = t.quote;
+  adjustQuoteFontSize(testimonialQuoteEl);
+
+  testimonialPhotoEl.src = t.photo;
+  authorPhotoEl.src = t.logo;
+
+  stat1NumberEl.textContent = t.stat1Number;
+  stat1LabelEl.textContent = t.stat1Label;
+  stat1SubEl.textContent = t.stat1Sub;
+
+  stat2NumberEl.textContent = t.stat2Number;
+  stat2LabelEl.textContent = t.stat2Label;
+  stat2SubEl.textContent = t.stat2Sub;
+}
+
+function changeTestimonial(newIndex) {
+  testimonialQuoteEl.classList.add('fading');
+  testimonialPhotoEl.classList.remove('loaded');
+
+  setTimeout(() => {
+    currentTestimonialIndex = newIndex;
+    renderTestimonial(currentTestimonialIndex);
+
+    testimonialQuoteEl.classList.remove('fading');
+    testimonialPhotoEl.classList.add('loaded');
+  }, 400);
+}
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+if (nextBtn) {
+  nextBtn.addEventListener('click', () => {
+    const newIndex = (currentTestimonialIndex + 1) % testimonials.length;
+    changeTestimonial(newIndex);
+  });
+}
+
+if (prevBtn) {
+  prevBtn.addEventListener('click', () => {
+    const newIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+    changeTestimonial(newIndex);
+  });
+}
+renderTestimonial(currentTestimonialIndex);
+
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    // On est en FR, on repasse en EN
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    // On est en EN, on passe en FR
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+
+// ============================================
+// SWIPE TACTILE POUR TESTIMONIALS (MOBILE)
+// ============================================
+
+(function() {
+  const photoWrap = document.querySelector('.testimonial-photo-wrap');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (!photoWrap || !prevBtn || !nextBtn) return;
+
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const SWIPE_THRESHOLD = 50; // distance minimale en px pour valider un swipe
+
+  photoWrap.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  photoWrap.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipeGesture();
+  }, { passive: true });
+
+  function handleSwipeGesture() {
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (Math.abs(swipeDistance) < SWIPE_THRESHOLD) return; // swipe trop court, on ignore
+
+    if (swipeDistance > 0) {
+      // swipe vers la droite → témoignage précédent
+      prevBtn.click();
+    } else {
+      // swipe vers la gauche → témoignage suivant
+      nextBtn.click();
+    }
+  }
+})();
+
+</script>

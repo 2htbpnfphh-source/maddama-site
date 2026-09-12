@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index.html#welcomeSection';
+  }
+}
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
+
+    // Fermer le menu si on clique sur un lien
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
+  }
+});
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADDAMA</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+/* ===== VARIABLES ===== */
+:root {
+    --image-height-active: 700px;
+    --tools-offset: 650px;
+}
+
+body { 
+    font-family: 'Helvetica Neue', Arial, sans-serif; 
+    overflow-x:hidden; 
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.services-container {
+    flex: 1;
+}
+header { 
+  position: fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  padding: 17.5px 35px; 
+  z-index: 1000; 
+  color:#fff; 
+  mix-blend-mode: difference; 
+}
+
+header .logo { 
+  font-weight:bold; 
+  letter-spacing:3px; 
+  font-size:14px; 
+  position: absolute; 
+  left: 35px; 
+}
+
+header .logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header nav { 
+  display:flex; 
+  gap:28px; 
+  font-size:10px; 
+  letter-spacing:1px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+}
+  
+header nav a { 
+  color:#fff; 
+  text-decoration:none;
+  opacity: 1;
+}
+  
+header .boutique { 
+  font-size:10px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;  
+  position: absolute; 
+  right: 35px;
+  opacity: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+header .lang-switch {
+  font-size: 10px;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  position: absolute;
+  right: 95px; /* ajuste cette valeur selon la largeur de "CONTACT" + l'espace voulu */
+  color: inherit;
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* ===== HERO SECTION ===== */
+.services-hero {
+    width: 100%;
+    height: 800px;
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-image {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    object-position: center 80%;
+    transform: scaleX(-1);
+    display: block;
+}
+
+.hero-title-wrapper {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-label {
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+    line-height: 1.1;
+}
+
+.hero-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0;
+    line-height: 1.1;
+}
+
+.hero-description {
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    line-height: 1.1;
+    margin-top: -130px;
+    margin-bottom: -40;
+}
+
+.hero-description {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.hero-line {
+  height: 1px;
+  width: 50px;
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+/* ===== SERVICES CONTAINER ===== */
+.services-container {
+    background-color: #000;
+    padding: 50px 50px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.tools-label {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #999;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+/* ===== SERVICE ITEM ===== */
+.service-item {
+    margin-bottom: 50px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.service-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.service-header {
+    display: grid;
+    grid-template-columns: 120px 1.3fr 1fr;
+    gap: 50px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.service-number {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 70px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+}
+
+.service-image {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 2px;
+    transition: height 0.5s ease; 
+}
+
+.service-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.service-title {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+}
+
+.service-subtitle {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #999;
+    font-style: italic;
+}
+
+.service-description {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    max-width: 900px;
+    color: #ccc;
+}
+
+/* ===== SERVICE DISCOVER TOOLS ===== */
+.tools-discover {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 40px;
+    padding-bottom: 10px;
+    align-self: start;  
+}
+
+.service-item.active .service-image {
+    height: var(--image-height-active);
+}
+
+/* ===== SERVICE DETAILS (caché par défaut) ===== */
+.service-details {
+    position: relative;  
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: 150px 1fr 1fr;
+    gap: 100px;
+    align-items: start;
+}
+
+.service-item.active .service-details {
+    max-height: var(--image-height-active);
+    margin-top: 60px;
+    overflow: visible;
+}
+
+/* ===== TOOLS LIST ALIGNEMENT ===== */
+.tools-list {
+    display: contents;
+}
+
+.tools-label-details {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #999;
+    text-transform: uppercase;
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0; 
+}
+
+.tools-content {
+    grid-column: 3;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-top: -340px;
+}
+
+.tools-list-items {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: #ccc;
+    text-transform: uppercase;
+    list-style: none;
+}
+
+.tools-list-items li {
+    margin-bottom: 4px;
+}
+
+/* HOVER EFFECT */
+.service-item:hover {
+    border-bottom-color: #555;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  position: static;
+  width: 100%;
+  background: transparent;
+  color: white;
+  padding: 15px 20px;        
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: auto;
+  transition: opacity 0.01s ease;
+  margin-bottom: -30px; 
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-content p {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* ============================================= */
+/* ===== HEADER MOBILE (caché sur desktop) ===== */
+/* ============================================= */
+
+.mobile-header {
+  display: none;
+}
+
+.mobile-menu-panel {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  /* On cache le header desktop */
+  header:not(.mobile-header) {
+    display: none;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 20px;
+    z-index: 1000;
+    background: transparent;
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+
+  .mobile-logo {
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .mobile-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mobile-lang {
+    font-size: 11px;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle.open .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  /* Panneau plein écran */
+  .mobile-menu-panel {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+  }
+
+  .mobile-menu-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .mobile-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+}
+
+/* ============================================
+   MOBILE (768px) — SERVICES PAGE
+   ============================================ */
+
+@media (max-width: 768px) {
+
+  /* ---- HERO ---- */
+  .services-hero {
+    height: 500px;
+  }
+
+  .hero-image {
+    height: 400px;
+  }
+
+  .hero-label {
+    font-size: 16px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+    padding: 0 20px;
+  }
+
+  .hero-description {
+    font-size: 11px;
+    margin-top: -60px;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .hero-line {
+    width: 25px;
+  }
+
+  /* ---- CONTAINER ---- */
+  .services-container {
+    padding: 30px 20px;
+    margin-top: 0;
+  }
+
+  .tools-label {
+    font-size: 11px;
+    margin-bottom: 25px;
+  }
+
+  /* ---- SERVICE ITEM : bandeau image full-width ---- */
+  .service-item {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+  }
+
+  .service-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Image en bandeau, plus large que haute */
+  .service-image {
+    width: 100%;
+    height: 180px;
+    order: 1;
+  }
+
+  .service-item.active .service-image {
+    height: 180px; /* on ne l'agrandit plus sur mobile */
+  }
+
+  /* Grid 1 : le chiffre */
+  .service-number {
+    font-size: 40px;
+    order: 2;
+  }
+
+  /* Grid 2 : titre / sous-titre / description */
+  .service-content {
+    order: 3;
+    gap: 14px;
+  }
+
+  .service-title {
+    font-size: 22px;
+  }
+
+  .service-subtitle {
+    font-size: 15px;
+  }
+
+  .service-description {
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 100%;
+  }
+
+  .tools-discover {
+    font-size: 15px;
+    margin-top: 15px;
+  }
+
+  /* ---- TOOLS LIST déployée ---- */
+  .service-details {
+    display: block; /* on annule le grid desktop */
+    grid-template-columns: none;
+    gap: 0;
+  }
+
+  .service-item.active .service-details {
+    max-height: 1000px; /* assez grand pour tout contenir */
+    margin-top: 20px;
+  }
+
+  .tools-list {
+    display: block;
+  }
+
+  .tools-label-details {
+    display: none; /* déjà invisible en desktop, on confirme ici */
+  }
+
+  .tools-content {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .tools-list-items {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+<div class="logo"><a href="index.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+<a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+<a href="Services.html">SERVICES</a>
+<a href="case-studies.html">CASE STUDIES</a>
+<a href="index.html#testimonials">TESTIMONIALS</a>
+  </nav>
+<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">FR</a>
+<a href="Contact.html" class="boutique">CONTACT</a>
+</header>
+
+<!-- ===== HEADER MOBILE ===== -->
+<header class="mobile-header">
+  <a href="index.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
+  <div class="mobile-header-right">
+    <a href="#" onclick="switchLanguage(event)" class="mobile-lang" id="mobileLangSwitchBtn">FR</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+      <span class="toggle-icon">+</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== PANNEAU MENU MOBILE ===== -->
+<div class="mobile-menu-panel" id="mobileMenuPanel">
+  <nav class="mobile-nav">
+    <a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+    <a href="Services.html">SERVICES</a>
+    <a href="case-studies.html">CASE STUDIES</a>
+    <a href="index.html#testimonials" onclick="goToTestimonials(event)">TESTIMONIALS</a>
+    <a href="Contact.html">CONTACT</a>
+  </nav>
+</div>
+
+<!-- HERO SECTION -->
+<div class="services-hero">
+    <img src="HERO-BOTTEGA.jpg" alt="Bottega" class="hero-image">
+    <div class="hero-title-wrapper">
+        <div class="hero-label">WELCOME TO</div>
+        <h1 class="hero-title">BOTTEGA MADDAMA</h1>
+    </div>
+</div>
+        <div class="hero-description">
+          <span class="hero-line"></span>
+          Where matter turns into meaning
+          <span class="hero-line"></span>
+        </div>
+
+</div>
+
+<!-- SERVICES CONTAINER -->
+<div class="services-container">
+    <div class="tools-label">OUR SERVICES:</div>
+
+<!-- SERVICE 01 -->
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.01</div>
+        <img src="MOSAIC-INTEL.jpg" alt="Intel" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Intel - Market, Insights & Trends</div>
+            <div class="service-subtitle">Mastering the unknown: the erratic era</div>
+            <p class="service-description">How can you know your path is right if you've never explored the alternatives? What if there is a better way? To be sure you are heading right toward your goal, we have to allow ourself to lose ourself into the infinite of possibilities. Like a couturier standing in front of an endless wall of fabrics searching for rarity, we need is to see it all, feel it all, imagine every possible combination to be certain of making an enlightened choice.</p>
+            <p class="tools-discover">Discover our tools →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Strategic monitoring</li>
+                    <li>Market & competition analysis</li>
+                    <li>Target definition & consumers analysis (inc. personae)</li>
+                    <li>Consumers' interview</li>
+                    <li>Customer journey</li>
+                    <li>Trend report</li>
+                    <li>Innovation report</li>
+                    <li>Brand Audit (+ option: stakeholder / consumers interview)</li>
+                    <li>Strategic benchmark (product, service, campaign, competition)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.02</div>
+        <img src="FORESIGHT-DIAMOND.jpg" alt="Foresight" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Foresight - Strategy & Innovation</div>
+            <div class="service-subtitle">Take a step back to make three steps further</div>
+            <p class="service-description">Every craftsman knows the danger of rushing the cut — act too fast, too close to the material and you risk ruining the potential instead of revealing it. To see clearly and shape a vision, you have to step back and read the whole piece: its texture, its structure, the direction it naturally wants to take. Strategy works the same way : the wider the view, the sharper the cut. Only from that distance can you see the path that turns raw material into something singular.</p>
+            <p class="tools-discover">Discover our tools →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Brand Strategy</li>
+                    <li>Activation / targeting strategy</li>
+                    <li>Brand positioning & Brand platform</li>
+                    <li>Brand / Portfolio Architecture</li>
+                    <li>Blue Ocean exploration</li>
+                    <li>Brand Adaptation (new market, audience)</li>
+                    <li>Future scenarios & needs anticipation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.03</div>
+        <img src="FABRIC-STUDIO.jpg" alt="Studio" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Studio - Concepts & Visuals</div>
+            <div class="service-subtitle">From brain to hands: shaping ideas into reality</div>
+            <p class="service-description">Great ideas shouldn't just live rent free in your head. They deserve to become visuals, campaigns and experiences people can actually see & feel.
+Whether it's building a visual identity that finally feels like you, designing a campaign or concept that cuts through the noise or reconnecting with your audience through a rebrand that actually reflects who you've become: Studio is where the fabric gets cut, stitched & tailored into something real.</p>
+            <p class="tools-discover">Discover our tools →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+<li>Internal Communication & Employer Branding</li>
+<li>External Communication & Advertising</li>
+<li>Logo & Logo Animation</li>
+<li>Graphic Design & Visual Identity</li>
+<li>Branding / Rebranding</li>
+<li>Development of Communication Assets</li>
+<li>Brand Templates</li>
+<li>Pitch Deck Creation (content & design)</li>
+<li>Brand Book & Brand Guidelines</li>
+<li>Big Idea</li>
+<li>Advertising & Activation Concept</li>
+<li>Message Hierarchy</li>
+<li>Motion Design & Video</li>
+<li>Creative Brief</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="service-item">
+    <div class="service-header" onclick="toggleService(this)">
+        <div class="service-number">.04</div>
+        <img src="ARGILE-LAB.jpg" alt="Lab" class="service-image">
+        <div class="service-content">
+            <div class="service-title">Lab - Workshops</div>
+            <div class="service-subtitle">Smarter together</div>
+            <p class="service-description">Good ideas can spark from anywhere, but we're not willing to rely on chance to find them. So we bring the right people together & build on each other's thinking to find ideas you're actually eager to make happen in real life. Whether it's a strategic workshop to craft & align your team, an innovation sprint to unlock new opportunities or a creative session to explore uncharted territories: the Lab is where energy gets created & thrive.</p>
+            <p class="tools-discover">Discover our tools →</p>
+        </div>
+    </div>
+    <div class="service-details">
+        <div class="tools-list">
+            <div class="tools-label-details">TOOLS:</div>
+            <div class="tools-content">
+                <ul class="tools-list-items">
+                    <li>Active participant workshop</li>
+                    <li>Strategic / creative brainstorming</li>
+                    <li>Workshop creation & moderation</li>
+                    <li>Service / product innovation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <p>© 2026 MADDAMA. ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+
+<script>
+    function toggleService(header) {
+        const serviceItem = header.closest('.service-item');
+
+        document.querySelectorAll('.service-item').forEach(item => {
+            if (item !== serviceItem) {
+                item.classList.remove('active');
+            }
+        });
+
+        serviceItem.classList.toggle('active');
+    }
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    // On est en FR, on repasse en EN
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    // On est en EN, on passe en FR
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+</script>
+
+</body>
+</html>

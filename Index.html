@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToWelcomeState();
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index.html#welcomeSection';
+  }
+}
+
+function resetToWelcomeState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = false;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = false;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+
+  // On remet les éléments d'animation dans leur état "avant carousel"
+  if (blackRectContainer) blackRectContainer.style.left = '100%';
+  if (blackRectContent) blackRectContent.style.left = '100%';
+  if (imageWrapper) imageWrapper.style.opacity = 0;
+  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '-100vh';
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
+
+    // Fermer le menu si on clique sur un lien
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
+  }
+});
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADDAMA</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; overflow-x:hidden; }
+
+  body.locked {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+header { 
+  position: fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  padding: 17.5px 35px; 
+  z-index: 10000; 
+  color:#fff; 
+  mix-blend-mode: difference; 
+}
+
+header .logo { 
+  font-weight:bold; 
+  letter-spacing:3px; 
+  font-size:14px; 
+  position: absolute; 
+  left: 35px; 
+}
+
+header .logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header nav { 
+  display:flex; 
+  gap:28px; 
+  font-size:10px; 
+  letter-spacing:1px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+}
+  
+header nav a { 
+  color:#fff; 
+  text-decoration:none;
+  opacity: 0;
+  animation: fadeInNav 0.6s ease forwards;
+}
+  
+header .boutique { 
+  font-size:10px; 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;  
+  position: absolute; 
+  right: 35px;
+  opacity: 0;
+  color: inherit;
+  text-decoration: none;
+  animation: fadeInNav 0.6s ease forwards;
+}
+
+header .lang-switch {
+  font-size: 10px;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  position: absolute;
+  right: 95px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeInNav 0.6s ease forwards;
+  animation-delay: 9.96s; 
+}
+
+@keyframes fadeInNav {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+header nav a:nth-child(1) { animation-delay: 9s; }
+header nav a:nth-child(2) { animation-delay: 9.24s; }
+header nav a:nth-child(3) { animation-delay: 9.48s; }
+header nav a:nth-child(4) { animation-delay: 9.72s; }
+header .lang-switch { animation-delay: 9.96s; }
+
+header .boutique { animation-delay: 10.20s; }
+
+  .hero { position: relative; width: 100vw; height: 100vh; overflow: hidden; background:#000; }
+  .set { position: absolute; top:0; left:0; width:100%; height:100%; display:flex; opacity:0; transition: opacity 0.6s ease; pointer-events:none; z-index:2; }
+  .set.active { opacity:1; pointer-events:auto; }
+  .set .half { width:50%; height:100%; overflow:hidden; position:relative; }
+  .set .half img { width:100%; height:100%; object-fit:cover; display:block; }
+  
+  #set5 .half { width:50%; height:100%; overflow:hidden; position:relative; transition: transform 1s cubic-bezier(.77,0,.18,1); }
+  #set5 .half img { position:absolute; top:0; width:200%; height:100%; object-fit:cover; }
+  #set5 .half-left img { left:0; }
+  #set5 .half-right img { right:0; }
+  #set5.split .half-left { transform: translateX(-100%); }
+  #set5.split .half-right { transform: translateX(100%); }
+
+  .scroll-indicator { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:#fff; font-size:12px; letter-spacing:2px; z-index:10; transition:opacity 0.5s ease; opacity:0; }
+
+  .welcome-section { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; transition: background 0.8s ease; z-index:5; pointer-events:none; }
+  .welcome-section.bg-white { background:#fff; }
+  .welcome-to { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; font-style: normal; font-weight: 400; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color:#000; opacity:0; transform: translateY(-10px); transition: opacity 0.8s ease, transform 0.8s ease; margin-bottom: 15px; }
+  .welcome-to.visible { opacity:1; transform: translateY(0); }
+  .maddama-reveal { display:flex; flex-direction:column; align-items:center; opacity:0; transform: translateY(60px); transition: opacity 0.9s ease, transform 0.9s ease; }
+  .maddama-reveal.revealed { opacity:1; transform: translateY(0); }
+  .maddama-reveal img { width: 400px; max-width: 60vw; height:auto; display:block; }
+  .maddama-baseline { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; margin-top: 15px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color:#000; text-align:center; max-width: 600px; line-height:1.3; }
+  
+  .brand-section { width: 100%; display:flex; background:#000; padding: 70px; gap: 60px; align-items: center; }
+  .brand-section .image-side { position: relative; width: 45%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
+  .brand-section .image-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand-section .image-title { position: absolute; bottom: 40px; left: 40px; right: 40px; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; text-align: right; }
+  .brand-section .image-title .make { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 400; margin-bottom: -5px; }
+  .brand-section .image-title .big-title { font-size: 60px; font-weight: 800; text-transform: uppercase; line-height: 1.05; letter-spacing: -1px; }
+  .brand-section .image-title .big-title .strike { text-decoration: line-through; text-decoration-thickness: 4px; }
+  .brand-section .text-side { flex: 1; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+  .brand-section .divider { width: 100px; height: 3px; background: #fff; margin-bottom: 30px; }
+  .brand-section .divider.bottom { margin-top: 30px; margin-bottom: 0; }
+  .brand-section .body-text { font-size: 18px; line-height: 1.5; font-weight: 400; }
+  .brand-section .body-text p { margin-bottom: 30px; }
+  .brand-section .body-text p:last-child { margin-bottom: 0; }
+  .brand-section .body-text em { font-style: italic; }
+  .brand-section .body-text .closing { font-weight: 700; font-style: italic; }
+  
+  @font-face {
+    font-family: 'Aptos';
+    src: local('Aptos');
+  }
+
+  body { background: #ffffff; color: #111111; }
+
+.about-hero {
+  position: relative;
+  background: #ffffff;
+  min-height: 400px;      /* hauteur fixe au lieu de min-height */
+  overflow: hidden;
+  padding: 36px;
+  display: flex;
+  margin-bottom: 30px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.about-hero-inner { position: relative; background: #f2f2f2; padding: 24px; width: 100%; overflow: hidden; }
+.about-hero-top { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+.about-label { font-size: 9.6px; font-weight: 700; letter-spacing: 0.6px; color: #111; }
+.about-bg-logo { position: absolute; bottom: -234px; right: 21.6px; width: 921.6px; height: 576px; z-index: 0; user-select: none; pointer-events: none; opacity: 0.02; }
+.about-bg-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+.about-hero-content { position: relative; display: flex; align-items: center; gap: 36px; z-index: 1; flex: 1; }
+.about-photo-wrapper { position: relative; flex-shrink: 0; width: 252px; display: flex; align-items: flex-end; margin-left: 38.4px; }
+.about-photo-circle-bg { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); left: -36px; top: 12px; z-index: 0; }
+.about-photo-placeholder { position: relative; z-index: 1; width: 252px; height: 336px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-left: 25.2px; margin-bottom: -56.4px; }
+.about-photo-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(100%); }
+.about-photo-labels { position: absolute; left: -36px; bottom: 0; z-index: 2; display: flex; flex-direction: column; }
+.about-photo-labels .creative { position: absolute; left: -4.8px; bottom: -6px; font-size: 8.4px; font-weight: 700; letter-spacing: 0.6px; color: #111; }
+.about-photo-labels .strategist { position: absolute; left: 80.4px; bottom: -15.6px; font-size: 8.4px; font-weight: 700; letter-spacing: 0.6px; color: #ffffff; background: transparent; }
+
+.about-text-block { display: flex; align-items: center; gap: 18px; max-width: 420px; margin-left: 151.2px; margin-top: -78px; }
+.about-bar { width: 1.8px; height: 78px; background: #111; flex-shrink: 0; }
+.about-main-text { font-size: 15.6px; line-height: 1.5; font-weight: 400; color: #111; letter-spacing: 0.18px; }
+.about-main-text b { font-weight: 800; }
+
+  .content-section { max-width: 1000px; margin: 30px auto; text-align: center; padding: 0 0px; }
+  .content-section p { font-size: 16px; line-height: 1.5; color: #111; margin-bottom: 30px; word-spacing: 0.05em; }
+  .content-section p:first-child { font-size: 16px; }
+  .content-section p:nth-child(2) { max-width: 1000px; }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .symbol-divider { width: 30px; height: 30px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+  .symbol-divider img { width: 100%; height: 100%; object-fit: contain; }
+
+  .scroll-buffer { width: 100%; height: 600px; }
+
+.black-rect-container {
+  position: fixed;
+  width: 112.5%;
+  height: 840px;
+  background: black;
+  top: calc(50vh - 40px);   /* équivalent stable à "50% + 380px" + translateY(-50%) */
+  left: 100%;
+  z-index: 50;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.black-rect-content {
+  position: fixed;
+  width: 100vw;
+  height: 840px;
+  top: calc(50vh - 30px);   /* équivalent stable à "50% + 390px" + translateY(-50%) */
+  left: 100%;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+  padding: 60px 40px;
+  margin-bottom: 1500px;
+}
+
+.hidden-after-intro {
+  display: none !important;
+}
+
+  .what-we-do-title { 
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+    font-size: 14px; 
+    font-weight: 300; 
+    text-transform: uppercase; 
+    color: #fff; 
+    letter-spacing: 2px; 
+    margin: 0; 
+    text-align: center; 
+    width: 100%; 
+    margin-top: -45px;
+  }
+
+  .symbols-container {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    z-index: 1;
+    margin-top: 10px;
+    transform: translateY(110px);
+  }
+
+  .symbols-container img:nth-child(1) {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(45deg);
+  }
+
+  .symbols-container img:nth-child(2) {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(-45deg);
+  }
+  .services-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px 300px; 
+    max-width: 100%; 
+    width: 100%; 
+    color: #fff;
+    margin-top: 0px;
+  }
+
+  .service-item { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+  .service-item .service-name { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; line-height: 0.8; }
+
+  .services-grid > :nth-child(odd) .service-name { text-align: right; }
+  .services-grid > :nth-child(even) .service-name { text-align: left; }
+
+  .bottom-text {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 1000px;
+    line-height: 1.5;
+  }
+
+  .image-section-container {
+    position: relative;
+    width: 100%;
+    height: 800px;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 0;
+  }
+
+  .image-wrapper {
+    width: 70%;
+    height: 120%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .image-wrapper.visible {
+    opacity: 1;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: rotate(-90deg);
+    display: block;
+  }
+
+
+.black-rect-slideup {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  left: 0;
+  top: 100vh; /* remplace la logique JS top:100vh -> 0vh, mais fixé en dur ici */
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 80px 40px 40px 40px;
+}
+
+.black-rect-slideup img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 0;
+  display: block;
+  justify-content: center;
+}
+  .carousel-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-container {
+    width: 100%;
+    overflow: hidden;
+    margin-top: -30px;
+    padding: 0px 0;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 15px;
+    animation: scroll-infinite 50s linear infinite;
+  }
+
+  .carousel-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes scroll-infinite {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-380px * 12 - 30px * 12));
+    }
+  }
+
+  .carousel-item {
+    flex-shrink: 0;
+    width: 270px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    height: 400px;
+  }
+
+  .carousel-text {
+    padding: 0;
+  }
+
+  .carousel-brand {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 2.5px;
+  }
+
+  .carousel-description {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: #ccc;
+  }
+
+  .carousel-bottom-text {
+    text-align: center;
+    font-size: 16px;
+    color: #fff;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  .they-trusted-us {
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-top: 60px;
+    width: 100%;
+  margin-bottom: 40px;
+  }
+
+  .clients-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -80px;
+    padding: 40px;
+  width: 100%;
+  }
+
+.clients-wrapper img {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.stars { color: #f5a623; margin-bottom: 15px; }
+.t-quote { font-size: 16px; line-height: 1.6; }
+.t-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+.t-author img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.t-name { font-weight: 700; font-size: 14px; }
+.t-role { font-size: 13px; color: #888; }
+
+.black-rect-slideup-2 {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  top: auto;
+  bottom: -100vh;   
+  background: #000;
+  z-index: 9999;
+  transition: none;
+  display: block;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.testimonial-section {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  color: #0a0a0a;
+  padding: 70px 80px 40px;   
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: inherit;
+}
+
+.testimonial-topline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex: 0 0 auto;
+  padding-bottom: 20px;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.topline-sep {
+  flex: 1 1 160px;
+  min-width: 24px;
+  max-width: 400px;
+  height: 1.2px;
+  background: #000;
+}
+
+.testimonial-body {
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.testimonial-photo-wrap {
+  position: relative;
+  flex: 0 0 360px;
+  width: 360px;
+  height: 440px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ddd;
+}
+
+.testimonial-photo {
+  width: 105% !important;
+  height: 105% !important;
+  object-fit: cover !important;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.testimonial-photo.loaded {
+  opacity: 1;
+}
+
+.testimonial-quote {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 800px;
+  max-height: 100%;
+  margin: 0 0 0 auto;
+  padding: 8px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-align: right;
+  font-style: italic;
+  font-weight: 500;
+  font-family: "Aptos", "Helvetica Neue", Arial, sans-serif;
+  font-size: 22px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+}
+
+.testimonial-quote.fading {
+  opacity: 0;
+}
+
+.testimonial-divider {
+  width: min(700px, 100%);
+  height: 1.2px;
+  flex: 0 0 auto;
+  background: #000;
+  margin: 0 0 16px auto;
+}
+
+.testimonial-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.testimonial-right-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 40px;
+  min-width: 0;
+}
+
+.testimonial-nav {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #f2f2f2;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: #e4e4e4;
+  transform: scale(1.05);
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.author-photo-frame {
+  width: 170px;
+  height: 100px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.author-photo-frame img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.testimonial-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stat-number {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stat-sub {
+  font-size: 13px;
+  color: #888;
+}
+
+@media (max-width: 1100px) {
+  .testimonial-section { padding-left: 40px; padding-right: 40px; }
+  .testimonial-body { gap: 32px; }
+  .testimonial-photo-wrap { flex-basis: 300px; width: 300px; height: 380px; }
+  .testimonial-right-group { gap: 20px; }
+}
+
+@media (max-width: 900px) {
+  .testimonial-section {
+    min-height: 100vh;
+    padding: 24px 24px 32px;
+    justify-content: flex-start;
+    gap: 24px;
+  }
+  .testimonial-topline { gap: 12px; width: 100%; font-size: 11px; }
+  .topline-sep { flex-basis: auto; max-width: none; }
+  .testimonial-body {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    overflow: visible;
+  }
+  .testimonial-photo-wrap {
+    flex: 0 0 auto;
+    width: min(400px, 100%);
+    height: min(440px, 55vh);
+  }
+  .testimonial-quote {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 800px;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    text-align: center;
+  }
+  .testimonial-divider { width: 100%; margin: 0; }
+  .testimonial-footer {
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .testimonial-right-group {
+    flex: 1 1 520px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .testimonial-label { position: static; transform: none; }
+}
+
+@media (max-width: 600px) {
+  .testimonial-section { padding: 20px 16px 28px; gap: 20px; }
+  .testimonial-topline { gap: 7px; font-size: 9px; letter-spacing: 0.02em; }
+  .testimonial-photo-wrap { width: min(300px, 100%); height: min(360px, 52vh); }
+  .testimonial-body { gap: 20px; }
+  .testimonial-footer,
+  .testimonial-right-group {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .testimonial-nav { justify-content: center; }
+  .testimonial-right-group { flex: 0 0 auto; align-items: center; }
+  .testimonial-author,
+  .testimonial-stat { width: 100%; align-items: center; text-align: center; }
+  .author-photo-frame { width: 150px; height: 80px; }
+  .stat-number { font-size: 28px; }
+}
+.final-section {
+  width: 100%;
+  height: 100vh;              
+  overflow: hidden;           
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  gap: 10px;                
+  margin-top: 0;
+  transform: none;
+  padding: 40px 0;       
+  box-sizing: border-box;
+}
+
+  .ambition-symbol-top {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;     
+  margin-top: 40px;  
+  }
+
+  .ambition-symbol-top img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ambition-text {
+    max-width: 800px;
+    text-align: center;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    margin-bottom: 20px;      
+    margin-top: 0;            
+  }
+
+  .ambition-text p {
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;     
+  }
+
+  .ambition-text p:first-child {
+    font-weight: 700;
+    margin-bottom: 20px;     
+  }
+
+  .ambition-text p:nth-child(2) {
+    font-weight: 400;
+    margin-bottom: 20px;    
+  }
+
+  .ambition-text p:last-child {
+    font-weight: 700;
+  }
+
+  .cta-images {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;  
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .cta-image {
+    width: 450px;
+    height: 250px;           
+    margin-top: -30px;          
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .cta-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+.cta-item:nth-child(3) .cta-image img {
+  transform: scaleX(-1);
+}
+
+a.cta-item {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cta-text-wrapper {
+  margin-top: -40px;             
+  position: relative;
+  z-index: 10;
+  text-align: right;
+  margin-right: 10px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;  
+}
+
+.cta-image-text {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;                
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cta-subtitle {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;                
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+  .ambition-symbol-bottom {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -60px;   
+  }
+
+  .ambition-symbol-bottom img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+footer {
+  position: static;
+  width: 100%;
+  background: transparent;
+  color: white;
+  padding: 15px 20px;        
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: auto;
+  transition: opacity 0.01s ease;
+  margin-bottom: -30px; 
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-content p {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fff;
+}
+</style>
+
+</head>
+
+<body class="locked">
+
+<header>
+<div class="logo"><a href="index.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+<a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+<a href="Services.html">SERVICES</a>
+<a href="case-studies.html">CASE STUDIES</a>
+<a href="index.html#testimonials" onclick="goToTestimonials(event)">TESTIMONIALS</a>
+  </nav>
+<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">FR</a>
+<a href="Contact.html" class="boutique">CONTACT</a>
+</header>
+
+<div class="hero">
+  <div class="set active" id="set1">
+    <div class="half"><img src="FEMME-PIERRE.png" alt="Femme Pierre"></div>
+    <div class="half"><img src="PIERRE.png" alt="Pierre"></div>
+  </div>
+  <div class="set" id="set2">
+    <div class="half"><img src="DIAMANT.png" alt="Diamant"></div>
+    <div class="half"><img src="FEMME-DIAMANT.png" alt="Femme Diamant"></div>
+  </div>
+  <div class="set" id="set3">
+    <div class="half"><img src="FEMME-LIN-BLEU.png" alt="Femme Lin Bleu"></div>
+    <div class="half"><img src="LIN-BLEU.png" alt="Lin Bleu"></div>
+  </div>
+  <div class="set" id="set4">
+    <div class="half"><img src="ARGILE.png" alt="Argile"></div>
+    <div class="half"><img src="FEMME-ARGILE.png" alt="Femme Argile"></div>
+  </div>
+  <div class="set" id="set5">
+  <div class="half half-left"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Gauche"></div>
+  <div class="half half-right"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Droite"></div>
+</div>
+
+</div>
+
+<div class="welcome-section" id="welcomeSection">
+  <div class="welcome-to" id="welcomeTo">Welcome to</div>
+  <div class="maddama-reveal" id="maddamaReveal">
+    <img src="LOGO-MADDAMA-NOIR.png" alt="Logo Maddama">
+    <div class="maddama-baseline">Where Brand Artisans craft unique brands<br>with strategic precision</div>
+  </div>
+</div>
+</div>
+
+<section class="brand-section" id="about">
+  <div class="image-side">
+    <img src="HOME-1.jpg" alt="Brand visual">
+    <div class="image-title">
+      <div class="make">Make</div>
+      <div class="big-title">Your<br>Brand<br>Matter<span class="strike">s</span></div>
+    </div>
+  </div>
+  <div class="text-side">
+    <div class="divider"></div>
+    <div class="body-text">
+      <p>Every brand starts as raw matter. Just as a diamond sleeps within a raw rock, every brand carries a living matter, rich with potential, waiting to be shaped to reveal its undeniable value.</p>
+      <p>Nothing is set in stone. Everything can be created or evolve, transform, grow richer or wider without ever losing its essence. At first, every cut, every stroke of chisel can feel like damage. But to carve raw material with vision and intention is actually removing what stands in the way of a clear sight of what truly matters.<br> Birthing new ideas, revealing a new light on something timeless, crafting a singularity that lasts or simply keeping the sparks alive: it doesn't happen by chance. <em>It's a craft.</em></p>
+      <p>My role and my responsibility, as a creative strategist is to bring clarity & a strategic vision, and the creative know-how to make it real — all while preserving, year after year, the power of the legacy built.</p>
+      <p class="closing">We craft to make it matter and make it last.</p>
+    </div>
+    <div class="divider bottom"></div>
+  </div>
+</section>
+
+<section class="about-hero" id="about-hero">
+  <div class="about-hero-inner">
+    <div class="about-hero-top">
+      <div class="about-label">ABOUT MADDAMA</div>
+    </div>
+    <div class="about-hero-content">
+      <div class="about-photo-wrapper">
+        <div class="about-photo-circle-bg"></div>
+        <div class="about-photo-placeholder">
+<img src="PHOTO-PRO.png" alt="Portrait" width="252" height="336">
+        </div>
+        <div class="about-photo-labels">
+          <span class="creative">CREATIVE</span>
+          <span class="strategist">STRATEGIST</span>
+        </div>
+      </div>
+      <div class="about-text-block">
+        <div class="about-bar"></div>
+        <div class="about-main-text">
+          MADDAMA IS <b>A BRAND ARTISAN STUDIO</b>, WITH NEARLY <b>10 YEARS OF EXPERIENCE</b> NAVIGATING THE <b>FULL SPECTRUM OF BRAND CHALLENGES</b>.
+        </div>
+        <div class="about-bar"></div>
+      </div>
+    </div>
+    <div class="about-bg-logo">
+      <img src="LOGO-MADDAMA-NOIR.png" alt="Maddama Logo">
+    </div>
+  </div>
+</section>
+
+<div class="symbol-divider">
+  <img src="SYMBOLE-NOIR.png" alt="Symbole">
+</div>
+
+<section class="content-section">
+  <p>At Maddama, we see brands as living entities.</p>
+  <p>They're born, shaped, evolving & following their own path, living by their own timeline. Along that journey, they face countless inflection points that demand anticipation, clarity and ingenuity. Our job is to guide them through their natural evolution.</p>
+  <p>(Re)imagining, strengthening, expanding them while preserving what makes them remarkable.</p>
+</section>
+
+<div class="symbol-divider">
+  <img src="SYMBOLE-NOIR.png" alt="Symbole">
+</div>
+
+<div class="scroll-buffer"></div>
+
+<div class="black-rect-container"></div>
+
+<div class="black-rect-content">
+  <div class="what-we-do-title">WHAT WE DO</div>
+
+  <div class="symbols-container">
+    <img src="SYMBOLE-BLANC.png" alt="Symbole">
+    <img src="SYMBOLE-BLANC.png" alt="Symbole">
+  </div>
+
+  <div class="services-grid">
+    <div class="service-item"><div class="service-name">BRAND STRATEGY & POSITIONING</div></div>
+    <div class="service-item"><div class="service-name">BRAND IDENTITY & VISUAL / SEMANTIC TERRITORIES</div></div>
+    <div class="service-item"><div class="service-name">BRAND & PORTFOLIO ARCHITECTURE</div></div>
+    <div class="service-item"><div class="service-name">BRAND ACTIVATION INC. SHOPPER MARKETING</div></div>
+    <div class="service-item"><div class="service-name">FORESIGHT & TREND ANALYSIS</div></div>
+    <div class="service-item"><div class="service-name">QUALITATIVE CONSUMERS INSIGHTS</div></div>
+    <div class="service-item"><div class="service-name">INNOVATION & PRODUCT/SERVICE STRATEGY</div></div>
+    <div class="service-item"><div class="service-name">CONCEPT, BIG IDEA & CREATIVE DIRECTION</div></div>
+    <div class="service-item"><div class="service-name">WORKSHOPS CREATION & MODERATION</div></div>
+    <div class="service-item"><div class="service-name">BRAND STRATEGY & MANAGEMENT TRAINING</div></div>
+  </div>
+
+  <div class="bottom-text">
+    All across national and international territories.<br>
+    From mass-market to ultra-luxury.<br>
+    For independent niche brands to Fortune 500 groups alike.
+  </div>
+</div>
+
+<div class="image-section-container">
+  <div class="image-wrapper" id="imageWrapper">
+  </div>
+</div>
+
+<div class="scroll-buffer"></div>
+
+<div class="black-rect-slideup">
+  <div class="carousel-content">
+    <div class="carousel-container">
+      <div class="carousel-track">
+
+        <div class="carousel-item">
+          <img src="ALCOHOL.jpg" alt="ALCOHOL">
+          <div class="carousel-text">
+            <div class="carousel-brand">ALCOHOL</div>
+            <div class="carousel-description">SPIRITS & WINE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="AUTO.jpg" alt="TRANSPORTATION">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRANSPORTATION</div>
+            <div class="carousel-description">MOBILITY</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="CHARITY.jpg" alt="CHARITY">
+          <div class="carousel-text">
+            <div class="carousel-brand">CHARITY</div>
+            <div class="carousel-description">IMPACT & PURPOSE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="COSMETIC.jpg" alt="COSMETIC">
+          <div class="carousel-text">
+            <div class="carousel-brand">COSMETIC</div>
+            <div class="carousel-description">BEAUTY & CARE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="F&B.jpg" alt="F&B">
+          <div class="carousel-text">
+            <div class="carousel-brand">F&B</div>
+            <div class="carousel-description">FOOD & BEVERAGE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FINANCE.jpg" alt="FINANCE">
+          <div class="carousel-text">
+            <div class="carousel-brand">FINANCE</div>
+            <div class="carousel-description">BANKING & WEALTH</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FMCG.jpg" alt="FMCG">
+          <div class="carousel-text">
+            <div class="carousel-brand">FMCG</div>
+            <div class="carousel-description">CONSUMER GOODS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="HEALTH.jpg" alt="HEALTH">
+          <div class="carousel-text">
+            <div class="carousel-brand">HEALTH</div>
+            <div class="carousel-description">WELLNESS & CARE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="INDUSTRY.jpg" alt="INDUSTRY">
+          <div class="carousel-text">
+            <div class="carousel-brand">INDUSTRY</div>
+            <div class="carousel-description">B2B & MANUFACTURING</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="LUXURY.jpg" alt="LUXURY">
+          <div class="carousel-text">
+            <div class="carousel-brand">LUXURY</div>
+            <div class="carousel-description">PREMIUM & EXCLUSIVE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="PET.jpg" alt="PET">
+          <div class="carousel-text">
+            <div class="carousel-brand">PET</div>
+            <div class="carousel-description">PETS & COMPANIONS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="TRAVEL.jpg" alt="TRAVEL">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRAVEL</div>
+            <div class="carousel-description">HOSPITALITY & LEISURE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="ALCOHOL.jpg" alt="ALCOHOL">
+          <div class="carousel-text">
+            <div class="carousel-brand">ALCOHOL</div>
+            <div class="carousel-description">SPIRITS & WINE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="AUTO.jpg" alt="AUTO">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRANSPORTATION</div>
+            <div class="carousel-description">MOBILITY</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="CHARITY.jpg" alt="CHARITY">
+          <div class="carousel-text">
+            <div class="carousel-brand">CHARITY</div>
+            <div class="carousel-description">IMPACT & PURPOSE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="COSMETIC.jpg" alt="COSMETIC">
+          <div class="carousel-text">
+            <div class="carousel-brand">COSMETIC</div>
+            <div class="carousel-description">BEAUTY & CARE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="F&B.jpg" alt="F&B">
+          <div class="carousel-text">
+            <div class="carousel-brand">F&B</div>
+            <div class="carousel-description">FOOD & BEVERAGE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FINANCE.jpg" alt="FINANCE">
+          <div class="carousel-text">
+            <div class="carousel-brand">FINANCE</div>
+            <div class="carousel-description">BANKING & WEALTH</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FMCG.jpg" alt="FMCG">
+          <div class="carousel-text">
+            <div class="carousel-brand">FMCG</div>
+            <div class="carousel-description">CONSUMER GOODS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="HEALTH.jpg" alt="HEALTH">
+          <div class="carousel-text">
+            <div class="carousel-brand">HEALTH</div>
+            <div class="carousel-description">WELLNESS & CARE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="INDUSTRY.jpg" alt="INDUSTRY">
+          <div class="carousel-text">
+            <div class="carousel-brand">INDUSTRY</div>
+            <div class="carousel-description">B2B & MANUFACTURING</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="LUXURY.jpg" alt="LUXURY">
+          <div class="carousel-text">
+            <div class="carousel-brand">LUXURY</div>
+            <div class="carousel-description">PREMIUM & EXCLUSIVE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="PET.jpg" alt="PET">
+          <div class="carousel-text">
+            <div class="carousel-brand">PET</div>
+            <div class="carousel-description">PETS & COMPANIONS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="TRAVEL.jpg" alt="TRAVEL">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRAVEL</div>
+            <div class="carousel-description">HOSPITALITY & LEISURE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="they-trusted-us">
+    THEY TRUSTED US
+  </div>
+
+<div class="clients-wrapper">
+  <img src="LOGOS-CLIENTS-DESKTOP.jpg" class="logo-desktop" alt="Nos clients">
+</div>
+
+<div class="black-rect-slideup-2" id="testimonialsAnchor">
+<section class="testimonial-section">
+<div class="testimonial-topline">
+  <span class="testimonial-index">CLIENTS</span>
+  <span class="topline-sep"></span>
+  <span class="testimonial-label">TESTIMONIALS</span>
+  <span class="topline-sep"></span>
+  <span class="testimonial-year">PARTNERS</span>
+</div>
+
+<div class="testimonial-body">
+  <div class="testimonial-photo-wrap">
+    <img id="testimonialPhoto" src="" alt="" class="testimonial-photo loaded">
+  </div>
+
+  <blockquote class="testimonial-quote" id="testimonialQuote"></blockquote>
+</div>
+
+<div class="testimonial-divider"></div>
+
+<div class="testimonial-footer">
+  <div class="testimonial-nav">
+    <button class="nav-btn" id="prevBtn">&#8592;</button>
+    <button class="nav-btn" id="nextBtn">&#8594;</button>
+  </div>
+
+  <div class="testimonial-right-group">
+<div class="testimonial-author">
+  <div class="author-photo-frame">
+    <img id="authorPhoto" src="LOGO-KEEMIA.jpg" alt="Keemia">
+  </div>
+</div>
+
+    <div class="testimonial-stat">
+      <span class="stat-number" id="stat1Number">CHAIMA</span>
+      <span class="stat-label" id="stat1Label">KHADI</span>
+      <span class="stat-sub" id="stat1Sub">Directrice Conseil</span>
+    </div>
+
+    <div class="testimonial-stat">
+      <span class="stat-number" id="stat2Number">KEEMIA</span>
+      <span class="stat-label" id="stat2Label">Shopper agency</span>
+      <span class="stat-sub" id="stat2Sub">+100 collaborateurs</span>
+    </div>
+  </div>
+</div>
+</section>
+
+  <div class="final-section">
+
+    <div class="ambition-symbol-top">
+      <img src="SYMBOLE-BLANC.png" alt="Symbole">
+    </div>
+
+    <div class="ambition-text">
+      <p>Unrealized ambition is untapped potential waiting to be explored.</p>
+      <p>You have a bright idea or an idea of a brand but don't know how to concretize it? You want your brand to expand into new markets? Reach new audiences? Launch a new product? Rethink what you stand for? Prepare for what's next?</p>
+      <p>Wherever the ambition stands, there's a craft & a tool to help it take shape.</p>
+    </div>
+<div class="cta-images">
+  <a class="cta-item" href="Services.html">
+    <div class="cta-image">
+      <img src="CRAFT.jpg" alt="Let's craft it">
+    </div>
+    <div class="cta-text-wrapper">
+      <div class="cta-image-text">LET'S CRAFT IT →</div>
+      <div class="cta-subtitle">OUR SERVICES</div>
+    </div>
+  </a>
+
+  <a class="cta-item" href="case-studies.html">
+    <div class="cta-image">
+      <img src="CASES.jpg" alt="Show me what you got">
+    </div>
+    <div class="cta-text-wrapper">
+      <div class="cta-image-text">SHOW ME WHAT YOU GOT →</div>
+      <div class="cta-subtitle">CASE STUDIES</div>
+    </div>
+  </a>
+
+  <a class="cta-item" href="Contact.html">
+    <div class="cta-image cta-image-flipped">
+      <img src="CONTACT.jpg" alt="Let's get in touch">
+    </div>
+    <div class="cta-text-wrapper">
+      <div class="cta-image-text">GET IN TOUCH →</div>
+      <div class="cta-subtitle">CONTACT</div>
+    </div>
+  </a>
+</div>
+
+    <div class="ambition-symbol-bottom">
+      <img src="SYMBOLE-BLANC.png" alt="Symbole">
+    </div>
+    <footer class="footer">
+      <div class="footer-content">
+        <p>© 2026 MADDAMA. ALL RIGHTS RESERVED.</p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+const sets = ['set1','set2','set3','set4','set5'];
+let currentIndex = 0;
+const interval = 1550;
+let autoplayFinished = false;
+let hasSplit = false;
+
+function showSet(index) {
+  sets.forEach((id, i) => {
+    document.getElementById(id).classList.toggle('active', i === index);
+  });
+}
+
+function nextSet() {
+  currentIndex++;
+  if (currentIndex >= sets.length) {
+    currentIndex = sets.length - 1;
+    autoplayFinished = true;
+    clearInterval(autoplayTimer);
+    return;
+  }
+  showSet(currentIndex);
+}
+
+showSet(currentIndex);
+const autoplayTimer = setInterval(nextSet, interval);
+
+window.addEventListener('wheel', handleFirstScroll, { passive:false });
+window.addEventListener('touchmove', handleFirstScroll, { passive:false });
+
+function handleFirstScroll(e) {
+  if (!autoplayFinished || hasSplit) return;
+  e.preventDefault();
+  hasSplit = true;
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  setTimeout(() => {
+    document.getElementById('maddamaReveal').classList.add('revealed');
+  }, 400);
+  setTimeout(() => {
+    document.body.classList.remove('locked');
+  }, 1600);
+}
+
+const blackRectContainer = document.querySelector('.black-rect-container');
+const blackRectContent = document.querySelector('.black-rect-content');
+const imageWrapper = document.querySelector('#imageWrapper');
+const blackRectSlideup = document.querySelector('.black-rect-slideup');
+const blackRectSlideup2 = document.querySelector('.black-rect-slideup-2');
+const lastSymbol = document.querySelectorAll('img[src*="SYMBOLE-NOIR"]');
+const symbolElement = lastSymbol[lastSymbol.length - 1];
+const body = document.body;
+const html = document.documentElement;
+
+const ambitionSymbolTop = document.querySelector('.ambition-symbol-top');
+const ambitionSymbolBottom = document.querySelector('.ambition-symbol-bottom');
+
+let scrollLocked = false;
+let animationStarted = false;
+let animationScrollDelta = 0;
+let contentFullyVisible = false;
+let imageAnimationStarted = false;
+let imageScrollDelta = 0;
+let carouselAnimationStarted = false;
+let carouselScrollDelta = 0;
+let carouselFinished = false;
+
+// ==========================================================
+// SKIP INTRO SI ARRIVÉE AVEC UNE ANCRE (ex: index.html#about-hero)
+// ==========================================================
+if (window.location.hash === '#about-hero') {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const target = document.getElementById('about-hero');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      history.replaceState(null, '', window.location.pathname);
+    }, 100);
+  });
+}
+
+// ==========================================================
+// SKIP INTRO SI ARRIVÉE AVEC #welcomeSection (juste après l'animation des 5 sets)
+// ==========================================================
+if (window.location.hash === '#welcomeSection') {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = false;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = false;
+
+  animationScrollDelta = 0;
+  imageScrollDelta = 0;
+  carouselScrollDelta = 0;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      history.replaceState(null, '', window.location.pathname);
+    }, 100);
+  });
+}
+
+// ==========================================================
+// SKIP INTRO SI ARRIVÉE AVEC #testimonials
+// ==========================================================
+if (window.location.hash === '#testimonials') {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const target = document.getElementById('testimonialsAnchor');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      history.replaceState(null, '', window.location.pathname);
+    }, 100);
+  });
+}
+
+function isContentFullyVisible() {
+  if (!symbolElement) return false;
+  const symbolRect = symbolElement.getBoundingClientRect();
+  const bottomOfContent = symbolRect.bottom + 80;
+  return bottomOfContent <= window.innerHeight;
+}
+
+window.addEventListener('wheel', (e) => {
+  if (!hasSplit) return;
+
+  if (!contentFullyVisible) {
+    if (isContentFullyVisible()) {
+      contentFullyVisible = true;
+    }
+    return;
+  }
+
+  if (contentFullyVisible && !scrollLocked && !animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+
+    if (e.deltaY < 0 && window.scrollY > 10) {
+      return;
+    }
+
+    e.preventDefault();
+
+    scrollLocked = true;
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+    animationStarted = true;
+    return;
+  }
+
+  // ÉTAPE 1 : black-rect
+  if (animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+    e.preventDefault();
+    animationScrollDelta += e.deltaY;
+    animationScrollDelta = Math.max(0, Math.min(animationScrollDelta, 2000));
+    const progress = animationScrollDelta / 2000;
+    const leftValue = 100 - (progress * 100);
+    blackRectContainer.style.left = leftValue + '%';
+    blackRectContent.style.left = leftValue + '%';
+
+    if (progress >= 1) {
+      animationStarted = false;
+      imageAnimationStarted = true;
+      imageScrollDelta = 0;
+    }
+
+    if (progress <= 0 && e.deltaY < 0) {
+      scrollLocked = false;
+      animationStarted = false;
+      body.style.overflow = 'auto';
+      html.style.overflow = 'auto';
+    }
+    return;
+  }
+
+  // ÉTAPE 2 : image
+  if (imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+    e.preventDefault();
+    imageScrollDelta += e.deltaY;
+    imageScrollDelta = Math.max(0, Math.min(imageScrollDelta, 2000));
+    const progress = imageScrollDelta / 2000;
+    imageWrapper.style.opacity = progress;
+    blackRectSlideup.style.top = (100 - (progress * 100)) + 'vh';
+
+    if (progress >= 1) {
+      imageAnimationStarted = false;
+      carouselAnimationStarted = true;
+      carouselScrollDelta = 0;
+    }
+
+    if (progress <= 0 && e.deltaY < 0) {
+      imageAnimationStarted = false;
+      animationStarted = true;
+      animationScrollDelta = 2000;
+    }
+    return;
+  }
+
+  // ÉTAPE 3 : apparition de slideup-2 (testimonials + ambition/CTA)
+  if (carouselAnimationStarted) {
+    e.preventDefault();
+    carouselScrollDelta += e.deltaY;
+    carouselScrollDelta = Math.max(0, Math.min(carouselScrollDelta, 2000));
+    const progress = carouselScrollDelta / 2000;
+    blackRectSlideup2.style.bottom = (-200 + (progress * 200)) + 'vh';
+
+    if (progress > 0) {
+      ambitionSymbolTop.classList.add('visible');
+      ambitionSymbolBottom.classList.add('visible');
+    } else {
+      ambitionSymbolTop.classList.remove('visible');
+      ambitionSymbolBottom.classList.remove('visible');
+    }
+
+    if (progress >= 1) {
+      carouselAnimationStarted = false;
+      carouselFinished = true;
+      scrollLocked = false;
+      blackRectSlideup2.scrollTop = 0;
+      body.style.overflow = 'hidden';
+      html.style.overflow = 'hidden';
+    }
+
+    if (progress <= 0 && e.deltaY < 0) {
+      carouselAnimationStarted = false;
+      imageAnimationStarted = true;
+      imageScrollDelta = 2000;
+      carouselFinished = false;
+    }
+    return;
+  }
+
+  // ÉTAPE 4 : scroll interne natif dans slideup-2 (testimonials + ambition/CTA)
+  if (carouselFinished) {
+    const atTop = blackRectSlideup2.scrollTop <= 0;
+    const atBottom = blackRectSlideup2.scrollTop + blackRectSlideup2.clientHeight >= blackRectSlideup2.scrollHeight - 2;
+
+    if (e.deltaY < 0 && atTop) {
+      e.preventDefault();
+      carouselFinished = false;
+      carouselAnimationStarted = true;
+      carouselScrollDelta = 1990;
+      return;
+    }
+
+    if (e.deltaY > 0 && atBottom) {
+      body.style.overflow = 'auto';
+      html.style.overflow = 'auto';
+      return;
+    }
+    // sinon on laisse le scroll natif agir DANS blackRectSlideup2
+    return;
+  }
+}, { passive: false });
+
+if (!window.location.hash) {
+  if (blackRectContainer) {
+    blackRectContainer.style.left = '100%';
+  }
+  if (blackRectContent) {
+    blackRectContent.style.left = '100%';
+  }
+  if (blackRectSlideup) {
+    blackRectSlideup.style.top = '100vh';
+  }
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '-200vh';
+  }
+}
+
+// ==========================================================
+// NAVIGATION HEADER : goToHome + reset vers l'état welcome
+// ==========================================================
+function resetToWelcomeState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = false;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = false;
+
+  animationScrollDelta = 0;
+  imageScrollDelta = 0;
+  carouselScrollDelta = 0;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+
+  if (blackRectContainer) blackRectContainer.style.left = '100%';
+  if (blackRectContent) blackRectContent.style.left = '100%';
+  if (imageWrapper) imageWrapper.style.opacity = 0;
+  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '-200vh';
+    blackRectSlideup2.scrollTop = 0;
+  }
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
+}
+
+function goToHome(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToWelcomeState();
+    const target = document.getElementById('welcomeSection');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    window.location.href = 'index.html#welcomeSection';
+  }
+}
+
+// ==========================================================
+// NAVIGATION HEADER : goToTestimonials + reset vers l'état testimonials
+// ==========================================================
+function resetToTestimonialsState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+  document.getElementById('welcomeSection').classList.add('bg-white');
+  document.getElementById('welcomeTo').classList.add('visible');
+  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  if (blackRectContainer) blackRectContainer.style.left = '0%';
+  if (blackRectContent) blackRectContent.style.left = '0%';
+  if (imageWrapper) imageWrapper.style.opacity = 1;
+  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+  if (blackRectSlideup2) {
+    blackRectSlideup2.style.bottom = '0vh';
+    blackRectSlideup2.scrollTop = 0;
+  }
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+}
+
+function goToTestimonials(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToTestimonialsState();
+    setTimeout(() => {
+      const target = document.getElementById('testimonialsAnchor');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 50);
+  } else {
+    window.location.href = 'index.html#testimonials';
+  }
+}
+
+const testimonials = [
+  {
+    quote: `"I have had the privilege of working with Alice as a strategic planner, and I would like to highlight the exceptional quality of her work. Her strategic approach is always spot on and thorough. Alice has a unique ability to analyse situations with finesse and to develop ideas that make a real difference.
+What particularly impressed me was also the meticulous and professional presentation of her ideas. Alice has a talent for making complex concepts accessible, which greatly facilitates understanding and buy-in.
+
+Furthermore, Alice stands out for her attentive listening and her willingness to take all feedback on board. She knows how to create a collaborative environment. Her flexibility and open-mindedness are major assets.
+
+Finally, I would like to highlight Alice's constant availability. She demonstrates exceptional commitment to her projects and clients, responding promptly to requests and providing ongoing support. This availability demonstrates her dedication to the success of the assignments entrusted to her."`,
+    photo: "CHAIMA-KADHI-KEEMIA.jpg",
+    logo: "LOGO-KEEMIA.jpg",
+    stat1Number: "CHAIMA",
+    stat1Label: "KHADI",
+    stat1Sub: "Account Director",
+    stat2Number: "KEEMIA",
+    stat2Label: "Shopper agency",
+    stat2Sub: "+100 team members"
+  },
+  {
+    quote: `"I am delighted to write this letter to recommend Alice Bronchain, an exceptional strategic planner whose skills and professionalism consistently exceed expectations.
+
+Alice stands out for her rigour and her commitment to excellence. Her ability not only to deliver what is asked of her, but also to go above and beyond expectations, is a rare and valuable quality. She possesses a remarkable talent for adapting to a variety of subjects, enabling her to propose innovative and effective solutions to any communication challenge.
+
+Her insights are always relevant and her analytical skills are, without a doubt, amongst the most remarkable I have ever observed. Alice has a unique ability to quickly grasp strategic issues and transform them into concrete, actionable strategies.
+I am convinced that Alice will be an invaluable asset to any organisation seeking to strengthen its strategic communication. Her vision, creativity and rigorous approach are qualities that will benefit any team.
+
+I highly recommend Alice Bronchain for any role requiring expertise, commitment and innovation in the field of strategic communication."`,
+    photo: "JULIEN-BOUISSY-JEFF.jpg",
+    logo: "LOGO-JEFF.jpg",
+    stat1Number: "JULIEN",
+    stat1Label: "BOUISSY",
+    stat1Sub: "Co-founder",
+    stat2Number: "JEFF AGENCY",
+    stat2Label: "Advertising agency",
+    stat2Sub: "Awards winners"
+  },
+  {
+    quote: `"We were lucky to have Alice part of the team for a year. I truly appreciated her mindset and contribution to accounts and pitch. She's a good brain with solid culture and references and a great team mate. She's curious and knows how to organize her thoughts in a good pace. She developed a solid understanding of brand challenges and ability to articulate rich creative springboard. 
+A creative planner for sure."`,
+    photo: "CHRYSTELE-VELAYOUDON-VMLYR.jpg",
+    logo: "LOGO-VMLYR.jpg",
+    stat1Number: "CHRYSTÈLE",
+    stat1Label: "VELAYOUDON",
+    stat1Sub: "Head of Strategy",
+    stat2Number: "VMLY&R",
+    stat2Label: "Advertising agency",
+    stat2Sub: "Worldwide renowned"
+  },
+  {
+
+    quote: `"Alice has been an invaluable help every time we've called on her services. She has managed to shed new light on topics we thought we knew inside out, enabling us to score extra points in all the advertising competitions she was involved in. 
+A tremendous asset!"`,
+    photo: "FLORIAN-CAUQUIL-JEFF.jpg",
+    logo: "LOGO-JEFF.jpg",
+    stat1Number: "FLORIAN",
+    stat1Label: "CAUQUIL",
+    stat1Sub: "Co-founder",
+    stat2Number: "JEFF AGENCY",
+    stat2Label: "Advertising agency",
+    stat2Sub: "Awards winners"
+  },
+  {
+    quote: `"I met Alice more than five years ago, and we had the longest job interview ever. She was passionate and captivating, and our professional journey started from a gut feeling and a strong sense of intellectual connection and mutual stimulation.
+We worked together first at June Marketing and then at Labbrand. She is a beautiful human being and a great strategic planner and designer.
+Alice has a unique set of skills: she can think about a brand from both a linguistic and strategic perspective and a visual one, and she always knows what she is talking about. She brings a contagious level of energy and is incredibly inspiring when it comes to innovation trends, as well as coming up with dozens of product concepts.
+She dares to challenge the brief and the ideas. Not for the sake of it, but to make sure we deliver the best thinking, the best idea, the best campaign, or the best new product, one that will sell like hot cakes!
+With Alice by my side, I always have a blast, and I know we will find the best path forward for brands of all kinds. I am sure we will work together again in the future. She can create magic with any team and any brand."`,
+    photo: "AURELIE-PLESSIER-LABBRAND.jpg",
+    logo: "LOGO-LABBRAND.jpg",
+    stat1Number: "AURÉLIE",
+    stat1Label: "PLESSIER",
+    stat1Sub: "CEO",
+    stat2Number: "LABBRAND",
+    stat2Label: "Naming agency",
+    stat2Sub: "Worldwide renowned"
+  }
+];
+
+let currentTestimonialIndex = 0;
+
+const testimonialQuoteEl = document.getElementById('testimonialQuote');
+const testimonialPhotoEl = document.getElementById('testimonialPhoto');
+const authorPhotoEl = document.getElementById('authorPhoto');
+const stat1NumberEl = document.getElementById('stat1Number');
+const stat1LabelEl = document.getElementById('stat1Label');
+const stat1SubEl = document.getElementById('stat1Sub');
+const stat2NumberEl = document.getElementById('stat2Number');
+const stat2LabelEl = document.getElementById('stat2Label');
+const stat2SubEl = document.getElementById('stat2Sub');
+
+function adjustQuoteFontSize(el) {
+  const length = el.textContent.length;
+
+  if (length < 300) {
+    el.style.fontSize = "24px";
+  } else if (length < 600) {
+    el.style.fontSize = "21px";
+  } else if (length < 900) {
+    el.style.fontSize = "19px";
+  } else if (length < 1300) {
+    el.style.fontSize = "17px";
+  } else {
+    el.style.fontSize = "15px";
+  }
+}
+
+function renderTestimonial(index) {
+  const t = testimonials[index];
+
+  testimonialQuoteEl.textContent = t.quote;
+  adjustQuoteFontSize(testimonialQuoteEl);
+
+  testimonialPhotoEl.src = t.photo;
+  authorPhotoEl.src = t.logo;
+
+  stat1NumberEl.textContent = t.stat1Number;
+  stat1LabelEl.textContent = t.stat1Label;
+  stat1SubEl.textContent = t.stat1Sub;
+
+  stat2NumberEl.textContent = t.stat2Number;
+  stat2LabelEl.textContent = t.stat2Label;
+  stat2SubEl.textContent = t.stat2Sub;
+}
+
+function changeTestimonial(newIndex) {
+  testimonialQuoteEl.classList.add('fading');
+  testimonialPhotoEl.classList.remove('loaded');
+
+  setTimeout(() => {
+    currentTestimonialIndex = newIndex;
+    renderTestimonial(currentTestimonialIndex);
+
+    testimonialQuoteEl.classList.remove('fading');
+    testimonialPhotoEl.classList.add('loaded');
+  }, 400);
+}
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+if (nextBtn) {
+  nextBtn.addEventListener('click', () => {
+    const newIndex = (currentTestimonialIndex + 1) % testimonials.length;
+    changeTestimonial(newIndex);
+  });
+}
+
+if (prevBtn) {
+  prevBtn.addEventListener('click', () => {
+    const newIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+    changeTestimonial(newIndex);
+  });
+}
+renderTestimonial(currentTestimonialIndex);
+
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    // On est en FR, on repasse en EN
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    // On est en EN, on passe en FR
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+
+</script>
