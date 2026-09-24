@@ -1,88 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>
-function goToHome(e) {
-  e.preventDefault();
-  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
-
-  if (isIndexPage) {
-    resetToWelcomeState();
-    const target = document.getElementById('welcomeSection');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  } else {
-    window.location.href = 'index.html#welcomeSection';
-  }
-}
-
-function resetToWelcomeState() {
-  clearInterval(autoplayTimer);
-  autoplayFinished = true;
-  hasSplit = true;
-  scrollLocked = false;
-  animationStarted = false;
-  contentFullyVisible = false;
-  imageAnimationStarted = false;
-  carouselAnimationStarted = false;
-  carouselFinished = false;
-
-  document.body.classList.remove('locked');
-  document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
-
-  body.style.overflow = 'auto';
-  html.style.overflow = 'auto';
-
-  // On remet les éléments d'animation dans leur état "avant carousel"
-  if (blackRectContainer) blackRectContainer.style.left = '100%';
-  if (blackRectContent) blackRectContent.style.left = '100%';
-  if (imageWrapper) imageWrapper.style.opacity = 0;
-  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
-  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '-100vh';
-  if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
-  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  const toggle = document.getElementById('mobileMenuToggle');
-  const panel = document.getElementById('mobileMenuPanel');
-  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
-
-  if (toggle && panel) {
-    toggle.addEventListener('click', function () {
-      const isOpen = panel.classList.toggle('active');
-      toggle.classList.toggle('open', isOpen);
-      icon.textContent = isOpen ? '×' : '+';
-    });
-
-    // Fermer le menu si on clique sur un lien
-    panel.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        panel.classList.remove('active');
-        toggle.classList.remove('open');
-        icon.textContent = '+';
-      });
-    });
-  }
-});
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MADDAMA</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
 
-  body { font-family: 'Helvetica Neue', Arial, sans-serif; overflow-x:hidden; }
+/* ========================================================== 
+   HEADER DESKTOP
+   ========================================================== */
 
-  body.locked {
-    overflow: hidden;
-    height: 100vh;
-  }
+* { 
+  margin:0; 
+  padding:0; 
+  box-sizing:border-box; 
+}
 
+body { 
+  font-family: 'Helvetica Neue', Arial, sans-serif; 
+  overflow-x:hidden; 
+  background: #ffffff;
+  color: #111111;
+}
+
+body.locked {
+  overflow: hidden;
+  height: 100vh;
+}
+
+@font-face {
+  font-family: 'Aptos';
+  src: local('Aptos');
+}
+
+/* ========================================================== 
+   TOGGLE DESKTOP / MOBILE (base)
+   ========================================================== */
+.desktop-only { display: flex; }
+.mobile-only  { display: none; }
+
+.maddama-baseline.desktop-only { display: block; }
+.maddama-baseline.mobile-only  { display: none; }
+
+/* ========================================================== 
+   HEADER DESKTOP
+   ========================================================== */
 header { 
   position: fixed; 
   top:0; 
@@ -159,65 +121,209 @@ header .lang-switch {
   }
 }
 
-header nav a:nth-child(1) { animation-delay: 9s; }
-header nav a:nth-child(2) { animation-delay: 9.24s; }
-header nav a:nth-child(3) { animation-delay: 9.48s; }
-header nav a:nth-child(4) { animation-delay: 9.72s; }
-header .lang-switch { animation-delay: 9.96s; }
+header nav a:nth-child(1) { animation-delay: 8.80s; }
+header nav a:nth-child(2) { animation-delay: 9.04s; }
+header nav a:nth-child(3) { animation-delay: 9.28s; }
+header nav a:nth-child(4) { animation-delay: 9.52s; }
+header .lang-switch { animation-delay: 9.76s; }
+header .boutique { animation-delay: 10s; }
 
-header .boutique { animation-delay: 10.20s; }
+/* ==========================================================
+   HERO - SETS
+   ========================================================== */
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
 
-  .hero { position: relative; width: 100vw; height: 100vh; overflow: hidden; background:#000; }
-  .set { position: absolute; top:0; left:0; width:100%; height:100%; display:flex; opacity:0; transition: opacity 0.6s ease; pointer-events:none; z-index:2; }
-  .set.active { opacity:1; pointer-events:auto; }
-  .set .half { width:50%; height:100%; overflow:hidden; position:relative; }
-  .set .half img { width:100%; height:100%; object-fit:cover; display:block; }
-  
-  #set5 .half { width:50%; height:100%; overflow:hidden; position:relative; transition: transform 1s cubic-bezier(.77,0,.18,1); }
-  #set5 .half img { position:absolute; top:0; width:200%; height:100%; object-fit:cover; }
-  #set5 .half-left img { left:0; }
-  #set5 .half-right img { right:0; }
-  #set5.split .half-left { transform: translateX(-100%); }
-  #set5.split .half-right { transform: translateX(100%); }
+.set {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  z-index: 2;
+}
 
-  .scroll-indicator { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:#fff; font-size:12px; letter-spacing:2px; z-index:10; transition:opacity 0.5s ease; opacity:0; }
+.set.active {
+  opacity: 1;
+  z-index: 10;
+}
 
-  .welcome-section { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; transition: background 0.8s ease; z-index:5; pointer-events:none; }
-  .welcome-section.bg-white { background:#fff; }
-  .welcome-to { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; font-style: normal; font-weight: 400; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color:#000; opacity:0; transform: translateY(-10px); transition: opacity 0.8s ease, transform 0.8s ease; margin-bottom: 15px; }
-  .welcome-to.visible { opacity:1; transform: translateY(0); }
-  .maddama-reveal { display:flex; flex-direction:column; align-items:center; opacity:0; transform: translateY(60px); transition: opacity 0.9s ease, transform 0.9s ease; }
-  .maddama-reveal.revealed { opacity:1; transform: translateY(0); }
-  .maddama-reveal img { width: 400px; max-width: 60vw; height:auto; display:block; }
-  .maddama-baseline { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; margin-top: 15px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color:#000; text-align:center; max-width: 600px; line-height:1.3; }
-  
-  .brand-section { width: 100%; display:flex; background:#000; padding: 70px; gap: 60px; align-items: center; }
-  .brand-section .image-side { position: relative; width: 45%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
-  .brand-section .image-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .brand-section .image-title { position: absolute; bottom: 40px; left: 40px; right: 40px; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; text-align: right; }
-  .brand-section .image-title .make { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 400; margin-bottom: -5px; }
-  .brand-section .image-title .big-title { font-size: 60px; font-weight: 800; text-transform: uppercase; line-height: 1.05; letter-spacing: -1px; }
-  .brand-section .image-title .big-title .strike { text-decoration: line-through; text-decoration-thickness: 4px; }
-  .brand-section .text-side { flex: 1; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
-  .brand-section .divider { width: 100px; height: 3px; background: #fff; margin-bottom: 30px; }
-  .brand-section .divider.bottom { margin-top: 30px; margin-bottom: 0; }
-  .brand-section .body-text { font-size: 18px; line-height: 1.5; font-weight: 400; }
-  .brand-section .body-text p { margin-bottom: 30px; }
-  .brand-section .body-text p:last-child { margin-bottom: 0; }
-  .brand-section .body-text em { font-style: italic; }
-  .brand-section .body-text .closing { font-weight: 700; font-style: italic; }
-  
-  @font-face {
-    font-family: 'Aptos';
-    src: local('Aptos');
-  }
+.set .half {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
 
-  body { background: #ffffff; color: #111111; }
+.set .half img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
+#set2 .half:last-child img {
+  object-position: 15% center;
+}
+
+#set5 {
+  justify-content: center;
+  align-items: center;
+}
+
+#set5 .half {
+  transition: transform 1s cubic-bezier(.77, 0, .18, 1);
+}
+
+#set5 .half img {
+  position: absolute;
+  top: 0;
+  width: 200%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+#set5 .half-left img  { left: 0; }
+#set5 .half-right img { right: 0; }
+
+#set5.split .half-left  { transform: translateX(-100%); }
+#set5.split .half-right { transform: translateX(100%); }
+
+/* ==========================================================
+   WELCOME SECTION
+   ========================================================== */
+.welcome-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease, background 0.8s ease;
+}
+
+.welcome-section.bg-white {
+  background: #fff;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.welcome-to {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  margin-bottom: 15px;
+}
+
+.welcome-to.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.maddama-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.maddama-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.maddama-reveal img {
+  width: 400px;
+  max-width: 60vw;
+  height: auto;
+  display: block;
+}
+
+.maddama-baseline {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  margin-top: 15px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #000;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.3;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  z-index: 10;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+
+/* ==========================================================
+   HEADER MOBILE (caché par défaut sur desktop)
+   ========================================================== */
+.mobile-header,
+.mobile-menu-panel {
+  display: none;
+}
+
+/* ==========================================================
+   BRAND SECTION
+   ========================================================== */
+.brand-section { width: 100%; display:flex; background:#000; padding: 70px; gap: 60px; align-items: center; }
+.brand-section .image-side { position: relative; width: 45%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
+.brand-section .image-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.brand-section .image-title { position: absolute; bottom: 40px; left: 40px; right: 40px; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; text-align: right; }
+.brand-section .image-title .make { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 400; margin-bottom: -5px; }
+.brand-section .image-title .big-title { font-size: 60px; font-weight: 800; text-transform: uppercase; line-height: 1.05; letter-spacing: -1px; }
+.brand-section .image-title .big-title .strike { text-decoration: line-through; text-decoration-thickness: 4px; }
+.brand-section .text-side { flex: 1; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+.brand-section .divider { width: 100px; height: 3px; background: #fff; margin-bottom: 30px; }
+.brand-section .divider.bottom { margin-top: 30px; margin-bottom: 0; }
+.brand-section .body-text { font-size: 18px; line-height: 1.5; font-weight: 400; }
+.brand-section .body-text p { margin-bottom: 30px; }
+.brand-section .body-text p:last-child { margin-bottom: 0; }
+.brand-section .body-text em { font-style: italic; }
+.brand-section .body-text .closing { font-weight: 700; font-style: italic; }
+
+/* ==========================================================
+   ABOUT HERO
+   ========================================================== */
 .about-hero {
   position: relative;
   background: #ffffff;
-  min-height: 400px;      /* hauteur fixe au lieu de min-height */
+  min-height: 400px;
   overflow: hidden;
   padding: 36px;
   display: flex;
@@ -245,33 +351,55 @@ header .boutique { animation-delay: 10.20s; }
 .about-main-text { font-size: 15.6px; line-height: 1.5; font-weight: 400; color: #111; letter-spacing: 0.18px; }
 .about-main-text b { font-weight: 800; }
 
-  .content-section { max-width: 1000px; margin: 30px auto; text-align: center; padding: 0 0px; }
-  .content-section p { font-size: 16px; line-height: 1.5; color: #111; margin-bottom: 30px; word-spacing: 0.05em; }
-  .content-section p:first-child { font-size: 16px; }
-  .content-section p:nth-child(2) { max-width: 1000px; }
-  .content-section p:last-child { margin-bottom: 0; }
+/* ==========================================================
+   CONTENT SECTION + SYMBOLS
+   ========================================================== */
+.content-section {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.content-section p { font-size: 16px; line-height: 1.5; color: #111; margin-bottom: 30px; word-spacing: 0.05em; }
+.content-section .intro-text { font-size: 16px; }
+.content-section .body-main { max-width: 1000px; margin-left: auto; margin-right: auto; }
+.content-section .closing-text { margin-bottom: 0; }
 
-  .symbol-divider { width: 30px; height: 30px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-  .symbol-divider img { width: 100%; height: 100%; object-fit: contain; }
+.symbol-divider {
+  width: 24px;
+  height: 24px;
+  margin: 20px auto;
+}
+.symbol-divider img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.scroll-buffer { width: 100%; height: 600px; }
 
-  .scroll-buffer { width: 100%; height: 600px; }
-
+/* ==========================================================
+   BLACK RECT / WHAT WE DO
+   ========================================================== */
 .black-rect-container {
   position: fixed;
   width: 112.5%;
   height: 840px;
   background: black;
-  top: calc(50vh - 40px);   /* équivalent stable à "50% + 380px" + translateY(-50%) */
+  top: calc(50vh - 40px);
   left: 100%;
   z-index: 50;
   border-radius: 8px;
   overflow: hidden;
 }
+
 .black-rect-content {
   position: fixed;
   width: 100vw;
   height: 840px;
-  top: calc(50vh - 30px);   /* équivalent stable à "50% + 390px" + translateY(-50%) */
+  top: calc(50vh - 30px);
   left: 100%;
   z-index: 51;
   display: flex;
@@ -287,119 +415,125 @@ header .boutique { animation-delay: 10.20s; }
   display: none !important;
 }
 
-  .what-we-do-title { 
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
-    font-size: 14px; 
-    font-weight: 300; 
-    text-transform: uppercase; 
-    color: #fff; 
-    letter-spacing: 2px; 
-    margin: 0; 
-    text-align: center; 
-    width: 100%; 
-    margin-top: -45px;
-  }
+.what-we-do-title { 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+  font-size: 14px; 
+  font-weight: 300; 
+  text-transform: uppercase; 
+  color: #fff; 
+  letter-spacing: 2px; 
+  margin: 0; 
+  text-align: center; 
+  width: 100%; 
+  margin-top: -45px;
+}
 
-  .symbols-container {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    z-index: 1;
-    margin-top: 10px;
-    transform: translateY(110px);
-  }
+.symbols-container {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  z-index: 1;
+  margin-top: 10px;
+  transform: translateY(110px);
+}
 
-  .symbols-container img:nth-child(1) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: rotate(45deg);
-  }
+.symbols-container img:nth-child(1) {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: rotate(45deg);
+}
 
-  .symbols-container img:nth-child(2) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: rotate(-45deg);
-  }
-  .services-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 30px 300px; 
-    max-width: 100%; 
-    width: 100%; 
-    color: #fff;
-    margin-top: 0px;
-  }
+.symbols-container img:nth-child(2) {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: rotate(-45deg);
+}
 
-  .service-item { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
-  .service-item .service-name { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; line-height: 0.8; }
+.services-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 30px 300px; 
+  max-width: 100%; 
+  width: 100%; 
+  color: #fff;
+  margin-top: 0px;
+}
 
-  .services-grid > :nth-child(odd) .service-name { text-align: right; }
-  .services-grid > :nth-child(even) .service-name { text-align: left; }
+.service-item { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+.service-item .service-name { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; line-height: 0.8; }
 
-  .bottom-text {
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 300;
-    text-transform: uppercase;
-    color: #fff;
-    letter-spacing: 2px;
-    text-align: center;
-    margin-top: 40px;
-    width: 100%;
-    max-width: 1000px;
-    line-height: 1.5;
-  }
+.services-grid > :nth-child(odd) .service-name { text-align: right; }
+.services-grid > :nth-child(even) .service-name { text-align: left; }
 
-  .image-section-container {
-    position: relative;
-    width: 100%;
-    height: 800px;
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    margin-top: 0;
-  }
+.bottom-text {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-top: 40px;
+  width: 100%;
+  max-width: 1000px;
+  line-height: 1.5;
+}
 
-  .image-wrapper {
-    width: 70%;
-    height: 120%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
+/* ==========================================================
+   IMAGE SECTION FINALE (rotation)
+   ========================================================== */
+.image-section-container {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 0;
+}
 
-  .image-wrapper.visible {
-    opacity: 1;
-  }
+.image-wrapper {
+  width: 70%;
+  height: 120%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-  .image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: rotate(-90deg);
-    display: block;
-  }
+.image-wrapper.visible {
+  opacity: 1;
+}
 
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: rotate(-90deg);
+  display: block;
+}
 
+/* ==========================================================
+   BLACK RECT SLIDEUP (carousel clients)
+   ========================================================== */
 .black-rect-slideup {
   position: fixed;
   width: 100%;
   height: 100vh;
   background: black;
   left: 0;
-  top: 100vh; /* remplace la logique JS top:100vh -> 0vh, mais fixé en dur ici */
+  top: 100vh;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -417,110 +551,102 @@ header .boutique { animation-delay: 10.20s; }
   display: block;
   justify-content: center;
 }
-  .carousel-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
 
-  .carousel-container {
-    width: 100%;
-    overflow: hidden;
-    margin-top: -30px;
-    padding: 0px 0;
-  }
-
-  .carousel-track {
-    display: flex;
-    gap: 15px;
-    animation: scroll-infinite 50s linear infinite;
-  }
-
-  .carousel-track:hover {
-    animation-play-state: paused;
-  }
-
-  @keyframes scroll-infinite {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(calc(-380px * 12 - 30px * 12));
-    }
-  }
-
-  .carousel-item {
-    flex-shrink: 0;
-    width: 270px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .carousel-item img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    height: 400px;
-  }
-
-  .carousel-text {
-    padding: 0;
-  }
-
-  .carousel-brand {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #fff;
-    margin-bottom: 2.5px;
-  }
-
-  .carousel-description {
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    color: #ccc;
-  }
-
-  .carousel-bottom-text {
-    text-align: center;
-    font-size: 16px;
-    color: #fff;
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.6;
-  }
-
-  .they-trusted-us {
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: uppercase;
-    text-align: center;
-    color: #fff;
-    letter-spacing: 1px;
-    margin-top: 60px;
-    width: 100%;
-  margin-bottom: 40px;
-  }
-
-  .clients-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: -80px;
-    padding: 40px;
+.carousel-content {
   width: 100%;
-  }
-
-.clients-wrapper img {
-  max-width: 1200px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  margin-top: -30px;
+  padding: 0px 0;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 15px;
+  animation: scroll-infinite 50s linear infinite;
+}
+
+.carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-infinite {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-380px * 12 - 30px * 12)); }
+}
+
+.carousel-item {
+  flex-shrink: 0;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel-item img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  height: 400px;
+}
+
+.carousel-text {
+  padding: 0;
+}
+
+.carousel-brand {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 2.5px;
+}
+
+.carousel-description {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: #ccc;
+}
+
+.carousel-bottom-text {
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.they-trusted-us {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-top: 60px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.logo-desktop {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: -40px auto 0;
+}
+
+.logo-mobile { display: none; }
 
 .stars { color: #f5a623; margin-bottom: 15px; }
 .t-quote { font-size: 16px; line-height: 1.6; }
@@ -529,6 +655,9 @@ header .boutique { animation-delay: 10.20s; }
 .t-name { font-weight: 700; font-size: 14px; }
 .t-role { font-size: 13px; color: #888; }
 
+/* ==========================================================
+   BLACK RECT SLIDEUP 2 (testimonials)
+   ========================================================== */
 .black-rect-slideup-2 {
   position: fixed;
   left: 0;
@@ -612,6 +741,16 @@ header .boutique { animation-delay: 10.20s; }
   opacity: 1;
 }
 
+.testimonial-logo {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
 .testimonial-quote {
   box-sizing: border-box;
   flex: 1 1 auto;
@@ -668,6 +807,13 @@ header .boutique { animation-delay: 10.20s; }
   flex-shrink: 0;
 }
 
+/* Desktop : on garde les flèches, on cache les dots */
+@media (min-width: 769px) {
+  .testimonial-dots {
+    display: none !important;
+  }
+}
+
 .nav-btn {
   width: 48px;
   height: 48px;
@@ -681,7 +827,6 @@ header .boutique { animation-delay: 10.20s; }
   cursor: pointer;
   transition: background 0.25s ease, transform 0.2s ease;
 }
-
 .nav-btn:hover {
   background: #e4e4e4;
   transform: scale(1.05);
@@ -694,124 +839,50 @@ header .boutique { animation-delay: 10.20s; }
   background: transparent;
   padding: 0;
   border-radius: 0;
-  flex-shrink: 0;
 }
-
-.author-photo-frame {
-  width: 170px;
-  height: 100px;
-  overflow: hidden;
+.author-photo {
+  width: 140px !important;
+  height: 70px !important;
+  border-radius: 4px !important;
+  object-fit: contain !important;
+  background: transparent !important;
+}
+.author-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  line-height: 1.4;
 }
-
-.author-photo-frame img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
+.author-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+.author-role {
+  font-size: 13px;
+  color: #888;
 }
 
 .testimonial-stat {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 0;
 }
-
 .stat-number {
   font-size: 34px;
   font-weight: 800;
   line-height: 1.1;
 }
-
 .stat-label {
   font-size: 14px;
   font-weight: 600;
 }
-
 .stat-sub {
   font-size: 13px;
   color: #888;
 }
 
-@media (max-width: 1100px) {
-  .testimonial-section { padding-left: 40px; padding-right: 40px; }
-  .testimonial-body { gap: 32px; }
-  .testimonial-photo-wrap { flex-basis: 300px; width: 300px; height: 380px; }
-  .testimonial-right-group { gap: 20px; }
-}
-
-@media (max-width: 900px) {
-  .testimonial-section {
-    min-height: 100vh;
-    padding: 24px 24px 32px;
-    justify-content: flex-start;
-    gap: 24px;
-  }
-  .testimonial-topline { gap: 12px; width: 100%; font-size: 11px; }
-  .topline-sep { flex-basis: auto; max-width: none; }
-  .testimonial-body {
-    display: flex;
-    flex: 0 0 auto;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 24px;
-    overflow: visible;
-  }
-  .testimonial-photo-wrap {
-    flex: 0 0 auto;
-    width: min(400px, 100%);
-    height: min(440px, 55vh);
-  }
-  .testimonial-quote {
-    flex: 0 0 auto;
-    width: 100%;
-    max-width: 800px;
-    max-height: none;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    text-align: center;
-  }
-  .testimonial-divider { width: 100%; margin: 0; }
-  .testimonial-footer {
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 24px;
-  }
-  .testimonial-right-group {
-    flex: 1 1 520px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 24px;
-  }
-  .testimonial-label { position: static; transform: none; }
-}
-
-@media (max-width: 600px) {
-  .testimonial-section { padding: 20px 16px 28px; gap: 20px; }
-  .testimonial-topline { gap: 7px; font-size: 9px; letter-spacing: 0.02em; }
-  .testimonial-photo-wrap { width: min(300px, 100%); height: min(360px, 52vh); }
-  .testimonial-body { gap: 20px; }
-  .testimonial-footer,
-  .testimonial-right-group {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-  }
-  .testimonial-nav { justify-content: center; }
-  .testimonial-right-group { flex: 0 0 auto; align-items: center; }
-  .testimonial-author,
-  .testimonial-stat { width: 100%; align-items: center; text-align: center; }
-  .author-photo-frame { width: 150px; height: 80px; }
-  .stat-number { font-size: 28px; }
-}
+/* ==========================================================
+   FINAL SECTION
+   ========================================================== */
 .final-section {
   width: 100%;
   height: 100vh;              
@@ -821,82 +892,82 @@ header .boutique { animation-delay: 10.20s; }
   align-items: center;
   justify-content: space-between;
   color: #fff;
-  gap: 10px;                
+  gap: 10px;                  
   margin-top: 0;
   transform: none;
   padding: 40px 0;       
   box-sizing: border-box;
 }
 
-  .ambition-symbol-top {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;     
+.ambition-symbol-top {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
   margin-top: 40px;  
-  }
+}
 
-  .ambition-symbol-top img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+.ambition-symbol-top img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
-  .ambition-text {
-    max-width: 800px;
-    text-align: center;
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    color: #fff;
-    margin-bottom: 20px;      
-    margin-top: 0;            
-  }
+.ambition-text {
+  max-width: 800px;
+  text-align: center;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  color: #fff;
+  margin-bottom: 20px;      
+  margin-top: 0;            
+}
 
-  .ambition-text p {
-    font-size: 14px;
-    line-height: 1.3;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 20px;     
-  }
+.ambition-text p {
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;      
+}
 
-  .ambition-text p:first-child {
-    font-weight: 700;
-    margin-bottom: 20px;     
-  }
+.ambition-text p:first-child {
+  font-weight: 700;
+  margin-bottom: 20px;     
+}
 
-  .ambition-text p:nth-child(2) {
-    font-weight: 400;
-    margin-bottom: 20px;    
-  }
+.ambition-text p:nth-child(2) {
+  font-weight: 400;
+  margin-bottom: 20px;      
+}
 
-  .ambition-text p:last-child {
-    font-weight: 700;
-  }
+.ambition-text p:last-child {
+  font-weight: 700;
+}
 
-  .cta-images {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 30px;  
-    flex-wrap: wrap;
-    max-width: 100%;
-  }
+.cta-images {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;  
+  flex-wrap: wrap;
+  max-width: 100%;
+}
 
-  .cta-image {
-    width: 450px;
-    height: 250px;           
-    margin-top: -30px;          
-    overflow: hidden;
-    cursor: pointer;
-  }
+.cta-image {
+  width: 450px;
+  height: 250px;           
+  margin-top: -30px;          
+  overflow: hidden;
+  cursor: pointer;
+}
 
-  .cta-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+.cta-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 .cta-item:nth-child(3) .cta-image img {
   transform: scaleX(-1);
@@ -944,21 +1015,24 @@ a.cta-item {
   line-height: 1.4;
 }
 
-  .ambition-symbol-bottom {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: -60px;   
-  }
+.ambition-symbol-bottom {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -60px;   
+}
 
-  .ambition-symbol-bottom img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+.ambition-symbol-bottom img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
+/* ==========================================================
+   FOOTER
+   ========================================================== */
 footer {
   position: static;
   width: 100%;
@@ -984,22 +1058,888 @@ footer {
   text-transform: uppercase;
   color: #fff;
 }
-</style>
 
+/* ==========================================================
+   MOBILE — TOUT max-width: 768px FUSIONNÉ EN UN SEUL BLOC
+   ========================================================== */
+
+@media (max-width: 768px) {
+
+  /* ---- Toggle desktop / mobile ---- */
+  .desktop-only { display: none !important; }
+  .mobile-only  { display: flex !important; }
+
+  .maddama-baseline.desktop-only { display: none; }
+  .maddama-baseline.mobile-only  { display: block; }
+
+  /* ============================
+     1. HEADER MOBILE
+     ============================ */
+
+  header:not(.mobile-header) {
+    display: none !important;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 20px;
+    z-index: 1000;
+    background: transparent;
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+
+  .mobile-logo {
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .mobile-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mobile-lang {
+    font-size: 11px;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle.open .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  .mobile-menu-panel {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 30px;
+  }
+
+  .mobile-menu-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .mobile-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ============================
+     2. WELCOME MOBILE
+     ============================ */
+
+  .mobile-welcome {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .mobile-welcome.mobile-revealed {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-welcome.bg-white {
+    background: #fff;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .welcome-to,
+  .mobile-welcome .welcome-to {
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+
+  .maddama-reveal img,
+  .mobile-welcome .maddama-reveal img {
+    width: 260px;
+    max-width: 70vw;
+  }
+
+  .maddama-baseline,
+  .mobile-welcome .maddama-baseline {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    max-width: 85vw;
+    line-height: 1.4;
+    padding: 0 20px;
+  }
+
+  /* ============================
+     3. BRAND SECTION
+     ============================ */
+
+  .brand-section {
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 30px;
+  }
+
+  .brand-section .image-side {
+    width: 100%;
+    aspect-ratio: 1/1;
+  }
+
+  .brand-section .image-title {
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    text-align: center;
+  }
+
+  .brand-section .image-title .make {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+
+  .brand-section .image-title .big-title {
+    font-size: 32px;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-section .divider {
+    width: 60px;
+    height: 2px;
+    margin: 0 auto 20px auto;
+  }
+
+  .brand-section .divider.bottom {
+    margin-top: 20px;
+  }
+
+  .brand-section .body-text {
+    font-size: 14px;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .brand-section .body-text p {
+    margin-bottom: 20px;
+  }
+
+  /* ============================
+     4. ABOUT HERO
+     ============================ */
+
+  .about-hero {
+    padding: 16px;
+    min-height: auto;
+  }
+
+  .about-hero-inner {
+    padding: 12px;
+  }
+
+  .about-hero-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .about-photo-wrapper {
+    width: 100%;
+    max-width: 280px;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .about-photo-circle-bg {
+    width: 220px;
+    height: 220px;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+  }
+
+  .about-photo-placeholder {
+    width: 200px;
+    height: 260px;
+    margin: 0 auto;
+    margin-bottom: -30px;
+  }
+
+  .about-photo-labels {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+  }
+
+  .about-photo-labels .creative {
+    left: 12px;
+    color:#fff; 
+    bottom: -9px;
+    font-size: 9px;
+  }
+
+  .about-photo-labels .strategist {
+    left: 40px;
+    right: 0;
+    bottom: -22px;
+    font-size: 9px;
+  }
+
+  .about-text-block {
+    flex-direction: row;
+    max-width: 100%;
+    margin-left: 0;
+    margin-top: 50px;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .about-bar {
+    width: 2px;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .about-main-text {
+    font-size: 13px;
+    line-height: 1.1;
+    letter-spacing: 0.1px;
+    text-align: center;
+  }
+
+  .about-bg-logo {
+    display: none;
+  }
+
+  /* ============================
+     5. CONTENT SECTION + SYMBOLS
+     ============================ */
+
+  .content-section {
+    padding: 20px 20px 20px 20px; 
+    margin: 0;
+    align-items: center;
+  }
+
+  .content-section p {
+    font-size: 13px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .content-section p.mobile-only {
+    display: block !important;
+    text-align: center !important;
+  }
+
+  .content-section .intro-text {
+    font-size: 13.05px;
+    margin-bottom: 20px;
+  }
+
+  .symbol-text-wrapper {
+    margin-top: -35px; /* ajuste cette valeur à l'oeil */
+  }
+
+  .symbol-divider {
+    width: 24px;
+    height: 24px;
+    margin: 8px auto; 
+  }
+
+  /* ============================
+     6. BLACK RECT / WHAT WE DO
+     ============================ */
+
+  .scroll-buffer {
+    display: none;
+  }
+
+  .black-rect-container {
+    display: none;
+  }
+
+  .black-rect-content {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: auto;
+    left: auto;
+    background: #000;
+    z-index: auto;
+    pointer-events: auto;
+    padding: 50px 24px 60px 24px;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .symbols-container {
+  position: absolute !important;
+  top: 15px;
+    width: 22px;
+    height: 22px;
+    transform: none;
+  margin-bottom: 40px;
+    order: 1;
+  }
+
+  .what-we-do-title {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    order: 2;
+  }
+
+.divider-top {
+  width: 1px;
+  height: 24px;
+  background-color: #fff;
+  margin: -5px auto -5px auto;
+    order: 3;
+}
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    order: 4;
+  }
+
+  .services-grid > .service-item .service-name {
+    text-align: center !important;
+    font-size: 13px;
+    line-height: 1.2;
+  margin-bottom: -5px;
+    order: 5;
+  }
+
+  .bottom-text {
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    line-height: 1.6;
+    order: 6;
+  }
+
+.divider-bottom {
+  width: 1px;
+  height: 24px;
+  background-color: #fff;
+  margin: -5px auto -5px auto;
+    order: 6;
+}
+  .symbols-container {
+  position: absolute !important;
+  top: 15px;
+    width: 22px;
+    height: 22px;
+    transform: none;
+  margin-bottom: 40px;
+    order: 7;
+  }
+
+  /* ============================
+     8. BLACK SLIDEUP (carousel clients)
+     ============================ */
+
+  .black-rect-slideup {
+    position: relative;
+    top: 0;
+    height: auto;
+    padding: 40px 20px 20px 20px;
+    align-items: center;
+  justify-content: flex-start;
+  }
+
+  .carousel-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .carousel-track {
+    gap: 12px;
+    animation: scroll-infinite-mobile 40s linear infinite;
+  }
+
+  @keyframes scroll-infinite-mobile {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-190px * 12 - 12px * 12)); }
+  }
+
+  .carousel-item {
+    width: 190px;
+  }
+
+  .carousel-item img {
+    height: 260px;
+  }
+
+  .carousel-brand { font-size: 11px; }
+  .carousel-description { font-size: 9px; }
+
+  .they-trusted-us {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+.image-section-container,
+.image-wrapper,
+.image-section-container * {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+.logo-desktop {
+  display: none !important;
+}
+
+.logo-mobile {
+  display: block !important;
+  width: 85% !important;
+  max-width: 280px;
+  height:auto;
+  margin: 0 auto;
+  margin-bottom: 90px !important;
+}
+  /* ============================
+     9. BLACK SLIDEUP 2 (testimonials)
+     ============================ */
+
+  .black-rect-slideup-2 {
+    position: relative;
+    bottom: 0;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .testimonial-section {
+    padding: 20px 20px !important;
+    min-height: auto;
+  }
+
+  .testimonial-topline {
+    gap: 10px;
+    font-size: 10px;
+    padding-bottom: 10px;
+  margin-bottom: -10px !important; 
+  }
+
+  .topline-sep {
+    flex: 0 1 15px;
+    margin: 0 8px;
+  }
+
+  .testimonial-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 0 !important;
+    position: relative;
+  margin-top: -10px !important; 
+  }
+
+  .testimonial-photo-wrap {
+  overflow: hidden !important;
+    position: relative !important;
+    width: 100%;
+    max-width: 300px;
+    max-height: 200px !important;
+  margin-top: -20px !important; 
+  margin-bottom: -20px !important; 
+    touch-action: pan-y;
+  user-select: none;
+  }
+
+.testimonial-photo-wrap img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+#testimonialPhoto,
+.testimonial-photo {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 20% !important; 
+  display: block !important;
+}
+
+/* On cache les flèches sur mobile */
+.swipe-arrow {
+  display: none !important;
+}
+
+/* Dots container */
+.testimonial-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: -5px;
+  margin-bottom: -30px;
+}
+
+.testimonial-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.testimonial-dot.active {
+  background: rgba(0, 0, 0, 0.85);
+  width: 9px;
+  height: 9px;
+}
+
+  @keyframes swipe-hint-left {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(-4px); }
+  }
+  @keyframes swipe-hint-right {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(4px); }
+  }
+
+  .testimonial-quote {
+    position: static;
+    width: 100%;
+    max-width: 320px;
+    margin: -20px auto -15px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.2;
+  }
+
+  .testimonial-divider {
+    width: 80%;
+    max-width: 280px;
+    margin: -15px auto -15px;
+  }
+
+  .testimonial-footer {
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .testimonial-nav {
+    display: none; /* remplacé par le swipe */
+  }
+
+.testimonial-right-group {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Le logo prend toute la largeur → force les 2 stats à passer sur la ligne suivante */
+.testimonial-author {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  order: 1;
+  margin-bottom: 8px;
+}
+
+.author-photo {
+  width: 110px;
+  height: 55px;
+  object-fit: contain;
+}
+
+/* Les deux stats se placent côte à côte sur la 2e ligne */
+.testimonial-stat {
+  flex: 0 1 45%;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.testimonial-author {
+  display: none;
+}
+
+/* Réduit la taille du texte pour mobile */
+.stat-number {
+  font-size: 20px; /* au lieu de 26px */
+}
+
+.stat-label {
+  font-size: 11px; /* au lieu de 12px */
+}
+
+.stat-sub {
+  font-size: 10px; /* au lieu de 11px */
+}
+
+  /* ============================
+     10. FINAL SECTION
+     ============================ */
+
+  .final-section {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding: 40px 20px;
+    gap: 20px;
+  }
+
+  .ambition-symbol-top {
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text {
+    max-width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text p {
+    font-size: 10px;
+    line-height: 1.2;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text p:first-child,
+  .ambition-text p:nth-child(2) {
+    margin-bottom: 15px;
+  }
+
+  .cta-images {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  a.cta-item {
+  align-items: flex-end;
+    width: 100%;
+  }
+
+  .cta-image {
+    width: 300px;
+    height: 180px;
+    margin-top: 0;
+  }
+
+  .cta-item:nth-child(3) .cta-image img {
+    transform: scaleX(-1);
+  }
+
+.cta-text-wrapper {
+  width: 300px;            /* même largeur que .cta-image */
+  margin-top: -30px;
+  align-items: flex-end;   /* au lieu de "right" qui n'est pas une valeur valide pour align-items */
+  text-align: right;
+  margin-right: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+  .cta-image-text {
+    font-size: 11px;
+  }
+
+  .cta-subtitle {
+    font-size: 9px;
+  }
+
+  .ambition-symbol-bottom {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
+
+  /* ============================
+     11. FOOTER
+     ============================ */
+
+  footer {
+    padding: 15px 20px;
+    margin-bottom: 0;
+  }
+
+  .footer-content p {
+    font-size: 8px;
+  }
+
+}
+
+/* ==========================================================
+   TABLETTE (900px) — gardé séparé, inchangé
+   ========================================================== */
+
+@media (max-width: 900px) {
+  .testimonial-section { padding: 24px 24px; }
+
+  .testimonial-body {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 60px 0;
+  }
+  .testimonial-photo-wrap {
+    position: relative;
+    width: 400px;
+    height: 520px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ddd;
+  }
+  .testimonial-quote {
+    flex: 1;
+    margin: 0;
+    text-align: left;
+    font-size: clamp(18px, 2vw, 28px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+  .testimonial-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  .testimonial-label {
+    position: static;
+    transform: none;
+  }
+}
+
+</style>
 </head>
 
 <body class="locked">
 
-<header>
-<div class="logo"><a href="index.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
-  <nav>
-<a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
-<a href="Services.html">SERVICES</a>
-<a href="case-studies.html">CASE STUDIES</a>
-<a href="index.html#testimonials" onclick="goToTestimonials(event)">TESTIMONIALS</a>
+<!-- Remplace mob par mobile partout -->
+<header class="mobile-header">
+  <a href="index.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
+  <div class="mobile-header-right">
+    <a href="#" onclick="switchLanguage(event)" class="mobile-lang" id="mobileLangSwitchBtn">FR</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+      <span class="toggle-icon">+</span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu-panel" id="mobileMenuPanel">
+  <nav class="mobile-nav">
+    <a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+    <a href="Services.html">SERVICES</a>
+    <a href="case-studies.html">CASE STUDIES</a>
+    <a href="index.html#testimonials" onclick="goToTestimonials(event)">TESTIMONIALS</a>
+    <a href="Contact.html">CONTACT</a>
   </nav>
-<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">FR</a>
-<a href="Contact.html" class="boutique">CONTACT</a>
+</div>
+
+<!-- ===== HEADER DESKTOP (inchangé, masqué en mobile via CSS) ===== -->
+<header>
+  <div class="logo"><a href="index.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+    <a href="index.html#welcomeSection" onclick="goToHome(event)">ABOUT</a>
+    <a href="Services.html">SERVICES</a>
+    <a href="case-studies.html">CASE STUDIES</a>
+    <a href="index.html#testimonials" onclick="goToTestimonials(event)">TESTIMONIALS</a>
+  </nav>
+  <a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">FR</a>
+  <a href="Contact.html" class="boutique">CONTACT</a>
 </header>
 
 <div class="hero">
@@ -1019,21 +1959,41 @@ footer {
     <div class="half"><img src="ARGILE.png" alt="Argile"></div>
     <div class="half"><img src="FEMME-ARGILE.png" alt="Femme Argile"></div>
   </div>
-  <div class="set" id="set5">
-  <div class="half half-left"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Gauche"></div>
-  <div class="half half-right"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Droite"></div>
-</div>
 
-</div>
-
-<div class="welcome-section" id="welcomeSection">
-  <div class="welcome-to" id="welcomeTo">Welcome to</div>
-  <div class="maddama-reveal" id="maddamaReveal">
-    <img src="LOGO-MADDAMA-NOIR.png" alt="Logo Maddama">
-    <div class="maddama-baseline">Where Brand Artisans craft unique brands<br>with strategic precision</div>
+<div class="set" id="set5">
+  <!-- DESKTOP : deux images identiques -->
+  <div class="half half-left desktop-only">
+    <img src="LOGO-MADDAMA.png" alt="Logo Maddama Gauche">
+  </div>
+  <div class="half half-right desktop-only">
+    <img src="LOGO-MADDAMA.png" alt="Logo Maddama Droite">
+  </div>
+  
+  <!-- MOBILE : deux demi-images (split en deux) -->
+  <div class="half half-left mobile-only">
+    <img src="LOGO-MADDAMA-MOBILE.png" alt="Logo Maddama Mobile Gauche">
+  </div>
+  <div class="half half-right mobile-only">
+    <img src="LOGO-MADDAMA-MOBILE.png" alt="Logo Maddama Mobile Droite">
   </div>
 </div>
 </div>
+
+<div class="welcome-section" id="welcomeSection">
+  <div class="welcome-to">WELCOME TO</div>
+  <div class="maddama-reveal">
+    <img src="LOGO-MADDAMA-NOIR.png" alt="Maddama">
+  </div>
+
+  <div class="maddama-baseline desktop-only">
+    Where Brand Artisans craft unique brands <br> with strategic precision.
+  </div>
+
+  <div class="maddama-baseline mobile-only">
+    Where Brand Artisans craft unique <br> brands with strategic precision.
+  </div>
+</div>
+
 
 <section class="brand-section" id="about">
   <div class="image-side">
@@ -1043,12 +2003,13 @@ footer {
       <div class="big-title">Your<br>Brand<br>Matter<span class="strike">s</span></div>
     </div>
   </div>
+
   <div class="text-side">
     <div class="divider"></div>
     <div class="body-text">
-      <p>Every brand starts as raw matter. Just as a diamond sleeps within a raw rock, every brand carries a living matter, rich with potential, waiting to be shaped to reveal its undeniable value.</p>
-      <p>Nothing is set in stone. Everything can be created or evolve, transform, grow richer or wider without ever losing its essence. At first, every cut, every stroke of chisel can feel like damage. But to carve raw material with vision and intention is actually removing what stands in the way of a clear sight of what truly matters.<br> Birthing new ideas, revealing a new light on something timeless, crafting a singularity that lasts or simply keeping the sparks alive: it doesn't happen by chance. <em>It's a craft.</em></p>
-      <p>My role and my responsibility, as a creative strategist is to bring clarity & a strategic vision, and the creative know-how to make it real — all while preserving, year after year, the power of the legacy built.</p>
+      <p>Every brand starts as raw matter. Just as a diamond sleeps within a raw rock, every brand carries a living matter, rich with potential, waiting to be shaped to reveal its undeniable value. </p>
+      <p>Nothing is set in stone. Everything can be created or evolve, transform, grow richer or wider without ever losing its essence. At first, every cut, every stroke of chisel can feel like damage. But to carve raw material with vision and intention is actually removing what stands in the way of a clear sight of what truly matters. <br> Birthing new ideas, revealing a new light on something timeless, crafting a singularity that endures or simply keeping the sparks alive: it doesn't happen by chance. It's a craft.</em></p>
+      <p>My role and my responsibility as a creative strategist is to bring clarity, a strategic vision & the creative know-how to make it real - all while preserving, year after year, the power of brand legacy built.</p>
       <p class="closing">We craft to make it matter and make it last.</p>
     </div>
     <div class="divider bottom"></div>
@@ -1064,7 +2025,7 @@ footer {
       <div class="about-photo-wrapper">
         <div class="about-photo-circle-bg"></div>
         <div class="about-photo-placeholder">
-<img src="PHOTO-PRO.png" alt="Portrait" width="252" height="336">
+          <img src="PHOTO-PRO.png" alt="Portrait" width="252" height="336">
         </div>
         <div class="about-photo-labels">
           <span class="creative">CREATIVE</span>
@@ -1074,7 +2035,7 @@ footer {
       <div class="about-text-block">
         <div class="about-bar"></div>
         <div class="about-main-text">
-          MADDAMA IS <b>A BRAND ARTISAN STUDIO</b>, WITH NEARLY <b>10 YEARS OF EXPERIENCE</b> NAVIGATING THE <b>FULL SPECTRUM OF BRAND CHALLENGES</b>.
+          MADDAMA IS <b>A BRAND STUDIO</b>, WITH NEARLY <b>10 YEARS OF EXPERIENCE</b> NAVIGATING THE <b>FULL SPECTRUM OF BRAND CHALLENGES</b>.
         </div>
         <div class="about-bar"></div>
       </div>
@@ -1085,15 +2046,19 @@ footer {
   </div>
 </section>
 
+<div class="symbol-text-wrapper">
 <div class="symbol-divider">
   <img src="SYMBOLE-NOIR.png" alt="Symbole">
 </div>
 
 <section class="content-section">
-  <p>At Maddama, we see brands as living entities.</p>
-  <p>They're born, shaped, evolving & following their own path, living by their own timeline. Along that journey, they face countless inflection points that demand anticipation, clarity and ingenuity. Our job is to guide them through their natural evolution.</p>
-  <p>(Re)imagining, strengthening, expanding them while preserving what makes them remarkable.</p>
+  <p class="desktop-only intro-text" style="text-align:center;">At Maddama, we see brands as living entities.</p>
+  <p class="mobile-only intro-text" style="text-align:center;">At Maddama, we see <br> brands as living entities.</p>
+
+  <p class="body-main">They're born, shaped. They evolve & follow their own path, live by their own timeline. Along that journey, they face countless inflection points that demand anticipation, clarity and ingenuity. Our job is to guide them through their natural evolution.</p>
+  <p class="closing-text">(Re)imagining, strengthening, expanding them while preserving what makes them remarkable.</p>
 </section>
+
 
 <div class="symbol-divider">
   <img src="SYMBOLE-NOIR.png" alt="Symbole">
@@ -1110,24 +2075,26 @@ footer {
     <img src="SYMBOLE-BLANC.png" alt="Symbole">
     <img src="SYMBOLE-BLANC.png" alt="Symbole">
   </div>
-
+<div class="vertical-divider divider-top"></div>
   <div class="services-grid">
     <div class="service-item"><div class="service-name">BRAND STRATEGY & POSITIONING</div></div>
     <div class="service-item"><div class="service-name">BRAND IDENTITY & VISUAL / SEMANTIC TERRITORIES</div></div>
     <div class="service-item"><div class="service-name">BRAND & PORTFOLIO ARCHITECTURE</div></div>
     <div class="service-item"><div class="service-name">BRAND ACTIVATION INC. SHOPPER MARKETING</div></div>
-    <div class="service-item"><div class="service-name">FORESIGHT & TREND ANALYSIS</div></div>
+    <div class="service-item"><div class="service-name">FORESIGHT & TRENDS</div></div>
     <div class="service-item"><div class="service-name">QUALITATIVE CONSUMERS INSIGHTS</div></div>
-    <div class="service-item"><div class="service-name">INNOVATION & PRODUCT/SERVICE STRATEGY</div></div>
+    <div class="service-item"><div class="service-name">INNOVATION & PRODUCT / SERVICE STRATEGY</div></div>
     <div class="service-item"><div class="service-name">CONCEPT, BIG IDEA & CREATIVE DIRECTION</div></div>
-    <div class="service-item"><div class="service-name">WORKSHOPS CREATION & MODERATION</div></div>
+    <div class="service-item"><div class="service-name">WORKSHOPS CREATION & FACILITATION</div></div>
     <div class="service-item"><div class="service-name">BRAND STRATEGY & MANAGEMENT TRAINING</div></div>
   </div>
 
+<div class="vertical-divider divider-bottom"></div>
+
   <div class="bottom-text">
-    All across national and international territories.<br>
-    From mass-market to ultra-luxury.<br>
-    For independent niche brands to Fortune 500 groups alike.
+    All across national & international territories<br>
+    From mass-market to ultra-luxury<br>
+    For small brands to fortune 500 groups alike
   </div>
 </div>
 
@@ -1147,103 +2114,7 @@ footer {
           <img src="ALCOHOL.jpg" alt="ALCOHOL">
           <div class="carousel-text">
             <div class="carousel-brand">ALCOHOL</div>
-            <div class="carousel-description">SPIRITS & WINE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="AUTO.jpg" alt="TRANSPORTATION">
-          <div class="carousel-text">
-            <div class="carousel-brand">TRANSPORTATION</div>
-            <div class="carousel-description">MOBILITY</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="CHARITY.jpg" alt="CHARITY">
-          <div class="carousel-text">
-            <div class="carousel-brand">CHARITY</div>
-            <div class="carousel-description">IMPACT & PURPOSE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="COSMETIC.jpg" alt="COSMETIC">
-          <div class="carousel-text">
-            <div class="carousel-brand">COSMETIC</div>
-            <div class="carousel-description">BEAUTY & CARE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="F&B.jpg" alt="F&B">
-          <div class="carousel-text">
-            <div class="carousel-brand">F&B</div>
-            <div class="carousel-description">FOOD & BEVERAGE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="FINANCE.jpg" alt="FINANCE">
-          <div class="carousel-text">
-            <div class="carousel-brand">FINANCE</div>
-            <div class="carousel-description">BANKING & WEALTH</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="FMCG.jpg" alt="FMCG">
-          <div class="carousel-text">
-            <div class="carousel-brand">FMCG</div>
-            <div class="carousel-description">CONSUMER GOODS</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="HEALTH.jpg" alt="HEALTH">
-          <div class="carousel-text">
-            <div class="carousel-brand">HEALTH</div>
-            <div class="carousel-description">WELLNESS & CARE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="INDUSTRY.jpg" alt="INDUSTRY">
-          <div class="carousel-text">
-            <div class="carousel-brand">INDUSTRY</div>
-            <div class="carousel-description">B2B & MANUFACTURING</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="LUXURY.jpg" alt="LUXURY">
-          <div class="carousel-text">
-            <div class="carousel-brand">LUXURY</div>
-            <div class="carousel-description">PREMIUM & EXCLUSIVE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="PET.jpg" alt="PET">
-          <div class="carousel-text">
-            <div class="carousel-brand">PET</div>
-            <div class="carousel-description">PETS & COMPANIONS</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="TRAVEL.jpg" alt="TRAVEL">
-          <div class="carousel-text">
-            <div class="carousel-brand">TRAVEL</div>
-            <div class="carousel-description">HOSPITALITY & LEISURE</div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="ALCOHOL.jpg" alt="ALCOHOL">
-          <div class="carousel-text">
-            <div class="carousel-brand">ALCOHOL</div>
-            <div class="carousel-description">SPIRITS & WINE</div>
+            <div class="carousel-description">WINE & SPIRITS</div>
           </div>
         </div>
 
@@ -1266,8 +2137,8 @@ footer {
         <div class="carousel-item">
           <img src="COSMETIC.jpg" alt="COSMETIC">
           <div class="carousel-text">
-            <div class="carousel-brand">COSMETIC</div>
-            <div class="carousel-description">BEAUTY & CARE</div>
+            <div class="carousel-brand">BEAUTY</div>
+            <div class="carousel-description">COSMETICS & CARE</div>
           </div>
         </div>
 
@@ -1275,7 +2146,7 @@ footer {
           <img src="F&B.jpg" alt="F&B">
           <div class="carousel-text">
             <div class="carousel-brand">F&B</div>
-            <div class="carousel-description">FOOD & BEVERAGE</div>
+            <div class="carousel-description">FOOD & BEVERAGES</div>
           </div>
         </div>
 
@@ -1283,7 +2154,7 @@ footer {
           <img src="FINANCE.jpg" alt="FINANCE">
           <div class="carousel-text">
             <div class="carousel-brand">FINANCE</div>
-            <div class="carousel-description">BANKING & WEALTH</div>
+            <div class="carousel-description">BANKING & INSURANCE</div>
           </div>
         </div>
 
@@ -1299,7 +2170,7 @@ footer {
           <img src="HEALTH.jpg" alt="HEALTH">
           <div class="carousel-text">
             <div class="carousel-brand">HEALTH</div>
-            <div class="carousel-description">WELLNESS & CARE</div>
+            <div class="carousel-description">WELLNESS & MEDS</div>
           </div>
         </div>
 
@@ -1307,7 +2178,7 @@ footer {
           <img src="INDUSTRY.jpg" alt="INDUSTRY">
           <div class="carousel-text">
             <div class="carousel-brand">INDUSTRY</div>
-            <div class="carousel-description">B2B & MANUFACTURING</div>
+            <div class="carousel-description">B2B</div>
           </div>
         </div>
 
@@ -1322,8 +2193,8 @@ footer {
         <div class="carousel-item">
           <img src="PET.jpg" alt="PET">
           <div class="carousel-text">
-            <div class="carousel-brand">PET</div>
-            <div class="carousel-description">PETS & COMPANIONS</div>
+            <div class="carousel-brand">PETS</div>
+            <div class="carousel-description">FOOD & CARE</div>
           </div>
         </div>
 
@@ -1331,7 +2202,103 @@ footer {
           <img src="TRAVEL.jpg" alt="TRAVEL">
           <div class="carousel-text">
             <div class="carousel-brand">TRAVEL</div>
-            <div class="carousel-description">HOSPITALITY & LEISURE</div>
+            <div class="carousel-description">LEISURE & TOURISM</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="ALCOHOL.jpg" alt="ALCOHOL">
+          <div class="carousel-text">
+            <div class="carousel-brand">ALCOHOL</div>
+            <div class="carousel-description">WINE & SPIRITS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="AUTO.jpg" alt="AUTO">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRANSPORTATION</div>
+            <div class="carousel-description">MOBILITY</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="CHARITY.jpg" alt="CHARITY">
+          <div class="carousel-text">
+            <div class="carousel-brand">CHARITY</div>
+            <div class="carousel-description">IMPACT & PURPOSE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="COSMETIC.jpg" alt="COSMETIC">
+          <div class="carousel-text">
+            <div class="carousel-brand">BEAUTY</div>
+            <div class="carousel-description">COSMETICS & CARE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="F&B.jpg" alt="F&B">
+          <div class="carousel-text">
+            <div class="carousel-brand">F&B</div>
+            <div class="carousel-description">FOOD & BEVERAGES</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FINANCE.jpg" alt="FINANCE">
+          <div class="carousel-text">
+            <div class="carousel-brand">FINANCE</div>
+            <div class="carousel-description">BANKING & INSURANCE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="FMCG.jpg" alt="FMCG">
+          <div class="carousel-text">
+            <div class="carousel-brand">FMCG</div>
+            <div class="carousel-description">CONSUMER GOODS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="HEALTH.jpg" alt="HEALTH">
+          <div class="carousel-text">
+            <div class="carousel-brand">HEALTH</div>
+            <div class="carousel-description">WELLNESS & MEDS</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="INDUSTRY.jpg" alt="INDUSTRY">
+          <div class="carousel-text">
+            <div class="carousel-brand">INDUSTRY</div>
+            <div class="carousel-description">B2B</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="LUXURY.jpg" alt="LUXURY">
+          <div class="carousel-text">
+            <div class="carousel-brand">LUXURY</div>
+            <div class="carousel-description">PREMIUM & EXCLUSIVE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="PET.jpg" alt="PET">
+          <div class="carousel-text">
+            <div class="carousel-brand">PETS</div>
+            <div class="carousel-description">FOOD & CARE</div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <img src="TRAVEL.jpg" alt="TRAVEL">
+          <div class="carousel-text">
+            <div class="carousel-brand">TRAVEL</div>
+            <div class="carousel-description">LEISURE & TOURISM</div>
           </div>
         </div>
       </div>
@@ -1342,57 +2309,58 @@ footer {
     THEY TRUSTED US
   </div>
 
-<div class="clients-wrapper">
-  <img src="LOGOS-CLIENTS-DESKTOP.jpg" class="logo-desktop" alt="Nos clients">
-</div>
+  <img src="LOGOS-CLIENTS-DESKTOP.jpg" class="logo-desktop" alt="Our clients">
+  <img src="LOGOS-CLIENTS-MOBILE.jpg" class="logo-mobile" alt="Our clients">
 
 <div class="black-rect-slideup-2" id="testimonialsAnchor">
-<section class="testimonial-section">
-<div class="testimonial-topline">
-  <span class="testimonial-index">CLIENTS</span>
-  <span class="topline-sep"></span>
-  <span class="testimonial-label">TESTIMONIALS</span>
-  <span class="topline-sep"></span>
-  <span class="testimonial-year">PARTNERS</span>
-</div>
-
-<div class="testimonial-body">
-  <div class="testimonial-photo-wrap">
-    <img id="testimonialPhoto" src="" alt="" class="testimonial-photo loaded">
-  </div>
-
-  <blockquote class="testimonial-quote" id="testimonialQuote"></blockquote>
-</div>
-
-<div class="testimonial-divider"></div>
-
-<div class="testimonial-footer">
-  <div class="testimonial-nav">
-    <button class="nav-btn" id="prevBtn">&#8592;</button>
-    <button class="nav-btn" id="nextBtn">&#8594;</button>
-  </div>
-
-  <div class="testimonial-right-group">
-<div class="testimonial-author">
-  <div class="author-photo-frame">
-    <img id="authorPhoto" src="LOGO-KEEMIA.jpg" alt="Keemia">
-  </div>
-</div>
-
-    <div class="testimonial-stat">
-      <span class="stat-number" id="stat1Number">CHAIMA</span>
-      <span class="stat-label" id="stat1Label">KHADI</span>
-      <span class="stat-sub" id="stat1Sub">Directrice Conseil</span>
+  <section class="testimonial-section">
+    <div class="testimonial-topline">
+      <span class="testimonial-index">CLIENTS</span>
+      <span class="topline-sep"></span>
+      <span class="testimonial-label">TESTIMONIALS</span>
+      <span class="topline-sep"></span>
+      <span class="testimonial-year">PARTNERS</span>
     </div>
 
-    <div class="testimonial-stat">
-      <span class="stat-number" id="stat2Number">KEEMIA</span>
-      <span class="stat-label" id="stat2Label">Shopper agency</span>
-      <span class="stat-sub" id="stat2Sub">+100 collaborateurs</span>
+    <div class="testimonial-body">
+      <div class="testimonial-photo-wrap">
+        <img id="testimonialPhoto" src="" alt="" class="testimonial-photo loaded">
+        <span class="swipe-arrow left">&#8592;</span>
+        <span class="swipe-arrow right">&#8594;</span>
+      </div>
+
+    <div class="testimonial-dots" id="testimonialDots"></div>
+
+      <blockquote class="testimonial-quote" id="testimonialQuote"></blockquote>
     </div>
-  </div>
-</div>
-</section>
+
+    <div class="testimonial-divider"></div>
+
+    <div class="testimonial-footer">
+      <div class="testimonial-nav">
+        <button class="nav-btn" id="prevBtn">&#8592;</button>
+        <button class="nav-btn" id="nextBtn">&#8594;</button>
+      </div>
+
+      <div class="testimonial-right-group">
+        <div class="testimonial-author">
+          <img id="authorPhoto" src="LOGO-KEEMIA.jpg" alt="Keemia" class="author-photo">
+        </div>
+
+        <div class="testimonial-stat">
+          <span class="stat-number" id="stat1Number">CHAIMA</span>
+          <span class="stat-label" id="stat1Label">KHADI</span>
+          <span class="stat-sub" id="stat1Sub">Client Director</span>
+        </div>
+
+        <div class="testimonial-stat">
+          <span class="stat-number" id="stat2Number">KEEMIA</span>
+          <span class="stat-label" id="stat2Label">Shopper agency</span>
+          <span class="stat-sub" id="stat2Sub">+100 employees</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <div class="final-section">
 
@@ -1401,41 +2369,42 @@ footer {
     </div>
 
     <div class="ambition-text">
-      <p>Unrealized ambition is untapped potential waiting to be explored.</p>
-      <p>You have a bright idea or an idea of a brand but don't know how to concretize it? You want your brand to expand into new markets? Reach new audiences? Launch a new product? Rethink what you stand for? Prepare for what's next?</p>
+      <p>Unrealized ambition is an untapped potential waiting to be explored</p>
+      <p>You have a bright idea but don't know how to concretize it? You want your brand to expand into new markets? Reach new audiences? Launch a new product? (Re)think what you stand for? Prepare for what's next?</p>
       <p>Wherever the ambition stands, there's a craft & a tool to help it take shape.</p>
     </div>
-<div class="cta-images">
-  <a class="cta-item" href="Services.html">
-    <div class="cta-image">
-      <img src="CRAFT.jpg" alt="Let's craft it">
-    </div>
-    <div class="cta-text-wrapper">
-      <div class="cta-image-text">LET'S CRAFT IT →</div>
-      <div class="cta-subtitle">OUR SERVICES</div>
-    </div>
-  </a>
 
-  <a class="cta-item" href="case-studies.html">
-    <div class="cta-image">
-      <img src="CASES.jpg" alt="Show me what you got">
-    </div>
-    <div class="cta-text-wrapper">
-      <div class="cta-image-text">SHOW ME WHAT YOU GOT →</div>
-      <div class="cta-subtitle">CASE STUDIES</div>
-    </div>
-  </a>
+    <div class="cta-images">
+      <a class="cta-item" href="Services.html">
+        <div class="cta-image">
+          <img src="CRAFT.jpg" alt="Let's craft it">
+        </div>
+        <div class="cta-text-wrapper">
+          <div class="cta-image-text">LET'S CRAFT IT →</div>
+          <div class="cta-subtitle">OUR SERVICES</div>
+        </div>
+      </a>
 
-  <a class="cta-item" href="Contact.html">
-    <div class="cta-image cta-image-flipped">
-      <img src="CONTACT.jpg" alt="Let's get in touch">
+      <a class="cta-item" href="case-studies.html">
+        <div class="cta-image">
+          <img src="CASES.jpg" alt="Show me what you got">
+        </div>
+        <div class="cta-text-wrapper">
+          <div class="cta-image-text">SHOW ME WHAT YOU GOT →</div>
+          <div class="cta-subtitle">CASE STUDIES</div>
+        </div>
+      </a>
+
+      <a class="cta-item" href="Contact.html">
+        <div class="cta-image cta-image-flipped">
+          <img src="CONTACT.jpg" alt="Let's get in touch">
+        </div>
+        <div class="cta-text-wrapper">
+          <div class="cta-image-text">GET IN TOUCH →</div>
+          <div class="cta-subtitle">CONTACT</div>
+        </div>
+      </a>
     </div>
-    <div class="cta-text-wrapper">
-      <div class="cta-image-text">GET IN TOUCH →</div>
-      <div class="cta-subtitle">CONTACT</div>
-    </div>
-  </a>
-</div>
 
     <div class="ambition-symbol-bottom">
       <img src="SYMBOLE-BLANC.png" alt="Symbole">
@@ -1449,50 +2418,99 @@ footer {
 </div>
 
 <script>
-const sets = ['set1','set2','set3','set4','set5'];
+// ==========================================================
+// UTILS
+// ==========================================================
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
+// ==========================================================
+// HERO AUTOPLAY (5 sets)
+// ==========================================================
+const sets = ['set1', 'set2', 'set3', 'set4', 'set5'];
 let currentIndex = 0;
 const interval = 1550;
 let autoplayFinished = false;
 let hasSplit = false;
+let autoplayTimer = null;
 
 function showSet(index) {
   sets.forEach((id, i) => {
-    document.getElementById(id).classList.toggle('active', i === index);
+    const element = document.getElementById(id);
+    if (element) {
+      element.classList.toggle('active', i === index);
+    }
   });
 }
 
-function nextSet() {
-  currentIndex++;
-  if (currentIndex >= sets.length) {
-    currentIndex = sets.length - 1;
-    autoplayFinished = true;
-    clearInterval(autoplayTimer);
-    return;
-  }
-  showSet(currentIndex);
+function startAutoplay() {
+  autoplayTimer = setInterval(() => {
+    currentIndex++;
+
+    if (currentIndex >= sets.length) {
+      // AUTOPLAY FINI — on reste sur le dernier set (logo), on attend le scroll
+      currentIndex = sets.length - 1;
+      autoplayFinished = true;
+      clearInterval(autoplayTimer);
+      autoplayTimer = null;
+      // PLUS RIEN ICI : pas de split, pas de reveal, pas de unlockScroll
+      // → tout ça sera déclenché par le scroll/swipe de l'utilisateur
+      return;
+    }
+
+    // AFFICHE LE SET SUIVANT
+    showSet(currentIndex);
+  }, interval);
 }
 
-showSet(currentIndex);
-const autoplayTimer = setInterval(nextSet, interval);
+function revealWelcomeSection() {
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (!welcomeSection) return;
+  welcomeSection.classList.add('bg-white');
 
-window.addEventListener('wheel', handleFirstScroll, { passive:false });
-window.addEventListener('touchmove', handleFirstScroll, { passive:false });
+  const welcomeTo = welcomeSection.querySelector('.welcome-to');
+  const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+  if (welcomeTo) welcomeTo.classList.add('visible');
+  if (maddamaReveal) maddamaReveal.classList.add('revealed');
+}
 
-function handleFirstScroll(e) {
-  if (!autoplayFinished || hasSplit) return;
-  e.preventDefault();
+function unlockScroll() {
+  document.body.classList.remove('locked');
+  document.body.style.overflow = 'auto';
+  document.documentElement.style.overflow = 'auto';
+}
+
+// NOUVELLE FONCTION : déclenche le split + reveal (appelée par le scroll/swipe)
+function triggerSplitAndReveal() {
+  if (hasSplit) return;
+  if (!autoplayFinished) return;
+
   hasSplit = true;
-  document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
+
+  // 🔒 On bloque le scroll pendant toute la durée du split/reveal
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  const set5 = document.getElementById('set5');
+  if (set5) {
+    set5.classList.add('split');
+  }
+
+  revealWelcomeSection();
+
   setTimeout(() => {
-    document.getElementById('maddamaReveal').classList.add('revealed');
-  }, 400);
-  setTimeout(() => {
-    document.body.classList.remove('locked');
+    unlockScroll(); // ne débloque qu'après l'animation complète
   }, 1600);
 }
 
+// INITIALISATION
+showSet(currentIndex);
+startAutoplay();
+
+// ==========================================================
+// ELEMENTS PARTAGÉS
+// ==========================================================
 const blackRectContainer = document.querySelector('.black-rect-container');
 const blackRectContent = document.querySelector('.black-rect-content');
 const imageWrapper = document.querySelector('#imageWrapper');
@@ -1517,7 +2535,27 @@ let carouselScrollDelta = 0;
 let carouselFinished = false;
 
 // ==========================================================
-// SKIP INTRO SI ARRIVÉE AVEC UNE ANCRE (ex: index.html#about-hero)
+// RESET STYLES INLINE SUR MOBILE
+// ==========================================================
+function resetInlineStylesForMobile() {
+  if (!isMobile()) return;
+  [blackRectContainer, blackRectContent, imageWrapper, blackRectSlideup, blackRectSlideup2].forEach(el => {
+    if (el) {
+      el.style.left = '';
+      el.style.top = '';
+      el.style.bottom = '';
+      el.style.opacity = '';
+    }
+  });
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+  document.body.classList.remove('locked');
+}
+
+window.addEventListener('resize', resetInlineStylesForMobile);
+
+// ==========================================================
+// SKIP INTRO SI ARRIVEE AVEC UNE ANCRE
 // ==========================================================
 if (window.location.hash === '#about-hero') {
   clearInterval(autoplayTimer);
@@ -1536,20 +2574,30 @@ if (window.location.hash === '#about-hero') {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
-  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
-  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  }
 
   window.addEventListener('load', () => {
     setTimeout(() => {
@@ -1560,9 +2608,6 @@ if (window.location.hash === '#about-hero') {
   });
 }
 
-// ==========================================================
-// SKIP INTRO SI ARRIVÉE AVEC #welcomeSection (juste après l'animation des 5 sets)
-// ==========================================================
 if (window.location.hash === '#welcomeSection') {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -1580,9 +2625,15 @@ if (window.location.hash === '#welcomeSection') {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
   body.style.overflow = 'auto';
   html.style.overflow = 'auto';
@@ -1594,9 +2645,6 @@ if (window.location.hash === '#welcomeSection') {
   });
 }
 
-// ==========================================================
-// SKIP INTRO SI ARRIVÉE AVEC #testimonials
-// ==========================================================
 if (window.location.hash === '#testimonials') {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -1614,20 +2662,30 @@ if (window.location.hash === '#testimonials') {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
-  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
-  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  }
 
   window.addEventListener('load', () => {
     setTimeout(() => {
@@ -1638,6 +2696,45 @@ if (window.location.hash === '#testimonials') {
   });
 }
 
+// ==========================================================
+// DECLENCHEUR DU SPLIT AU SCROLL / SWIPE (DESKTOP + MOBILE)
+// ==========================================================
+// Desktop : molette
+window.addEventListener('wheel', (e) => {
+  if (hasSplit) return;
+  if (!autoplayFinished) return;
+  triggerSplitAndReveal();
+}, { passive: true });
+
+// Mobile : swipe vers le haut
+let touchStartY = null;
+
+window.addEventListener('touchstart', (e) => {
+  if (hasSplit) return;
+  if (!autoplayFinished) return;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+  if (hasSplit) return; // une fois splité, on laisse le scroll normal reprendre
+  if (!autoplayFinished) return;
+
+  e.preventDefault(); // empêche le scroll physique tant qu'on n'a pas splité
+
+  if (touchStartY === null) return;
+
+  const currentY = e.touches[0].clientY;
+  const delta = touchStartY - currentY;
+
+  if (delta > 15) {
+    triggerSplitAndReveal();
+    touchStartY = null;
+  }
+}, { passive: false }); // ⚠️ obligatoire pour que preventDefault() fonctionne
+
+// ==========================================================
+// SCROLL HIJACKING DESKTOP (SEULEMENT SI !MOBILE)
+// ==========================================================
 function isContentFullyVisible() {
   if (!symbolElement) return false;
   const symbolRect = symbolElement.getBoundingClientRect();
@@ -1645,153 +2742,143 @@ function isContentFullyVisible() {
   return bottomOfContent <= window.innerHeight;
 }
 
-window.addEventListener('wheel', (e) => {
-  if (!hasSplit) return;
+if (!isMobile()) {
+  window.addEventListener('wheel', (e) => {
+    if (!hasSplit) return;
 
-  if (!contentFullyVisible) {
-    if (isContentFullyVisible()) {
-      contentFullyVisible = true;
-    }
-    return;
-  }
-
-  if (contentFullyVisible && !scrollLocked && !animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
-
-    if (e.deltaY < 0 && window.scrollY > 10) {
+    if (!contentFullyVisible) {
+      if (isContentFullyVisible()) {
+        contentFullyVisible = true;
+      }
       return;
     }
 
-    e.preventDefault();
-
-    scrollLocked = true;
-    body.style.overflow = 'hidden';
-    html.style.overflow = 'hidden';
-    animationStarted = true;
-    return;
-  }
-
-  // ÉTAPE 1 : black-rect
-  if (animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
-    e.preventDefault();
-    animationScrollDelta += e.deltaY;
-    animationScrollDelta = Math.max(0, Math.min(animationScrollDelta, 2000));
-    const progress = animationScrollDelta / 2000;
-    const leftValue = 100 - (progress * 100);
-    blackRectContainer.style.left = leftValue + '%';
-    blackRectContent.style.left = leftValue + '%';
-
-    if (progress >= 1) {
-      animationStarted = false;
-      imageAnimationStarted = true;
-      imageScrollDelta = 0;
-    }
-
-    if (progress <= 0 && e.deltaY < 0) {
-      scrollLocked = false;
-      animationStarted = false;
-      body.style.overflow = 'auto';
-      html.style.overflow = 'auto';
-    }
-    return;
-  }
-
-  // ÉTAPE 2 : image
-  if (imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
-    e.preventDefault();
-    imageScrollDelta += e.deltaY;
-    imageScrollDelta = Math.max(0, Math.min(imageScrollDelta, 2000));
-    const progress = imageScrollDelta / 2000;
-    imageWrapper.style.opacity = progress;
-    blackRectSlideup.style.top = (100 - (progress * 100)) + 'vh';
-
-    if (progress >= 1) {
-      imageAnimationStarted = false;
-      carouselAnimationStarted = true;
-      carouselScrollDelta = 0;
-    }
-
-    if (progress <= 0 && e.deltaY < 0) {
-      imageAnimationStarted = false;
-      animationStarted = true;
-      animationScrollDelta = 2000;
-    }
-    return;
-  }
-
-  // ÉTAPE 3 : apparition de slideup-2 (testimonials + ambition/CTA)
-  if (carouselAnimationStarted) {
-    e.preventDefault();
-    carouselScrollDelta += e.deltaY;
-    carouselScrollDelta = Math.max(0, Math.min(carouselScrollDelta, 2000));
-    const progress = carouselScrollDelta / 2000;
-    blackRectSlideup2.style.bottom = (-200 + (progress * 200)) + 'vh';
-
-    if (progress > 0) {
-      ambitionSymbolTop.classList.add('visible');
-      ambitionSymbolBottom.classList.add('visible');
-    } else {
-      ambitionSymbolTop.classList.remove('visible');
-      ambitionSymbolBottom.classList.remove('visible');
-    }
-
-    if (progress >= 1) {
-      carouselAnimationStarted = false;
-      carouselFinished = true;
-      scrollLocked = false;
-      blackRectSlideup2.scrollTop = 0;
+    if (contentFullyVisible && !scrollLocked && !animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+      if (e.deltaY < 0 && window.scrollY > 10) {
+        return;
+      }
+      e.preventDefault();
+      scrollLocked = true;
       body.style.overflow = 'hidden';
       html.style.overflow = 'hidden';
+      animationStarted = true;
+      return;
     }
 
-    if (progress <= 0 && e.deltaY < 0) {
-      carouselAnimationStarted = false;
-      imageAnimationStarted = true;
-      imageScrollDelta = 2000;
-      carouselFinished = false;
-    }
-    return;
-  }
-
-  // ÉTAPE 4 : scroll interne natif dans slideup-2 (testimonials + ambition/CTA)
-  if (carouselFinished) {
-    const atTop = blackRectSlideup2.scrollTop <= 0;
-    const atBottom = blackRectSlideup2.scrollTop + blackRectSlideup2.clientHeight >= blackRectSlideup2.scrollHeight - 2;
-
-    if (e.deltaY < 0 && atTop) {
+    // ETAPE 1 : black-rect
+    if (animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
       e.preventDefault();
-      carouselFinished = false;
-      carouselAnimationStarted = true;
-      carouselScrollDelta = 1990;
+      animationScrollDelta += e.deltaY;
+      animationScrollDelta = Math.max(0, Math.min(animationScrollDelta, 2000));
+      const progress = animationScrollDelta / 2000;
+      const leftValue = 100 - (progress * 100);
+      blackRectContainer.style.left = leftValue + '%';
+      blackRectContent.style.left = leftValue + '%';
+
+      if (progress >= 1) {
+        animationStarted = false;
+        imageAnimationStarted = true;
+        imageScrollDelta = 0;
+      }
+
+      if (progress <= 0 && e.deltaY < 0) {
+        scrollLocked = false;
+        animationStarted = false;
+        body.style.overflow = 'auto';
+        html.style.overflow = 'auto';
+      }
       return;
     }
 
-    if (e.deltaY > 0 && atBottom) {
-      body.style.overflow = 'auto';
-      html.style.overflow = 'auto';
+    // ETAPE 2 : image
+    if (imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+      e.preventDefault();
+      imageScrollDelta += e.deltaY;
+      imageScrollDelta = Math.max(0, Math.min(imageScrollDelta, 2000));
+      const progress = imageScrollDelta / 2000;
+      imageWrapper.style.opacity = progress;
+      blackRectSlideup.style.top = (100 - (progress * 100)) + 'vh';
+
+      if (progress >= 1) {
+        imageAnimationStarted = false;
+        carouselAnimationStarted = true;
+        carouselScrollDelta = 0;
+      }
+
+      if (progress <= 0 && e.deltaY < 0) {
+        imageAnimationStarted = false;
+        animationStarted = true;
+        animationScrollDelta = 2000;
+      }
       return;
     }
-    // sinon on laisse le scroll natif agir DANS blackRectSlideup2
-    return;
-  }
-}, { passive: false });
 
-if (!window.location.hash) {
-  if (blackRectContainer) {
-    blackRectContainer.style.left = '100%';
-  }
-  if (blackRectContent) {
-    blackRectContent.style.left = '100%';
-  }
-  if (blackRectSlideup) {
-    blackRectSlideup.style.top = '100vh';
-  }
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '-200vh';
+    // ETAPE 3 : slideup-2 (testimonials + ambition/CTA)
+    if (carouselAnimationStarted) {
+      e.preventDefault();
+      carouselScrollDelta += e.deltaY;
+      carouselScrollDelta = Math.max(0, Math.min(carouselScrollDelta, 2000));
+      const progress = carouselScrollDelta / 2000;
+      blackRectSlideup2.style.bottom = (-200 + (progress * 200)) + 'vh';
+
+      if (progress > 0) {
+        ambitionSymbolTop.classList.add('visible');
+        ambitionSymbolBottom.classList.add('visible');
+      } else {
+        ambitionSymbolTop.classList.remove('visible');
+        ambitionSymbolBottom.classList.remove('visible');
+      }
+
+      if (progress >= 1) {
+        carouselAnimationStarted = false;
+        carouselFinished = true;
+        scrollLocked = false;
+        blackRectSlideup2.scrollTop = 0;
+        body.style.overflow = 'hidden';
+        html.style.overflow = 'hidden';
+      }
+
+      if (progress <= 0 && e.deltaY < 0) {
+        carouselAnimationStarted = false;
+        imageAnimationStarted = true;
+        imageScrollDelta = 2000;
+        carouselFinished = false;
+      }
+      return;
+    }
+
+    // ETAPE 4 : scroll interne dans slideup-2
+    if (carouselFinished) {
+      const atTop = blackRectSlideup2.scrollTop <= 0;
+      const atBottom = blackRectSlideup2.scrollTop + blackRectSlideup2.clientHeight >= blackRectSlideup2.scrollHeight - 2;
+
+      if (e.deltaY < 0 && atTop) {
+        e.preventDefault();
+        carouselFinished = false;
+        carouselAnimationStarted = true;
+        carouselScrollDelta = 1990;
+        return;
+      }
+
+      if (e.deltaY > 0 && atBottom) {
+        body.style.overflow = 'auto';
+        html.style.overflow = 'auto';
+        return;
+      }
+      return;
+    }
+  }, { passive: false });
+
+  if (!window.location.hash) {
+    if (blackRectContainer) blackRectContainer.style.left = '100%';
+    if (blackRectContent) blackRectContent.style.left = '100%';
+    if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+    if (blackRectSlideup2) blackRectSlideup2.style.bottom = '-200vh';
   }
 }
 
 // ==========================================================
-// NAVIGATION HEADER : goToHome + reset vers l'état welcome
+// NAVIGATION HEADER
 // ==========================================================
 function resetToWelcomeState() {
   clearInterval(autoplayTimer);
@@ -1810,20 +2897,28 @@ function resetToWelcomeState() {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
   body.style.overflow = 'auto';
   html.style.overflow = 'auto';
 
-  if (blackRectContainer) blackRectContainer.style.left = '100%';
-  if (blackRectContent) blackRectContent.style.left = '100%';
-  if (imageWrapper) imageWrapper.style.opacity = 0;
-  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '-200vh';
-    blackRectSlideup2.scrollTop = 0;
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '100%';
+    if (blackRectContent) blackRectContent.style.left = '100%';
+    if (imageWrapper) imageWrapper.style.opacity = 0;
+    if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+    if (blackRectSlideup2) {
+      blackRectSlideup2.style.bottom = '-200vh';
+      blackRectSlideup2.scrollTop = 0;
+    }
   }
   if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
   if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
@@ -1844,9 +2939,67 @@ function goToHome(e) {
   }
 }
 
-// ==========================================================
-// NAVIGATION HEADER : goToTestimonials + reset vers l'état testimonials
-// ==========================================================
+function resetToAboutHeroState() {
+  clearInterval(autoplayTimer);
+  autoplayFinished = true;
+  hasSplit = true;
+  scrollLocked = false;
+  animationStarted = false;
+  contentFullyVisible = true;
+  imageAnimationStarted = false;
+  carouselAnimationStarted = false;
+  carouselFinished = true;
+
+  animationScrollDelta = 2000;
+  imageScrollDelta = 2000;
+  carouselScrollDelta = 2000;
+
+  document.body.classList.remove('locked');
+  document.getElementById('set5').classList.add('split');
+
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
+
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) {
+      blackRectSlideup2.style.bottom = '0vh';
+      blackRectSlideup2.scrollTop = 0;
+    }
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    body.style.overflow = 'auto';
+    html.style.overflow = 'auto';
+  }
+  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+}
+
+function goToAboutHero(e) {
+  e.preventDefault();
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+  if (isIndexPage) {
+    resetToAboutHeroState();
+    setTimeout(() => {
+      const target = document.getElementById('about-hero');
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 50);
+  } else {
+    window.location.href = 'index.html#about-hero';
+  }
+}
+
 function resetToTestimonialsState() {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -1864,23 +3017,33 @@ function resetToTestimonialsState() {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '0vh';
-    blackRectSlideup2.scrollTop = 0;
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
+
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) {
+      blackRectSlideup2.style.bottom = '0vh';
+      blackRectSlideup2.scrollTop = 0;
+    }
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    body.style.overflow = 'auto';
+    html.style.overflow = 'auto';
   }
   if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
   if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
-
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
 }
 
 function goToTestimonials(e) {
@@ -1898,14 +3061,29 @@ function goToTestimonials(e) {
   }
 }
 
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+
+// ==========================================================
+// TESTIMONIALS CAROUSEL
+// ==========================================================
 const testimonials = [
   {
-    quote: `"I have had the privilege of working with Alice as a strategic planner, and I would like to highlight the exceptional quality of her work. Her strategic approach is always spot on and thorough. Alice has a unique ability to analyse situations with finesse and to develop ideas that make a real difference.
-What particularly impressed me was also the meticulous and professional presentation of her ideas. Alice has a talent for making complex concepts accessible, which greatly facilitates understanding and buy-in.
-
-Furthermore, Alice stands out for her attentive listening and her willingness to take all feedback on board. She knows how to create a collaborative environment. Her flexibility and open-mindedness are major assets.
-
-Finally, I would like to highlight Alice's constant availability. She demonstrates exceptional commitment to her projects and clients, responding promptly to requests and providing ongoing support. This availability demonstrates her dedication to the success of the assignments entrusted to her."`,
+    quote: `"I have had the privilege of working with Alice as a strategic planner, and I would like to highlight the exceptional quality of her work. Her strategic approach is always spot on and thorough. Alice has a unique ability to analyse situations with finesse and to develop ideas that make a real difference. What particularly impressed me was also the meticulous and professional presentation of her ideas. Alice has a talent for making complex concepts accessible, which greatly facilitates understanding and buy-in. Furthermore, Alice stands out for her attentive listening and her willingness to take all feedback on board. She knows how to create a collaborative environment. Her flexibility and open-mindedness are major assets. Finally, I would like to highlight Alice's constant availability. She demonstrates exceptional commitment to her projects and clients, responding promptly to requests and providing ongoing support. This availability demonstrates her dedication to the success of the assignments entrusted to her."`,
     photo: "CHAIMA-KADHI-KEEMIA.jpg",
     logo: "LOGO-KEEMIA.jpg",
     stat1Number: "CHAIMA",
@@ -1913,29 +3091,21 @@ Finally, I would like to highlight Alice's constant availability. She demonstrat
     stat1Sub: "Account Director",
     stat2Number: "KEEMIA",
     stat2Label: "Shopper agency",
-    stat2Sub: "+100 team members"
+    stat2Sub: "Brand activation experts"
   },
   {
-    quote: `"I am delighted to write this letter to recommend Alice Bronchain, an exceptional strategic planner whose skills and professionalism consistently exceed expectations.
-
-Alice stands out for her rigour and her commitment to excellence. Her ability not only to deliver what is asked of her, but also to go above and beyond expectations, is a rare and valuable quality. She possesses a remarkable talent for adapting to a variety of subjects, enabling her to propose innovative and effective solutions to any communication challenge.
-
-Her insights are always relevant and her analytical skills are, without a doubt, amongst the most remarkable I have ever observed. Alice has a unique ability to quickly grasp strategic issues and transform them into concrete, actionable strategies.
-I am convinced that Alice will be an invaluable asset to any organisation seeking to strengthen its strategic communication. Her vision, creativity and rigorous approach are qualities that will benefit any team.
-
-I highly recommend Alice Bronchain for any role requiring expertise, commitment and innovation in the field of strategic communication."`,
+    quote: `"I am delighted to write this letter to recommend Alice Bronchain, an exceptional strategic planner whose skills and professionalism consistently exceed expectations. Alice stands out for her rigour and her commitment to excellence. Her ability not only to deliver what is asked of her, but also to go above and beyond expectations, is a rare and valuable quality. She possesses a remarkable talent for adapting to a variety of subjects, enabling her to propose innovative and effective solutions to any communication challenge. Her insights are always relevant and her analytical skills are, without a doubt, amongst the most remarkable I have ever observed. Alice has a unique ability to quickly grasp strategic issues and transform them into concrete, actionable strategies. I am convinced that Alice will be an invaluable asset to any organisation seeking to strengthen its strategic communication. Her vision, creativity and rigorous approach are qualities that will benefit any team. I highly recommend Alice Bronchain for any role requiring expertise, commitment and innovation in the field of strategic communication."`,
     photo: "JULIEN-BOUISSY-JEFF.jpg",
     logo: "LOGO-JEFF.jpg",
     stat1Number: "JULIEN",
     stat1Label: "BOUISSY",
-    stat1Sub: "Co-founder",
-    stat2Number: "JEFF AGENCY",
+    stat1Sub: "Co-CEO",
+    stat2Number: "JEFF",
     stat2Label: "Advertising agency",
     stat2Sub: "Awards winners"
   },
   {
-    quote: `"We were lucky to have Alice part of the team for a year. I truly appreciated her mindset and contribution to accounts and pitch. She's a good brain with solid culture and references and a great team mate. She's curious and knows how to organize her thoughts in a good pace. She developed a solid understanding of brand challenges and ability to articulate rich creative springboard. 
-A creative planner for sure."`,
+    quote: `"We were lucky to have Alice part of the team for a year. I truly appreciated her mindset and contribution to accounts and pitch. She's a good brain with solid culture and references and a great team mate. She's curious and knows how to organize her thoughts in a good pace. She developed a solid understanding of brand challenges and ability to articulate rich creative springboard. A creative planner for sure."`,
     photo: "CHRYSTELE-VELAYOUDON-VMLYR.jpg",
     logo: "LOGO-VMLYR.jpg",
     stat1Number: "CHRYSTÈLE",
@@ -1946,31 +3116,25 @@ A creative planner for sure."`,
     stat2Sub: "Worldwide renowned"
   },
   {
-
-    quote: `"Alice has been an invaluable help every time we've called on her services. She has managed to shed new light on topics we thought we knew inside out, enabling us to score extra points in all the advertising competitions she was involved in. 
-A tremendous asset!"`,
+    quote: `"Alice has been an invaluable help every time we've called on her services. She has managed to shed new light on topics we thought we knew inside out, enabling us to score extra points in all the advertising competitions she was involved in. A tremendous asset!"`,
     photo: "FLORIAN-CAUQUIL-JEFF.jpg",
     logo: "LOGO-JEFF.jpg",
     stat1Number: "FLORIAN",
     stat1Label: "CAUQUIL",
-    stat1Sub: "Co-founder",
-    stat2Number: "JEFF AGENCY",
+    stat1Sub: "Co-CEO",
+    stat2Number: "JEFF",
     stat2Label: "Advertising agency",
     stat2Sub: "Awards winners"
   },
   {
-    quote: `"I met Alice more than five years ago, and we had the longest job interview ever. She was passionate and captivating, and our professional journey started from a gut feeling and a strong sense of intellectual connection and mutual stimulation.
-We worked together first at June Marketing and then at Labbrand. She is a beautiful human being and a great strategic planner and designer.
-Alice has a unique set of skills: she can think about a brand from both a linguistic and strategic perspective and a visual one, and she always knows what she is talking about. She brings a contagious level of energy and is incredibly inspiring when it comes to innovation trends, as well as coming up with dozens of product concepts.
-She dares to challenge the brief and the ideas. Not for the sake of it, but to make sure we deliver the best thinking, the best idea, the best campaign, or the best new product, one that will sell like hot cakes!
-With Alice by my side, I always have a blast, and I know we will find the best path forward for brands of all kinds. I am sure we will work together again in the future. She can create magic with any team and any brand."`,
+    quote: `"I met Alice more than five years ago, and we had the longest job interview ever. She was passionate and captivating, and our professional journey started from a gut feeling and a strong sense of intellectual connection and mutual stimulation. We worked together first at June Marketing and then at Labbrand. She is a beautiful human being and a great strategic planner and designer. Alice has a unique set of skills: she can think about a brand from both a linguistic and strategic perspective and a visual one, and she always knows what she is talking about. She brings a contagious level of energy and is incredibly inspiring when it comes to innovation trends, as well as coming up with dozens of product concepts. She dares to challenge the brief and the ideas. Not for the sake of it, but to make sure we deliver the best thinking, the best idea, the best campaign, or the best new product, one that will sell like hot cakes! With Alice by my side, I always have a blast, and I know we will find the best path forward for brands of all kinds. I am sure we will work together again in the future. She can create magic with any team and any brand."`,
     photo: "AURELIE-PLESSIER-LABBRAND.jpg",
     logo: "LOGO-LABBRAND.jpg",
     stat1Number: "AURÉLIE",
     stat1Label: "PLESSIER",
     stat1Sub: "CEO",
     stat2Number: "LABBRAND",
-    stat2Label: "Naming agency",
+    stat2Label: "Branding agency",
     stat2Sub: "Worldwide renowned"
   }
 ];
@@ -1986,9 +3150,22 @@ const stat1SubEl = document.getElementById('stat1Sub');
 const stat2NumberEl = document.getElementById('stat2Number');
 const stat2LabelEl = document.getElementById('stat2Label');
 const stat2SubEl = document.getElementById('stat2Sub');
+const testimonialDotsEl = document.getElementById('testimonialDots');
 
 function adjustQuoteFontSize(el) {
   const length = el.textContent.length;
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    if (length < 300) el.style.fontSize = "15px";
+    else if (length < 600) el.style.fontSize = "14px";
+    else if (length < 900) el.style.fontSize = "13px";
+    else if (length < 1300) el.style.fontSize = "12px";
+    else el.style.fontSize = "9px";
+    el.style.fontWeight = "300";
+    el.style.lineHeight = "1.3";
+    return;
+  }
 
   if (length < 300) {
     el.style.fontSize = "24px";
@@ -2001,6 +3178,28 @@ function adjustQuoteFontSize(el) {
   } else {
     el.style.fontSize = "15px";
   }
+}
+
+function renderDots() {
+  if (!testimonialDotsEl) return;
+  testimonialDotsEl.innerHTML = '';
+  testimonials.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'testimonial-dot' + (i === currentTestimonialIndex ? ' active' : '');
+    dot.setAttribute('aria-label', `Testimonial ${i + 1}`);
+    dot.addEventListener('click', () => {
+      if (i !== currentTestimonialIndex) changeTestimonial(i);
+    });
+    testimonialDotsEl.appendChild(dot);
+  });
+}
+
+function updateActiveDot() {
+  if (!testimonialDotsEl) return;
+  const dots = testimonialDotsEl.querySelectorAll('.testimonial-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('active', i === currentTestimonialIndex);
+  });
 }
 
 function renderTestimonial(index) {
@@ -2019,6 +3218,8 @@ function renderTestimonial(index) {
   stat2NumberEl.textContent = t.stat2Number;
   stat2LabelEl.textContent = t.stat2Label;
   stat2SubEl.textContent = t.stat2Sub;
+
+  updateActiveDot();
 }
 
 function changeTestimonial(newIndex) {
@@ -2050,25 +3251,79 @@ if (prevBtn) {
     changeTestimonial(newIndex);
   });
 }
+
+// ==========================================================
+// SWIPE TACTILE MOBILE — TESTIMONIALS
+// ==========================================================
+(function setupSwipe() {
+  const wrap = document.querySelector('.testimonial-photo-wrap');
+  if (!wrap) return;
+
+  let startX = 0, startY = 0, startT = 0;
+  const THRESHOLD = 50;   // distance mini horizontale (px)
+  const RESTRAINT = 60;   // tolérance verticale (px)
+  const TIME_MAX = 600;   // durée max du geste (ms)
+
+  wrap.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startT = Date.now();
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', (e) => {
+    if (e.cancelable) e.preventDefault();
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', (e) => {
+    const t = e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    const dt = Date.now() - startT;
+
+    if (dt > TIME_MAX) return;
+    if (Math.abs(dx) < THRESHOLD) return;
+    if (Math.abs(dy) > RESTRAINT) return;
+
+    if (dx < 0) {
+      const newIndex = (currentTestimonialIndex + 1) % testimonials.length;
+      changeTestimonial(newIndex);
+    } else {
+      const newIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+      changeTestimonial(newIndex);
+    }
+  }, { passive: true });
+})();
+
+renderDots();
 renderTestimonial(currentTestimonialIndex);
 
-function switchLanguage(e) {
-  e.preventDefault();
-  const currentPath = window.location.pathname;
-  const currentHash = window.location.hash;
-  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+// ==========================================================
+// MENUS MOBILES
+// ==========================================================
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
 
-  let targetFile;
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
 
-  if (fileName.includes('-fr.html')) {
-    // On est en FR, on repasse en EN
-    targetFile = fileName.replace('-fr.html', '.html');
-  } else {
-    // On est en EN, on passe en FR
-    targetFile = fileName.replace('.html', '-fr.html');
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
   }
-
-  window.location.href = targetFile + currentHash;
-}
+});
 
 </script>
+</body>
+</html>

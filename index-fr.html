@@ -1,88 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>
-function goToHome(e) {
-  e.preventDefault();
-  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
-
-  if (isIndexPage) {
-    resetToWelcomeState();
-    const target = document.getElementById('welcomeSection');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  } else {
-    window.location.href = 'index.html#welcomeSection';
-  }
-}
-
-function resetToWelcomeState() {
-  clearInterval(autoplayTimer);
-  autoplayFinished = true;
-  hasSplit = true;
-  scrollLocked = false;
-  animationStarted = false;
-  contentFullyVisible = false;
-  imageAnimationStarted = false;
-  carouselAnimationStarted = false;
-  carouselFinished = false;
-
-  document.body.classList.remove('locked');
-  document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
-
-  body.style.overflow = 'auto';
-  html.style.overflow = 'auto';
-
-  // On remet les éléments d'animation dans leur état "avant carousel"
-  if (blackRectContainer) blackRectContainer.style.left = '100%';
-  if (blackRectContent) blackRectContent.style.left = '100%';
-  if (imageWrapper) imageWrapper.style.opacity = 0;
-  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
-  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '-100vh';
-  if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
-  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  const toggle = document.getElementById('mobileMenuToggle');
-  const panel = document.getElementById('mobileMenuPanel');
-  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
-
-  if (toggle && panel) {
-    toggle.addEventListener('click', function () {
-      const isOpen = panel.classList.toggle('active');
-      toggle.classList.toggle('open', isOpen);
-      icon.textContent = isOpen ? '×' : '+';
-    });
-
-    // Fermer le menu si on clique sur un lien
-    panel.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        panel.classList.remove('active');
-        toggle.classList.remove('open');
-        icon.textContent = '+';
-      });
-    });
-  }
-});
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MADDAMA</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
 
-  body { font-family: 'Helvetica Neue', Arial, sans-serif; overflow-x:hidden; }
+/* ========================================================== 
+   HEADER DESKTOP
+   ========================================================== */
 
-  body.locked {
-    overflow: hidden;
-    height: 100vh;
-  }
+* { 
+  margin:0; 
+  padding:0; 
+  box-sizing:border-box; 
+}
 
+body { 
+  font-family: 'Helvetica Neue', Arial, sans-serif; 
+  overflow-x:hidden; 
+  background: #ffffff;
+  color: #111111;
+}
+
+body.locked {
+  overflow: hidden;
+  height: 100vh;
+}
+
+@font-face {
+  font-family: 'Aptos';
+  src: local('Aptos');
+}
+
+/* ========================================================== 
+   TOGGLE DESKTOP / MOBILE (base)
+   ========================================================== */
+.desktop-only { display: flex; }
+.mobile-only  { display: none; }
+
+.maddama-baseline.desktop-only { display: block; }
+.maddama-baseline.mobile-only  { display: none; }
+
+/* ========================================================== 
+   HEADER DESKTOP
+   ========================================================== */
 header { 
   position: fixed; 
   top:0; 
@@ -159,65 +121,209 @@ header .lang-switch {
   }
 }
 
-header nav a:nth-child(1) { animation-delay: 9s; }
-header nav a:nth-child(2) { animation-delay: 9.24s; }
-header nav a:nth-child(3) { animation-delay: 9.48s; }
-header nav a:nth-child(4) { animation-delay: 9.72s; }
-header .lang-switch { animation-delay: 9.96s; }
+header nav a:nth-child(1) { animation-delay: 8.80s; }
+header nav a:nth-child(2) { animation-delay: 9.04s; }
+header nav a:nth-child(3) { animation-delay: 9.28s; }
+header nav a:nth-child(4) { animation-delay: 9.52s; }
+header .lang-switch { animation-delay: 9.76s; }
+header .boutique { animation-delay: 10s; }
 
-header .boutique { animation-delay: 10.20s; }
+/* ==========================================================
+   HERO - SETS
+   ========================================================== */
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
 
-  .hero { position: relative; width: 100vw; height: 100vh; overflow: hidden; background:#000; }
-  .set { position: absolute; top:0; left:0; width:100%; height:100%; display:flex; opacity:0; transition: opacity 0.6s ease; pointer-events:none; z-index:2; }
-  .set.active { opacity:1; pointer-events:auto; }
-  .set .half { width:50%; height:100%; overflow:hidden; position:relative; }
-  .set .half img { width:100%; height:100%; object-fit:cover; display:block; }
-  
-  #set5 .half { width:50%; height:100%; overflow:hidden; position:relative; transition: transform 1s cubic-bezier(.77,0,.18,1); }
-  #set5 .half img { position:absolute; top:0; width:200%; height:100%; object-fit:cover; }
-  #set5 .half-left img { left:0; }
-  #set5 .half-right img { right:0; }
-  #set5.split .half-left { transform: translateX(-100%); }
-  #set5.split .half-right { transform: translateX(100%); }
+.set {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  z-index: 2;
+}
 
-  .scroll-indicator { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:#fff; font-size:12px; letter-spacing:2px; z-index:10; transition:opacity 0.5s ease; opacity:0; }
+.set.active {
+  opacity: 1;
+  z-index: 10;
+}
 
-  .welcome-section { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; transition: background 0.8s ease; z-index:5; pointer-events:none; }
-  .welcome-section.bg-white { background:#fff; }
-  .welcome-to { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; font-style: normal; font-weight: 400; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color:#000; opacity:0; transform: translateY(-10px); transition: opacity 0.8s ease, transform 0.8s ease; margin-bottom: 15px; }
-  .welcome-to.visible { opacity:1; transform: translateY(0); }
-  .maddama-reveal { display:flex; flex-direction:column; align-items:center; opacity:0; transform: translateY(60px); transition: opacity 0.9s ease, transform 0.9s ease; }
-  .maddama-reveal.revealed { opacity:1; transform: translateY(0); }
-  .maddama-reveal img { width: 400px; max-width: 60vw; height:auto; display:block; }
-  .maddama-baseline { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; margin-top: 15px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color:#000; text-align:center; max-width: 600px; line-height:1.3; }
-  
-  .brand-section { width: 100%; display:flex; background:#000; padding: 70px; gap: 60px; align-items: center; }
-  .brand-section .image-side { position: relative; width: 45%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
-  .brand-section .image-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .brand-section .image-title { position: absolute; bottom: 40px; left: 40px; right: 40px; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; text-align: right; }
-  .brand-section .image-title .make { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 400; margin-bottom: -5px; }
-  .brand-section .image-title .big-title { font-size: 60px; font-weight: 800; text-transform: uppercase; line-height: 1.05; letter-spacing: -1px; }
-  .brand-section .image-title .big-title .strike { text-decoration: line-through; text-decoration-thickness: 4px; }
-  .brand-section .text-side { flex: 1; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
-  .brand-section .divider { width: 100px; height: 3px; background: #fff; margin-bottom: 30px; }
-  .brand-section .divider.bottom { margin-top: 30px; margin-bottom: 0; }
-  .brand-section .body-text { font-size: 18px; line-height: 1.5; font-weight: 400; }
-  .brand-section .body-text p { margin-bottom: 30px; }
-  .brand-section .body-text p:last-child { margin-bottom: 0; }
-  .brand-section .body-text em { font-style: italic; }
-  .brand-section .body-text .closing { font-weight: 700; font-style: italic; }
-  
-  @font-face {
-    font-family: 'Aptos';
-    src: local('Aptos');
-  }
+.set .half {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
 
-  body { background: #ffffff; color: #111111; }
+.set .half img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
+#set2 .half:last-child img {
+  object-position: 15% center;
+}
+
+#set5 {
+  justify-content: center;
+  align-items: center;
+}
+
+#set5 .half {
+  transition: transform 1s cubic-bezier(.77, 0, .18, 1);
+}
+
+#set5 .half img {
+  position: absolute;
+  top: 0;
+  width: 200%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+#set5 .half-left img  { left: 0; }
+#set5 .half-right img { right: 0; }
+
+#set5.split .half-left  { transform: translateX(-100%); }
+#set5.split .half-right { transform: translateX(100%); }
+
+/* ==========================================================
+   WELCOME SECTION
+   ========================================================== */
+.welcome-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease, background 0.8s ease;
+}
+
+.welcome-section.bg-white {
+  background: #fff;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.welcome-to {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  margin-bottom: 15px;
+}
+
+.welcome-to.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.maddama-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.maddama-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.maddama-reveal img {
+  width: 400px;
+  max-width: 60vw;
+  height: auto;
+  display: block;
+}
+
+.maddama-baseline {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  margin-top: 15px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #000;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.3;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  z-index: 10;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+
+/* ==========================================================
+   HEADER MOBILE (caché par défaut sur desktop)
+   ========================================================== */
+.mobile-header,
+.mobile-menu-panel {
+  display: none;
+}
+
+/* ==========================================================
+   BRAND SECTION
+   ========================================================== */
+.brand-section { width: 100%; display:flex; background:#000; padding: 70px; gap: 60px; align-items: center; }
+.brand-section .image-side { position: relative; width: 45%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
+.brand-section .image-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.brand-section .image-title { position: absolute; bottom: 40px; left: 40px; right: 40px; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; text-align: right; }
+.brand-section .image-title .make { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 400; margin-bottom: -5px; }
+.brand-section .image-title .big-title { font-size: 60px; font-weight: 800; text-transform: uppercase; line-height: 1.05; letter-spacing: -1px; }
+.brand-section .image-title .big-title .strike { text-decoration: line-through; text-decoration-thickness: 4px; }
+.brand-section .text-side { flex: 1; color: #fff; font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+.brand-section .divider { width: 100px; height: 3px; background: #fff; margin-bottom: 30px; }
+.brand-section .divider.bottom { margin-top: 30px; margin-bottom: 0; }
+.brand-section .body-text { font-size: 18px; line-height: 1.5; font-weight: 400; }
+.brand-section .body-text p { margin-bottom: 30px; }
+.brand-section .body-text p:last-child { margin-bottom: 0; }
+.brand-section .body-text em { font-style: italic; }
+.brand-section .body-text .closing { font-weight: 700; font-style: italic; }
+
+/* ==========================================================
+   ABOUT HERO
+   ========================================================== */
 .about-hero {
   position: relative;
   background: #ffffff;
-  min-height: 400px;      /* hauteur fixe au lieu de min-height */
+  min-height: 400px;
   overflow: hidden;
   padding: 36px;
   display: flex;
@@ -245,33 +351,55 @@ header .boutique { animation-delay: 10.20s; }
 .about-main-text { font-size: 15.6px; line-height: 1.5; font-weight: 400; color: #111; letter-spacing: 0.18px; }
 .about-main-text b { font-weight: 800; }
 
-  .content-section { max-width: 1000px; margin: 30px auto; text-align: center; padding: 0 0px; }
-  .content-section p { font-size: 16px; line-height: 1.5; color: #111; margin-bottom: 30px; word-spacing: 0.05em; }
-  .content-section p:first-child { font-size: 16px; }
-  .content-section p:nth-child(2) { max-width: 1000px; }
-  .content-section p:last-child { margin-bottom: 0; }
+/* ==========================================================
+   CONTENT SECTION + SYMBOLS
+   ========================================================== */
+.content-section {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.content-section p { font-size: 16px; line-height: 1.5; color: #111; margin-bottom: 30px; word-spacing: 0.05em; }
+.content-section .intro-text { font-size: 16px; }
+.content-section .body-main { max-width: 1000px; margin-left: auto; margin-right: auto; }
+.content-section .closing-text { margin-bottom: 0; }
 
-  .symbol-divider { width: 30px; height: 30px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-  .symbol-divider img { width: 100%; height: 100%; object-fit: contain; }
+.symbol-divider {
+  width: 24px;
+  height: 24px;
+  margin: 20px auto;
+}
+.symbol-divider img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.scroll-buffer { width: 100%; height: 600px; }
 
-  .scroll-buffer { width: 100%; height: 600px; }
-
+/* ==========================================================
+   BLACK RECT / WHAT WE DO
+   ========================================================== */
 .black-rect-container {
   position: fixed;
   width: 112.5%;
   height: 840px;
   background: black;
-  top: calc(50vh - 40px);   /* équivalent stable à "50% + 380px" + translateY(-50%) */
+  top: calc(50vh - 40px);
   left: 100%;
   z-index: 50;
   border-radius: 8px;
   overflow: hidden;
 }
+
 .black-rect-content {
   position: fixed;
   width: 100vw;
   height: 840px;
-  top: calc(50vh - 30px);   /* équivalent stable à "50% + 390px" + translateY(-50%) */
+  top: calc(50vh - 30px);
   left: 100%;
   z-index: 51;
   display: flex;
@@ -287,119 +415,125 @@ header .boutique { animation-delay: 10.20s; }
   display: none !important;
 }
 
-  .what-we-do-title { 
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
-    font-size: 14px; 
-    font-weight: 300; 
-    text-transform: uppercase; 
-    color: #fff; 
-    letter-spacing: 2px; 
-    margin: 0; 
-    text-align: center; 
-    width: 100%; 
-    margin-top: -45px;
-  }
+.what-we-do-title { 
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; 
+  font-size: 14px; 
+  font-weight: 300; 
+  text-transform: uppercase; 
+  color: #fff; 
+  letter-spacing: 2px; 
+  margin: 0; 
+  text-align: center; 
+  width: 100%; 
+  margin-top: -45px;
+}
 
-  .symbols-container {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    z-index: 1;
-    margin-top: 10px;
-    transform: translateY(110px);
-  }
+.symbols-container {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  z-index: 1;
+  margin-top: 10px;
+  transform: translateY(110px);
+}
 
-  .symbols-container img:nth-child(1) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: rotate(45deg);
-  }
+.symbols-container img:nth-child(1) {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: rotate(45deg);
+}
 
-  .symbols-container img:nth-child(2) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: rotate(-45deg);
-  }
-  .services-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 30px 300px; 
-    max-width: 100%; 
-    width: 100%; 
-    color: #fff;
-    margin-top: 0px;
-  }
+.symbols-container img:nth-child(2) {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: rotate(-45deg);
+}
 
-  .service-item { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
-  .service-item .service-name { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; line-height: 0.8; }
+.services-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 30px 300px; 
+  max-width: 100%; 
+  width: 100%; 
+  color: #fff;
+  margin-top: 0px;
+}
 
-  .services-grid > :nth-child(odd) .service-name { text-align: right; }
-  .services-grid > :nth-child(even) .service-name { text-align: left; }
+.service-item { font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif; }
+.service-item .service-name { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; line-height: 0.8; }
 
-  .bottom-text {
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 300;
-    text-transform: uppercase;
-    color: #fff;
-    letter-spacing: 2px;
-    text-align: center;
-    margin-top: 40px;
-    width: 100%;
-    max-width: 1000px;
-    line-height: 1.5;
-  }
+.services-grid > :nth-child(odd) .service-name { text-align: right; }
+.services-grid > :nth-child(even) .service-name { text-align: left; }
 
-  .image-section-container {
-    position: relative;
-    width: 100%;
-    height: 800px;
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    margin-top: 0;
-  }
+.bottom-text {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-top: 40px;
+  width: 100%;
+  max-width: 1000px;
+  line-height: 1.5;
+}
 
-  .image-wrapper {
-    width: 70%;
-    height: 120%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
+/* ==========================================================
+   IMAGE SECTION FINALE (rotation)
+   ========================================================== */
+.image-section-container {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 0;
+}
 
-  .image-wrapper.visible {
-    opacity: 1;
-  }
+.image-wrapper {
+  width: 70%;
+  height: 120%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-  .image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: rotate(-90deg);
-    display: block;
-  }
+.image-wrapper.visible {
+  opacity: 1;
+}
 
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: rotate(-90deg);
+  display: block;
+}
 
+/* ==========================================================
+   BLACK RECT SLIDEUP (carousel clients)
+   ========================================================== */
 .black-rect-slideup {
   position: fixed;
   width: 100%;
   height: 100vh;
   background: black;
   left: 0;
-  top: 100vh; /* remplace la logique JS top:100vh -> 0vh, mais fixé en dur ici */
+  top: 100vh;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -417,110 +551,102 @@ header .boutique { animation-delay: 10.20s; }
   display: block;
   justify-content: center;
 }
-  .carousel-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
 
-  .carousel-container {
-    width: 100%;
-    overflow: hidden;
-    margin-top: -30px;
-    padding: 0px 0;
-  }
-
-  .carousel-track {
-    display: flex;
-    gap: 15px;
-    animation: scroll-infinite 50s linear infinite;
-  }
-
-  .carousel-track:hover {
-    animation-play-state: paused;
-  }
-
-  @keyframes scroll-infinite {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(calc(-380px * 12 - 30px * 12));
-    }
-  }
-
-  .carousel-item {
-    flex-shrink: 0;
-    width: 270px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .carousel-item img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    height: 400px;
-  }
-
-  .carousel-text {
-    padding: 0;
-  }
-
-  .carousel-brand {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #fff;
-    margin-bottom: 2.5px;
-  }
-
-  .carousel-description {
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    color: #ccc;
-  }
-
-  .carousel-bottom-text {
-    text-align: center;
-    font-size: 16px;
-    color: #fff;
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.6;
-  }
-
-  .they-trusted-us {
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: uppercase;
-    text-align: center;
-    color: #fff;
-    letter-spacing: 1px;
-    margin-top: 60px;
-    width: 100%;
-  margin-bottom: 40px;
-  }
-
-  .clients-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: -80px;
-    padding: 40px;
+.carousel-content {
   width: 100%;
-  }
-
-.clients-wrapper img {
-  max-width: 2000px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  margin-top: -30px;
+  padding: 0px 0;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 15px;
+  animation: scroll-infinite 50s linear infinite;
+}
+
+.carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-infinite {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-380px * 12 - 30px * 12)); }
+}
+
+.carousel-item {
+  flex-shrink: 0;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel-item img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  height: 400px;
+}
+
+.carousel-text {
+  padding: 0;
+}
+
+.carousel-brand {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 2.5px;
+}
+
+.carousel-description {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: #ccc;
+}
+
+.carousel-bottom-text {
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.they-trusted-us {
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-top: 60px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.logo-desktop {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: -40px auto 0;
+}
+
+.logo-mobile { display: none; }
 
 .stars { color: #f5a623; margin-bottom: 15px; }
 .t-quote { font-size: 16px; line-height: 1.6; }
@@ -529,6 +655,9 @@ header .boutique { animation-delay: 10.20s; }
 .t-name { font-weight: 700; font-size: 14px; }
 .t-role { font-size: 13px; color: #888; }
 
+/* ==========================================================
+   BLACK RECT SLIDEUP 2 (testimonials)
+   ========================================================== */
 .black-rect-slideup-2 {
   position: fixed;
   left: 0;
@@ -678,6 +807,13 @@ header .boutique { animation-delay: 10.20s; }
   flex-shrink: 0;
 }
 
+/* Desktop : on garde les flèches, on cache les dots */
+@media (min-width: 769px) {
+  .testimonial-dots {
+    display: none !important;
+  }
+}
+
 .nav-btn {
   width: 48px;
   height: 48px;
@@ -705,11 +841,11 @@ header .boutique { animation-delay: 10.20s; }
   border-radius: 0;
 }
 .author-photo {
-  width: 140px;
-  height: 70px;
-  border-radius: 4px;
-  object-fit: contain;
-  background: transparent;
+  width: 140px !important;
+  height: 70px !important;
+  border-radius: 4px !important;
+  object-fit: contain !important;
+  background: transparent !important;
 }
 .author-info {
   display: flex;
@@ -744,82 +880,9 @@ header .boutique { animation-delay: 10.20s; }
   color: #888;
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
-  .testimonial-section { padding-left: 40px; padding-right: 40px; }
-  .testimonial-body { gap: 32px; }
-  .testimonial-photo-wrap { flex-basis: 300px; width: 300px; height: 380px; }
-  .testimonial-right-group { gap: 20px; }
-}
-
-@media (max-width: 900px) {
-  .testimonial-section {
-    min-height: 100vh;
-    padding: 24px 24px 32px;
-    justify-content: flex-start;
-    gap: 24px;
-  }
-  .testimonial-topline { gap: 12px; width: 100%; font-size: 11px; }
-  .topline-sep { flex-basis: auto; max-width: none; }
-  .testimonial-body {
-    display: flex;
-    flex: 0 0 auto;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 24px;
-    overflow: visible;
-  }
-  .testimonial-photo-wrap {
-    flex: 0 0 auto;
-    width: min(400px, 100%);
-    height: min(440px, 55vh);
-  }
-  .testimonial-quote {
-    flex: 0 0 auto;
-    width: 100%;
-    max-width: 800px;
-    max-height: none;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    text-align: center;
-  }
-  .testimonial-divider { width: 100%; margin: 0; }
-  .testimonial-footer {
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 24px;
-  }
-  .testimonial-right-group {
-    flex: 1 1 520px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 24px;
-  }
-  .testimonial-label { position: static; transform: none; }
-}
-
-@media (max-width: 600px) {
-  .testimonial-section { padding: 20px 16px 28px; gap: 20px; }
-  .testimonial-topline { gap: 7px; font-size: 9px; letter-spacing: 0.02em; }
-  .testimonial-photo-wrap { width: min(300px, 100%); height: min(360px, 52vh); }
-  .testimonial-body { gap: 20px; }
-  .testimonial-footer,
-  .testimonial-right-group {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-  }
-  .testimonial-nav { justify-content: center; }
-  .testimonial-right-group { flex: 0 0 auto; align-items: center; }
-  .testimonial-author,
-  .testimonial-stat { width: 100%; align-items: center; text-align: center; }
-  .author-photo-frame { width: 150px; height: 80px; }
-  .stat-number { font-size: 28px; }
-}
+/* ==========================================================
+   FINAL SECTION
+   ========================================================== */
 .final-section {
   width: 100%;
   height: 100vh;              
@@ -836,75 +899,75 @@ header .boutique { animation-delay: 10.20s; }
   box-sizing: border-box;
 }
 
-  .ambition-symbol-top {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center; 
+.ambition-symbol-top {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
   margin-top: 40px;  
-  }
+}
 
-  .ambition-symbol-top img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+.ambition-symbol-top img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
-  .ambition-text {
-    max-width: 800px;
-    text-align: center;
-    font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-    color: #fff;
-    margin-bottom: 20px;      
-    margin-top: 0;            
-  }
+.ambition-text {
+  max-width: 800px;
+  text-align: center;
+  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
+  color: #fff;
+  margin-bottom: 20px;      
+  margin-top: 0;            
+}
 
-  .ambition-text p {
-    font-size: 14px;
-    line-height: 1.3;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 20px;      
-  }
+.ambition-text p {
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;      
+}
 
-  .ambition-text p:first-child {
-    font-weight: 700;
-    margin-bottom: 20px;     
-  }
+.ambition-text p:first-child {
+  font-weight: 700;
+  margin-bottom: 20px;     
+}
 
-  .ambition-text p:nth-child(2) {
-    font-weight: 400;
-    margin-bottom: 20px;      
-  }
+.ambition-text p:nth-child(2) {
+  font-weight: 400;
+  margin-bottom: 20px;      
+}
 
-  .ambition-text p:last-child {
-    font-weight: 700;
-  }
+.ambition-text p:last-child {
+  font-weight: 700;
+}
 
-  .cta-images {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 30px;  
-    flex-wrap: wrap;
-    max-width: 100%;
-  }
+.cta-images {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;  
+  flex-wrap: wrap;
+  max-width: 100%;
+}
 
-  .cta-image {
-    width: 450px;
-    height: 250px;           
-    margin-top: -30px;          
-    overflow: hidden;
-    cursor: pointer;
-  }
+.cta-image {
+  width: 450px;
+  height: 250px;           
+  margin-top: -30px;          
+  overflow: hidden;
+  cursor: pointer;
+}
 
-  .cta-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+.cta-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 .cta-item:nth-child(3) .cta-image img {
   transform: scaleX(-1);
@@ -952,21 +1015,24 @@ a.cta-item {
   line-height: 1.4;
 }
 
-  .ambition-symbol-bottom {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: -60px;   
-  }
+.ambition-symbol-bottom {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -60px;   
+}
 
-  .ambition-symbol-bottom img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+.ambition-symbol-bottom img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
+/* ==========================================================
+   FOOTER
+   ========================================================== */
 footer {
   position: static;
   width: 100%;
@@ -993,23 +1059,25 @@ footer {
   color: #fff;
 }
 
-/* ============================================= */
-/* ===== HEADER MOBILE (caché sur desktop) ===== */
-/* ============================================= */
-
-.mobile-header {
-  display: none;
-}
-
-.mobile-menu-panel {
-  display: none;
-}
+/* ==========================================================
+   MOBILE — TOUT max-width: 768px FUSIONNÉ EN UN SEUL BLOC
+   ========================================================== */
 
 @media (max-width: 768px) {
 
-  /* On cache le header desktop */
+  /* ---- Toggle desktop / mobile ---- */
+  .desktop-only { display: none !important; }
+  .mobile-only  { display: flex !important; }
+
+  .maddama-baseline.desktop-only { display: none; }
+  .maddama-baseline.mobile-only  { display: block; }
+
+  /* ============================
+     1. HEADER MOBILE
+     ============================ */
+
   header:not(.mobile-header) {
-    display: none;
+    display: none !important;
   }
 
   .mobile-header {
@@ -1072,9 +1140,8 @@ footer {
     transform: rotate(45deg);
   }
 
-  /* Panneau plein écran */
   .mobile-menu-panel {
-    display: block;
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -1086,8 +1153,9 @@ footer {
     visibility: hidden;
     transform: translateY(-100%);
     transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
-    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 0 30px;
   }
 
@@ -1114,59 +1182,53 @@ footer {
     font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
   }
 
-}
-
-@media (max-width: 768px) {
-
   /* ============================
-     1. HERO INTRO - SETS D'IMAGES
+     2. WELCOME MOBILE
      ============================ */
 
-  /* Décalage de la femme diamant vers la droite */
-  #set2 .half:last-child img {
-    object-position: 75% center;
+  .mobile-welcome {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
   }
 
-  /* Nouveau logo pierre mobile - remplace set5 */
-  #set5 .half { 
-    width: 50%; 
-    height: 100%; 
-    overflow: hidden; 
-    position: relative; 
-    transition: transform 1s cubic-bezier(.77,0,.18,1); 
-  }
-  #set5 .half img { 
-    position: absolute; 
-    top: 0; 
-    width: 200%; 
-    height: 100%; 
-    object-fit: cover; 
-  }
-  #set5 .half-left img { 
-    left: 0; 
-    content: url('LOGO-MADDAMA-MOBILE.png');
-  }
-  #set5 .half-right img { 
-    right: 0; 
-    content: url('LOGO-MADDAMA-MOBILE.png');
+  .mobile-welcome.mobile-revealed {
+    opacity: 1;
+    pointer-events: auto;
   }
 
-  /* ============================
-     2. WELCOME SECTION (textes)
-     ============================ */
+  .mobile-welcome.bg-white {
+    background: #fff;
+    opacity: 1;
+    pointer-events: auto;
+  }
 
-  .welcome-to {
+  .welcome-to,
+  .mobile-welcome .welcome-to {
     font-size: 11px;
     letter-spacing: 3px;
     margin-bottom: 10px;
   }
 
-  .maddama-reveal img {
+  .maddama-reveal img,
+  .mobile-welcome .maddama-reveal img {
     width: 260px;
     max-width: 70vw;
   }
 
-  .maddama-baseline {
+  .maddama-baseline,
+  .mobile-welcome .maddama-baseline {
     font-size: 11px;
     letter-spacing: 0.5px;
     max-width: 85vw;
@@ -1217,8 +1279,8 @@ footer {
   }
 
   .brand-section .body-text {
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.2;
     text-align: left;
   }
 
@@ -1274,24 +1336,24 @@ footer {
   }
 
   .about-photo-labels .creative {
-    left: 0;
-    bottom: -4px;
+    left: 12px;
+    color:#fff; 
+    bottom: -9px;
     font-size: 9px;
   }
 
   .about-photo-labels .strategist {
-    left: auto;
+    left: 40px;
     right: 0;
-    bottom: -12px;
+    bottom: -22px;
     font-size: 9px;
   }
 
-  /* Nouveau bloc texte en dessous de la photo, entre 2 traits */
   .about-text-block {
     flex-direction: row;
     max-width: 100%;
     margin-left: 0;
-    margin-top: 30px;
+    margin-top: 50px;
     gap: 12px;
     align-items: stretch;
   }
@@ -1304,8 +1366,9 @@ footer {
 
   .about-main-text {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.1;
     letter-spacing: 0.1px;
+    text-align: center;
   }
 
   .about-bg-logo {
@@ -1317,20 +1380,36 @@ footer {
      ============================ */
 
   .content-section {
-    padding: 0 24px;
-    margin: 24px auto;
+    padding: 20px 20px 20px 20px; 
+    margin: 0;
+    align-items: center;
   }
 
   .content-section p {
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.2;
     margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .content-section p.mobile-only {
+    display: block !important;
+    text-align: center !important;
+  }
+
+  .content-section .intro-text {
+    font-size: 13.05px;
+    margin-bottom: 20px;
+  }
+
+  .symbol-text-wrapper {
+    margin-top: -35px; /* ajuste cette valeur à l'oeil */
   }
 
   .symbol-divider {
     width: 24px;
     height: 24px;
-    margin: 16px auto;
+    margin: 8px auto; 
   }
 
   /* ============================
@@ -1356,373 +1435,432 @@ footer {
     pointer-events: auto;
     padding: 50px 24px 60px 24px;
     margin-bottom: 0;
-  }
-
-  .what-we-do-title {
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    margin-top: 0;
-    order: 2;
-  }
-
-  .symbols-container {
-    position: relative;
-    width: 22px;
-    height: 22px;
-    margin: 0 auto 16px auto;
-    transform: none;
-    order: 1;
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    margin-top: 30px;
-    order: 3;
-  }
-
-  .services-grid > .service-item .service-name {
-    text-align: center !important;
-    font-size: 13px;
-    line-height: 1.3;
-  }
-
-  .bottom-text {
-    font-size: 11px;
-    letter-spacing: 1px;
-    margin-top: 30px;
-    line-height: 1.6;
-    order: 4;
-  }
-
-  /* Réorganisation flex pour respecter l'ordre demandé */
-  .black-rect-content {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
+  .symbols-container {
+  position: absolute !important;
+  top: 15px;
+    width: 22px;
+    height: 22px;
+    transform: none;
+  margin-bottom: 40px;
+    order: 1;
+  }
+
+  .what-we-do-title {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    order: 2;
+  }
+
+.divider-top {
+  width: 1px;
+  height: 24px;
+  background-color: #fff;
+  margin: -5px auto -5px auto;
+    order: 3;
+}
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    order: 4;
+  }
+
+  .services-grid > .service-item .service-name {
+    text-align: center !important;
+    font-size: 13px;
+    line-height: 1.2;
+  margin-bottom: -5px;
+    order: 5;
+  }
+
+  .bottom-text {
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    line-height: 1.6;
+    order: 6;
+  }
+
+.divider-bottom {
+  width: 1px;
+  height: 24px;
+  background-color: #fff;
+  margin: -5px auto -5px auto;
+    order: 6;
+}
+  .symbols-container {
+  position: absolute !important;
+  top: 15px;
+    width: 22px;
+    height: 22px;
+    transform: none;
+  margin-bottom: 40px;
+    order: 7;
+  }
+
   /* ============================
-     7. IMAGE SECTION FINALE
+     8. BLACK SLIDEUP (carousel clients)
      ============================ */
 
-  .image-section-container {
-    height: 400px;
+  .black-rect-slideup {
+    position: relative;
+    top: 0;
+    height: auto;
+    padding: 40px 20px 20px 20px;
+    align-items: center;
+  justify-content: flex-start;
   }
 
-  .image-wrapper {
-    width: 90%;
-    height: 100%;
+  .carousel-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
   }
 
+  .carousel-track {
+    gap: 12px;
+    animation: scroll-infinite-mobile 40s linear infinite;
+  }
+
+  @keyframes scroll-infinite-mobile {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-190px * 12 - 12px * 12)); }
+  }
+
+  .carousel-item {
+    width: 190px;
+  }
+
+  .carousel-item img {
+    height: 260px;
+  }
+
+  .carousel-brand { font-size: 11px; }
+  .carousel-description { font-size: 9px; }
+
+  .they-trusted-us {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+.image-section-container,
+.image-wrapper,
+.image-section-container * {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
 }
 
-/* ============================================
-   DESKTOP (inchangé)
-   ============================================ */
+.logo-desktop {
+  display: none !important;
+}
 
-.black-rect-slideup {
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  background: black;
-  left: 0;
-  top: 100vh;
-  z-index: 100;
+.logo-mobile {
+  display: block !important;
+  width: 85% !important;
+  max-width: 280px;
+  height:auto;
+  margin: 0 auto;
+  margin-bottom: 90px !important;
+}
+  /* ============================
+     9. BLACK SLIDEUP 2 (testimonials)
+     ============================ */
+
+  .black-rect-slideup-2 {
+    position: relative;
+    bottom: 0;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .testimonial-section {
+    padding: 20px 20px !important;
+    min-height: auto;
+  }
+
+  .testimonial-topline {
+    gap: 10px;
+    font-size: 10px;
+    padding-bottom: 10px;
+  margin-bottom: -10px !important; 
+  }
+
+  .topline-sep {
+    flex: 0 1 15px;
+    margin: 0 8px;
+  }
+
+  .testimonial-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 0 !important;
+    position: relative;
+  margin-top: -10px !important; 
+  }
+
+  .testimonial-photo-wrap {
+  overflow: hidden !important;
+    position: relative !important;
+    width: 100%;
+    max-width: 300px;
+    max-height: 200px !important;
+  margin-top: -20px !important; 
+  margin-bottom: -20px !important; 
+    touch-action: pan-y;
+  user-select: none;
+  }
+
+.testimonial-photo-wrap img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+#testimonialPhoto,
+.testimonial-photo {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 20% !important; 
+  display: block !important;
+}
+
+/* On cache les flèches sur mobile */
+.swipe-arrow {
+  display: none !important;
+}
+
+/* Dots container */
+.testimonial-dots {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 80px 40px 40px 40px;
-}
-
-.black-rect-slideup img {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  margin-bottom: 0;
-  display: block;
   justify-content: center;
-}
-
-.carousel-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  margin-top: -5px;
+  margin-bottom: -30px;
 }
 
-.carousel-container {
-  width: 100%;
-  overflow: hidden;
-  margin-top: -30px;
-  padding: 0px 0;
-}
-
-.carousel-track {
-  display: flex;
-  gap: 15px;
-  animation: scroll-infinite 50s linear infinite;
-}
-
-.carousel-track:hover {
-  animation-play-state: paused;
-}
-
-@keyframes scroll-infinite {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-380px * 12 - 30px * 12)); }
-}
-
-.carousel-item {
-  flex-shrink: 0;
-  width: 270px;
-  display: flex;
-  flex-direction: column;
-}
-
-.carousel-item img {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  height: 400px;
-}
-
-.carousel-text { padding: 0; }
-
-.carousel-brand {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #fff;
-  margin-bottom: 2.5px;
-}
-
-.carousel-description {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.5px;
-  color: #ccc;
-}
-
-.carousel-bottom-text {
-  text-align: center;
-  font-size: 16px;
-  color: #fff;
-  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-  line-height: 1.6;
-}
-
-.they-trusted-us {
-  font-family: 'Aptos', 'Helvetica Neue', Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  text-transform: uppercase;
-  text-align: center;
-  color: #fff;
-  letter-spacing: 1px;
-  margin-top: 60px;
-  width: 100%;
-  margin-bottom: 40px;
-}
-
-.clients-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: -80px;
-  padding: 40px;
-  width: 100%;
-}
-
-.clients-wrapper img {
-  max-width: 2000px;
-  width: 100%;
-}
-
-.stars { color: #f5a623; margin-bottom: 15px; }
-.t-quote { font-size: 16px; line-height: 1.6; }
-.t-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
-.t-author img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-.t-name { font-weight: 700; font-size: 14px; }
-.t-role { font-size: 13px; color: #888; }
-
-.black-rect-slideup-2 {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  top: auto;
-  bottom: -100vh;
-  background: black;
-  z-index: 9999;
-  transition: none;
-  display: block;
-  overflow-y: auto;
+.testimonial-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
   padding: 0;
 }
 
-.testimonial-section {
-  width: 100%;
-  min-height: 100vh;
-  background: #fff;
-  color: #0a0a0a;
-  padding: 70px 80px 40px;   
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
-  font-family: inherit;
+.testimonial-dot.active {
+  background: rgba(0, 0, 0, 0.85);
+  width: 9px;
+  height: 9px;
 }
 
-.testimonial-topline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  flex: 0 0 auto;
-  padding-bottom: 20px;
-  font-size: 13px;
-  color: #333;
-  white-space: nowrap;
-}
+  @keyframes swipe-hint-left {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(-4px); }
+  }
+  @keyframes swipe-hint-right {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(4px); }
+  }
 
-.topline-sep {
-  flex: 1 1 160px;
-  min-width: 24px;
-  max-width: 400px;
-  height: 1.2px;
-  background: #000;
-}
+  .testimonial-quote {
+    position: static;
+    width: 100%;
+    max-width: 320px;
+    margin: -20px auto -15px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.2;
+  }
 
-.testimonial-body {
-  display: flex;
-  align-items: center;
-  gap: clamp(32px, 6vw, 96px);
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  flex: 1 1 auto;
-  overflow: hidden;
-}
+  .testimonial-divider {
+    width: 80%;
+    max-width: 280px;
+    margin: -15px auto -15px;
+  }
 
-.testimonial-photo-wrap {
-  position: relative;
-  flex: 0 0 360px;
-  width: 360px;
-  height: 440px;
-  border-radius: 4px;
-  overflow: hidden;
-  background: #ddd;
-}
+  .testimonial-footer {
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+  }
 
-.testimonial-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.testimonial-photo.loaded { opacity: 1; }
-
-.testimonial-logo {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  color: #fff;
-  font-size: 18px;
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-}
-
-.testimonial-divider {
-  width: 700px;
-  height: 1.2px;
-  background: #000;
-  margin: 0 0 40px auto;
-}
-
-.testimonial-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-}
+  .testimonial-nav {
+    display: none; /* remplacé par le swipe */
+  }
 
 .testimonial-right-group {
   display: flex;
-  align-items: center;
-  gap: 40px;
-}
-
-.testimonial-nav {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.nav-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  background: #f2f2f2;
-  color: #0a0a0a;
-  display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row !important;
   justify-content: center;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.2s ease;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
 }
-.nav-btn:hover {
-  background: #e4e4e4;
-  transform: scale(1.05);
+
+/* Le logo prend toute la largeur → force les 2 stats à passer sur la ligne suivante */
+.testimonial-author {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  order: 1;
+  margin-bottom: 8px;
+}
+
+.author-photo {
+  width: 110px;
+  height: 55px;
+  object-fit: contain;
+}
+
+/* Les deux stats se placent côte à côte sur la 2e ligne */
+.testimonial-stat {
+  flex: 0 1 45%;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: transparent;
-  padding: 0;
-  border-radius: 0;
+  display: none;
 }
-.author-photo {
-  width: 140px;
-  height: 70px;
-  border-radius: 4px;
-  object-fit: contain;
-  background: transparent;
-}
-.author-info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.4;
-}
-.author-name { font-weight: 700; font-size: 16px; }
-.author-role { font-size: 13px; color: #888; }
 
-.testimonial-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+/* Réduit la taille du texte pour mobile */
+.stat-number {
+  font-size: 20px; /* au lieu de 26px */
 }
-.stat-number { font-size: 34px; font-weight: 800; line-height: 1.1; }
-.stat-label { font-size: 14px; font-weight: 600; }
-.stat-sub { font-size: 13px; color: #888; }
 
+.stat-label {
+  font-size: 11px; /* au lieu de 12px */
+}
 
-/* ============================================
-   TABLETTE (900px) — inchangé, gardé tel quel
-   ============================================ */
+.stat-sub {
+  font-size: 10px; /* au lieu de 11px */
+}
+
+  /* ============================
+     10. FINAL SECTION
+     ============================ */
+
+  .final-section {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding: 40px 20px;
+    gap: 20px;
+  }
+
+  .ambition-symbol-top {
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text {
+    max-width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text p {
+    font-size: 10px;
+    line-height: 1.2;
+    margin-bottom: 15px;
+  }
+
+  .ambition-text p:first-child,
+  .ambition-text p:nth-child(2) {
+    margin-bottom: 15px;
+  }
+
+  .cta-images {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  a.cta-item {
+  align-items: flex-end;
+    width: 100%;
+  }
+
+  .cta-image {
+    width: 300px;
+    height: 180px;
+    margin-top: 0;
+  }
+
+  .cta-item:nth-child(3) .cta-image img {
+    transform: scaleX(-1);
+  }
+
+.cta-text-wrapper {
+  width: 300px;            /* même largeur que .cta-image */
+  margin-top: -30px;
+  align-items: flex-end;   /* au lieu de "right" qui n'est pas une valeur valide pour align-items */
+  text-align: right;
+  margin-right: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+  .cta-image-text {
+    font-size: 11px;
+  }
+
+  .cta-subtitle {
+    font-size: 9px;
+  }
+
+  .ambition-symbol-bottom {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
+
+  /* ============================
+     11. FOOTER
+     ============================ */
+
+  footer {
+    padding: 15px 20px;
+    margin-bottom: 0;
+  }
+
+  .footer-content p {
+    font-size: 8px;
+  }
+
+}
+
+/* ==========================================================
+   TABLETTE (900px) — gardé séparé, inchangé
+   ========================================================== */
 
 @media (max-width: 900px) {
   .testimonial-section { padding: 24px 24px; }
@@ -1733,7 +1871,6 @@ footer {
     flex: 1;
     padding: 60px 0;
   }
-
   .testimonial-photo-wrap {
     position: relative;
     width: 400px;
@@ -1766,316 +1903,14 @@ footer {
   }
 }
 
-
-/* ============================================
-   MOBILE (768px) — override complet
-   ============================================ */
-
-@media (max-width: 768px) {
-
-  /* ---- Black slideup container : plus de position fixed cassante ---- */
-  .black-rect-slideup {
-    position: relative;
-    top: 0;
-    height: auto;
-    min-height: 100vh;
-    padding: 40px 20px 20px 20px;
-    align-items: center;
-  }
-
-  /* ---- Carousel adapté mobile ---- */
-  .carousel-container {
-    margin-top: 0;
-  }
-
-  .carousel-track {
-    gap: 12px;
-    animation: scroll-infinite-mobile 40s linear infinite;
-  }
-
-  @keyframes scroll-infinite-mobile {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-190px * 12 - 12px * 12)); }
-  }
-
-  .carousel-item {
-    width: 190px;
-  }
-
-  .carousel-item img {
-    height: 260px;
-  }
-
-  .carousel-brand { font-size: 11px; }
-  .carousel-description { font-size: 9px; }
-
-  /* ---- THEY TRUSTED US ---- */
-  .they-trusted-us {
-    margin-top: 40px;
-    margin-bottom: 20px;
-    font-size: 12px;
-  }
-
-  /* ---- Clients wrapper : logo vertical mobile ---- */
-  .clients-wrapper {
-    margin-top: 0;
-    padding: 20px;
-  }
-
-  .clients-wrapper img {
-    content: url('LOGO-CLIENTS-MOBILE.jpg');
-    max-width: 320px;
-  }
-
-  /* ---- Black slideup 2 (testimonials) ---- */
-  .black-rect-slideup-2 {
-    position: relative;
-    bottom: 0;
-    height: auto;
-    min-height: 100vh;
-  }
-
-  .testimonial-section {
-    padding: 30px 20px;
-    min-height: auto;
-  }
-
-  /* ---- Topline resserrée ---- */
-  .testimonial-topline {
-    gap: 16px;
-    font-size: 10px;
-    padding-bottom: 16px;
-  }
-
-  .topline-sep {
-    flex: 0 1 30px;
-    margin: 0 8px;
-  }
-
-  /* ---- Body : swipe container ---- */
-  .testimonial-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    position: relative;
-  }
-
-  /* ---- Photo en swipe avec flèches indicatrices ---- */
-  .testimonial-photo-wrap {
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-    height: 360px;
-    margin: 0 auto;
-    touch-action: pan-y;
-  }
-
-  .testimonial-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .swipe-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.85);
-    color: #0a0a0a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    z-index: 5;
-    pointer-events: none;
-    opacity: 0.6;
-  }
-
-  .swipe-arrow.left {
-    left: 10px;
-    animation: swipe-hint-left 2.2s ease-in-out infinite;
-  }
-  .swipe-arrow.right {
-    right: 10px;
-    animation: swipe-hint-right 2.2s ease-in-out infinite;
-  }
-
-  @keyframes swipe-hint-left {
-    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
-    50% { opacity: 1; transform: translateY(-50%) translateX(-4px); }
-  }
-  @keyframes swipe-hint-right {
-    0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
-    50% { opacity: 1; transform: translateY(-50%) translateX(4px); }
-  }
-
-  /* ---- Quote sous la photo ---- */
-  .testimonial-quote {
-    position: static;
-    width: 100%;
-    max-width: 320px;
-    margin: 20px auto 0;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.5;
-  }
-
-  /* ---- Divider ---- */
-  .testimonial-divider {
-    width: 80%;
-    max-width: 280px;
-    margin: 24px auto;
-  }
-
-  /* ---- Footer empilé ---- */
-  .testimonial-footer {
-    flex-direction: column;
-    gap: 14px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .testimonial-nav {
-    display: none; /* remplacé par le swipe */
-  }
-
-  .testimonial-right-group {
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .testimonial-stat {
-    align-items: center;
-    text-align: center;
-  }
-
-  .author-photo {
-    width: 110px;
-    height: 55px;
-  }
-
-  .stat-number { font-size: 26px; }
-  .stat-label { font-size: 12px; }
-  .stat-sub { font-size: 11px; }
-}
-
-@media (max-width: 768px) {
-
-  .final-section {
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
-    padding: 40px 20px;
-    gap: 20px;
-  }
-
-  .ambition-symbol-top {
-    width: 24px;
-    height: 24px;
-    margin-top: 0;
-    margin-bottom: 15px;
-  }
-
-  .ambition-text {
-    max-width: 100%;
-    margin-bottom: 15px;
-  }
-
-  .ambition-text p {
-    font-size: 12px;
-    line-height: 1.4;
-    margin-bottom: 15px;
-  }
-
-  .ambition-text p:first-child,
-  .ambition-text p:nth-child(2) {
-    margin-bottom: 15px;
-  }
-
-  /* CTA en colonne, centrées */
-  .cta-images {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 30px;
-  }
-
-  a.cta-item {
-    align-items: center;
-    width: 100%;
-  }
-
-  .cta-image {
-    width: 280px;
-    height: 180px;
-    margin-top: 0;
-  }
-
-  /* on annule le flip sur mobile si tu veux garder l'image normale, sinon laisse tel quel */
-  .cta-item:nth-child(3) .cta-image img {
-    transform: scaleX(-1);
-  }
-
-  .cta-text-wrapper {
-    margin-top: -30px;
-    align-items: center;
-    text-align: center;
-    margin-right: 0;
-    padding: 0 10px;
-  }
-
-  .cta-image-text {
-    font-size: 11px;
-  }
-
-  .cta-subtitle {
-    font-size: 9px;
-  }
-
-  .ambition-symbol-bottom {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 0;
-    margin-top: 10px;
-  }
-
-  footer {
-    padding: 15px 20px;
-    margin-bottom: 0;
-  }
-
-  .footer-content p {
-    font-size: 8px;
-  }
-
-}
 </style>
-
 </head>
 
 <body class="locked">
 
-<header>
-<div class="logo"><a href="index-fr.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
-  <nav>
-<a href="index-fr.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
-<a href="Services-fr.html">SERVICES</a>
-<a href="case-studies-fr.html">CASE STUDIES</a>
-<a href="index-fr.html#testimonials" onclick="goToTestimonials(event)">TEMOIGNAGES</a>
-  </nav>
-<a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">EN</a>
-<a href="Contact-fr.html" class="boutique">CONTACT</a>
-</header>
-
-<!-- ===== HEADER MOBILE ===== -->
+<!-- Remplace mob par mobile partout -->
 <header class="mobile-header">
-  <a href="index-fr.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
+  <a href="index.html#welcomeSection" class="mobile-logo" onclick="goToHome(event)">MADDAMA</a>
   <div class="mobile-header-right">
     <a href="#" onclick="switchLanguage(event)" class="mobile-lang" id="mobileLangSwitchBtn">EN</a>
     <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
@@ -2084,16 +1919,28 @@ footer {
   </div>
 </header>
 
-<!-- ===== PANNEAU MENU MOBILE ===== -->
 <div class="mobile-menu-panel" id="mobileMenuPanel">
   <nav class="mobile-nav">
-    <a href="index-fr.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
-    <a href="Services-fr.html">SERVICES</a>
-    <a href="case-studies-fr.html">CASE STUDIES</a>
-    <a href="index-fr.html#testimonials" onclick="goToTestimonials(event)">TEMOIGNAGES</a>
-    <a href="Contact-fr.html">CONTACT</a>
+    <a href="index.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
+    <a href="Services.html">SERVICES</a>
+    <a href="case-studies.html">CASE STUDIES</a>
+    <a href="index.html#testimonials" onclick="goToTestimonials(event)">TEMOIGNAGES</a>
+    <a href="Contact.html">CONTACT</a>
   </nav>
 </div>
+
+<!-- ===== HEADER DESKTOP (inchangé, masqué en mobile via CSS) ===== -->
+<header>
+  <div class="logo"><a href="index.html#welcomeSection" onclick="goToHome(event)">MADDAMA</a></div>
+  <nav>
+    <a href="index.html#welcomeSection" onclick="goToHome(event)">A PROPOS</a>
+    <a href="Services.html">SERVICES</a>
+    <a href="case-studies.html">CASE STUDIES</a>
+    <a href="index.html#testimonials" onclick="goToTestimonials(event)"> TEMOIGNAGES</a>
+  </nav>
+  <a href="#" onclick="switchLanguage(event)" class="lang-switch" id="langSwitchBtn">EN</a>
+  <a href="Contact.html" class="boutique">CONTACT</a>
+</header>
 
 <div class="hero">
   <div class="set active" id="set1">
@@ -2112,18 +1959,41 @@ footer {
     <div class="half"><img src="ARGILE.png" alt="Argile"></div>
     <div class="half"><img src="FEMME-ARGILE.png" alt="Femme Argile"></div>
   </div>
-  <div class="set" id="set5">
-    <div class="half half-left"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Gauche"></div>
-    <div class="half half-right"><img src="LOGO-MADDAMA.png" alt="Logo Maddama Droite"></div>
+
+<div class="set" id="set5">
+  <!-- DESKTOP : deux images identiques -->
+  <div class="half half-left desktop-only">
+    <img src="LOGO-MADDAMA.png" alt="Logo Maddama Gauche">
   </div>
-  <div class="welcome-section" id="welcomeSection">
-    <div class="welcome-to" id="welcomeTo">BIENVENUE CHEZ</div>
-    <div class="maddama-reveal" id="maddamaReveal">
-      <img src="LOGO-MADDAMA-NOIR.png" alt="Logo Maddama">
-      <div class="maddama-baseline">Studio d'artisanat de marque où riment <br> précision stratégique et exigence créative.<br></div>
-    </div>
+  <div class="half half-right desktop-only">
+    <img src="LOGO-MADDAMA.png" alt="Logo Maddama Droite">
+  </div>
+  
+  <!-- MOBILE : deux demi-images (split en deux) -->
+  <div class="half half-left mobile-only">
+    <img src="LOGO-MADDAMA-MOBILE.png" alt="Logo Maddama Mobile Gauche">
+  </div>
+  <div class="half half-right mobile-only">
+    <img src="LOGO-MADDAMA-MOBILE.png" alt="Logo Maddama Mobile Droite">
   </div>
 </div>
+</div>
+
+<div class="welcome-section" id="welcomeSection">
+  <div class="welcome-to">WELCOME TO</div>
+  <div class="maddama-reveal">
+    <img src="LOGO-MADDAMA-NOIR.png" alt="Maddama">
+  </div>
+
+  <div class="maddama-baseline desktop-only">
+    Studio d'artisanat de marque où riment <br> précision stratégique et exigence créative.<br>
+  </div>
+
+  <div class="maddama-baseline mobile-only">
+    Studio d'artisanat de marque où riment <br> précision stratégique et exigence créative.<br>
+  </div>
+</div>
+
 
 <section class="brand-section" id="about">
   <div class="image-side">
@@ -2133,11 +2003,12 @@ footer {
       <div class="big-title">Your<br>Brand<br>Matter<span class="strike">s</span></div>
     </div>
   </div>
+
   <div class="text-side">
     <div class="divider"></div>
     <div class="body-text">
       <p>Toute marque naît d'une idée qui germe et d'une matière qui prend peu à peu forme. À l'image du diamant qui sommeille au cœur d'une pierre brute, chaque marque porte en elle un potentiel riche et n'attend que d'être façonnée pour révéler toute sa valeur. </p>
-      <p>Pour autant, rien n'est jamais gravé dans le marbre. Une marque est une matière malléable : il est possible de la créer, la faire évoluer ou la transformer sans jamais lui faire perdre son essence. Au début, chaque entaille, chaque coup de ciseau peut sembler être un sacrilège fait à la matière. Mais tailler une matière brute avec intention, c'est en réalité raboter ce qui empêche de voir clairement ce qui compte vraiment. <br> Faire naître de nouvelles idées, façonner une singularité qui va durer ou simplement garder la passion des premiers jours intacte : rien de tout ça n'arrive par hasard. <em>C'est un savoir-faire.</em></p>
+      <p>Pour autant, rien n'est jamais gravé dans le marbre. Une marque est une matière malléable : il est possible de la créer, la faire évoluer ou la transformer sans jamais lui faire perdre son essence. Au début, chaque entaille, chaque coup de ciseau peut sembler être un sacrilège fait à la matière. Mais tailler une matière brute avec intention, c'est en réalité raboter ce qui empêche de voir clairement ce qui compte vraiment. <br> Faire naître de nouvelles idées, façonner une singularité qui va durer ou simplement garder la passion des premiers jours intacte : rien de tout ça n'arrive par hasard. <em> C'est un savoir-faire.</em></p>
       <p>En tant que Planneur Stratégique créative, c'est mon rôle et ma responsabilité d'apporter une vision stratégique limpide & pleine de sens, le savoir-faire créatif pour la concrétiser mais également d'être la gardienne du patrimoine créé.</p>
       <p class="closing">Chez Maddama, nous façonnons pour faire sens et pour que ça dure.</p>
     </div>
@@ -2154,7 +2025,7 @@ footer {
       <div class="about-photo-wrapper">
         <div class="about-photo-circle-bg"></div>
         <div class="about-photo-placeholder">
-<img src="PHOTO-PRO.png" alt="Portrait" width="252" height="336">
+          <img src="PHOTO-PRO.png" alt="Portrait" width="252" height="336">
         </div>
         <div class="about-photo-labels">
           <span class="creative">CREATIVE</span>
@@ -2175,15 +2046,19 @@ footer {
   </div>
 </section>
 
+<div class="symbol-text-wrapper">
 <div class="symbol-divider">
   <img src="SYMBOLE-NOIR.png" alt="Symbole">
 </div>
 
 <section class="content-section">
-  <p>Chez Maddama, nous pensons les marques comme des entités vivantes.</p>
-  <p>Elles naissent, se façonnent, évoluent & suivent leur propre chemin, vivent selon leur propre rythme. Et tout au long de ce parcours, elles font face à d'innombrables challenges qui exigent anticipation, clarté stratégique et savoir-faire ingénieux. Notre mission est de les accompagner et guider dans leur évolution naturelle.</p>
-  <p>Les (re)imaginer, les renforcer, les faire grandir, tout en préservant ce qui les rend remarquables.</p>
+  <p class="desktop-only intro-text" style="text-align:center;">Chez Maddama, nous pensons les marques comme des entités vivantes.</p>
+  <p class="mobile-only intro-text" style="text-align:center;">Chez Maddama, nous pensons les marques <br> comme des entités vivantes.</p>
+
+  <p class="body-main">Elles naissent, se façonnent, évoluent & suivent leur propre chemin, vivent selon leur propre rythme. Et tout au long de ce parcours, elles font face à d'innombrables challenges qui exigent anticipation, clarté stratégique et savoir-faire ingénieux. Notre mission est de les accompagner et guider dans leur évolution naturelle.</p>
+  <p class="closing-text">Les (re)imaginer, les renforcer, les faire grandir, tout en préservant ce qui les rend remarquables.</p>
 </section>
+
 
 <div class="symbol-divider">
   <img src="SYMBOLE-NOIR.png" alt="Symbole">
@@ -2200,7 +2075,7 @@ footer {
     <img src="SYMBOLE-BLANC.png" alt="Symbole">
     <img src="SYMBOLE-BLANC.png" alt="Symbole">
   </div>
-
+<div class="vertical-divider divider-top"></div>
   <div class="services-grid">
     <div class="service-item"><div class="service-name">STRATÉGIE DE MARQUE & POSITIONNEMENT</div></div>
     <div class="service-item"><div class="service-name">IDENTITÉ DE MARQUE ET TERRITOIRES VISUELS & SÉMANTIQUE</div></div>
@@ -2214,10 +2089,12 @@ footer {
     <div class="service-item"><div class="service-name">FORMATIONS A LA STRATÉGIE DE MARQUE</div></div>
   </div>
 
+<div class="vertical-divider divider-bottom"></div>
+
   <div class="bottom-text">
-    Pour des problématiques nationales comme internationales<br>
+    Pour des dimensions nationales & internationales<br>
     Des marques niches aux plus populaires<br>
-    Pour de petites marques indépendantes à celles du CAC 40
+    Des marques indépendantes comme celles du CAC 40
   </div>
 </div>
 
@@ -2233,7 +2110,7 @@ footer {
     <div class="carousel-container">
       <div class="carousel-track">
 
-        <div class="carousel-item">
+<div class="carousel-item">
           <img src="ALCOHOL.jpg" alt="ALCOHOL">
           <div class="carousel-text">
             <div class="carousel-brand">ALCOOL</div>
@@ -2428,62 +2305,63 @@ footer {
     </div>
   </div>
 
+
   <div class="they-trusted-us">
     ILS NOUS ONT FAIT CONFIANCE
   </div>
 
-<div class="clients-wrapper">
-  <img src="LOGOS-CLIENTS-DESKTOP.jpg" class="logo-desktop" alt="Nos clients">
-</div>
-</div>
+  <img src="LOGOS-CLIENTS-DESKTOP.jpg" class="logo-desktop" alt="Our clients">
+  <img src="LOGOS-CLIENTS-MOBILE.jpg" class="logo-mobile" alt="Our clients">
 
 <div class="black-rect-slideup-2" id="testimonialsAnchor">
-<section class="testimonial-section">
-<div class="testimonial-topline">
-  <span class="testimonial-index">CLIENTS</span>
-  <span class="topline-sep"></span>
-  <span class="testimonial-label">TEMOIGNAGES</span>
-  <span class="topline-sep"></span>
-  <span class="testimonial-year">PARTENAIRES</span>
-</div>
-
-<div class="testimonial-body">
-  <div class="testimonial-photo-wrap">
-    <img id="testimonialPhoto" src="" alt="" class="testimonial-photo loaded">
-    <span class="swipe-arrow left">&#8592;</span>
-    <span class="swipe-arrow right">&#8594;</span>
-  </div>
-
-  <blockquote class="testimonial-quote" id="testimonialQuote"></blockquote>
-</div>
-
-<div class="testimonial-divider"></div>
-
-<div class="testimonial-footer">
-  <div class="testimonial-nav">
-    <button class="nav-btn" id="prevBtn">&#8592;</button>
-    <button class="nav-btn" id="nextBtn">&#8594;</button>
-  </div>
-
-  <div class="testimonial-right-group">
-    <div class="testimonial-author">
-      <img id="authorPhoto" src="LOGO-KEEMIA.jpg" alt="Keemia" class="author-photo">
+  <section class="testimonial-section">
+    <div class="testimonial-topline">
+      <span class="testimonial-index">CLIENTS</span>
+      <span class="topline-sep"></span>
+      <span class="testimonial-label">TEMOIGNAGES</span>
+      <span class="topline-sep"></span>
+      <span class="testimonial-year">PARTENAIRES</span>
     </div>
 
-    <div class="testimonial-stat">
-      <span class="stat-number" id="stat1Number">CHAIMA</span>
-      <span class="stat-label" id="stat1Label">KHADI</span>
-      <span class="stat-sub" id="stat1Sub">Directrice Conseil</span>
+    <div class="testimonial-body">
+      <div class="testimonial-photo-wrap">
+        <img id="testimonialPhoto" src="" alt="" class="testimonial-photo loaded">
+        <span class="swipe-arrow left">&#8592;</span>
+        <span class="swipe-arrow right">&#8594;</span>
+      </div>
+
+    <div class="testimonial-dots" id="testimonialDots"></div>
+
+      <blockquote class="testimonial-quote" id="testimonialQuote"></blockquote>
     </div>
 
-    <div class="testimonial-stat">
-      <span class="stat-number" id="stat2Number">KEEMIA</span>
-      <span class="stat-label" id="stat2Label">Shopper agency</span>
-      <span class="stat-sub" id="stat2Sub">+100 collaborateurs</span>
+    <div class="testimonial-divider"></div>
+
+    <div class="testimonial-footer">
+      <div class="testimonial-nav">
+        <button class="nav-btn" id="prevBtn">&#8592;</button>
+        <button class="nav-btn" id="nextBtn">&#8594;</button>
+      </div>
+
+      <div class="testimonial-right-group">
+        <div class="testimonial-author">
+          <img id="authorPhoto" src="LOGO-KEEMIA.jpg" alt="Keemia" class="author-photo">
+        </div>
+
+        <div class="testimonial-stat">
+          <span class="stat-number" id="stat1Number">CHAIMA</span>
+          <span class="stat-label" id="stat1Label">KHADI</span>
+          <span class="stat-sub" id="stat1Sub">Client Director</span>
+        </div>
+
+        <div class="testimonial-stat">
+          <span class="stat-number" id="stat2Number">KEEMIA</span>
+          <span class="stat-label" id="stat2Label">Shopper agency</span>
+          <span class="stat-sub" id="stat2Sub">+100 employees</span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</section>
+  </section>
 
   <div class="final-section">
 
@@ -2492,10 +2370,11 @@ footer {
     </div>
 
     <div class="ambition-text">
-      <p>Vos idées méritent d'être réalisées. </p>
+      <p>Vos idées méritent d'être réalisées.</p>
       <p>Vous avez une idée ou le début d'une idée de marque mais vous ne savez pas comment la concrétiser ? Vous voulez conquérir de nouveaux marchés ? Atteindre de nouvelles audiences ? Lancer un nouveau produit / service ? Repenser totalement votre identité ou la manière de l'exprimer ? Ou tout simplement préparer la suite de votre aventure ?</p>
-      <p>Pour chaque ambition, il y a l'art et la manière de la réaliser. A nous de la trouver. </p>
+      <p>Pour chaque ambition, il y a l'art et la manière de la réaliser. A nous de la trouver.</p>
     </div>
+
 <div class="cta-images">
   <a class="cta-item" href="Services-fr.html">
     <div class="cta-image">
@@ -2540,50 +2419,99 @@ footer {
 </div>
 
 <script>
-const sets = ['set1','set2','set3','set4','set5'];
+// ==========================================================
+// UTILS
+// ==========================================================
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
+// ==========================================================
+// HERO AUTOPLAY (5 sets)
+// ==========================================================
+const sets = ['set1', 'set2', 'set3', 'set4', 'set5'];
 let currentIndex = 0;
 const interval = 1550;
 let autoplayFinished = false;
 let hasSplit = false;
+let autoplayTimer = null;
 
 function showSet(index) {
   sets.forEach((id, i) => {
-    document.getElementById(id).classList.toggle('active', i === index);
+    const element = document.getElementById(id);
+    if (element) {
+      element.classList.toggle('active', i === index);
+    }
   });
 }
 
-function nextSet() {
-  currentIndex++;
-  if (currentIndex >= sets.length) {
-    currentIndex = sets.length - 1;
-    autoplayFinished = true;
-    clearInterval(autoplayTimer);
-    return;
-  }
-  showSet(currentIndex);
+function startAutoplay() {
+  autoplayTimer = setInterval(() => {
+    currentIndex++;
+
+    if (currentIndex >= sets.length) {
+      // AUTOPLAY FINI — on reste sur le dernier set (logo), on attend le scroll
+      currentIndex = sets.length - 1;
+      autoplayFinished = true;
+      clearInterval(autoplayTimer);
+      autoplayTimer = null;
+      // PLUS RIEN ICI : pas de split, pas de reveal, pas de unlockScroll
+      // → tout ça sera déclenché par le scroll/swipe de l'utilisateur
+      return;
+    }
+
+    // AFFICHE LE SET SUIVANT
+    showSet(currentIndex);
+  }, interval);
 }
 
-showSet(currentIndex);
-const autoplayTimer = setInterval(nextSet, interval);
+function revealWelcomeSection() {
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (!welcomeSection) return;
+  welcomeSection.classList.add('bg-white');
 
-window.addEventListener('wheel', handleFirstScroll, { passive:false });
-window.addEventListener('touchmove', handleFirstScroll, { passive:false });
+  const welcomeTo = welcomeSection.querySelector('.welcome-to');
+  const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+  if (welcomeTo) welcomeTo.classList.add('visible');
+  if (maddamaReveal) maddamaReveal.classList.add('revealed');
+}
 
-function handleFirstScroll(e) {
-  if (!autoplayFinished || hasSplit) return;
-  e.preventDefault();
+function unlockScroll() {
+  document.body.classList.remove('locked');
+  document.body.style.overflow = 'auto';
+  document.documentElement.style.overflow = 'auto';
+}
+
+// NOUVELLE FONCTION : déclenche le split + reveal (appelée par le scroll/swipe)
+function triggerSplitAndReveal() {
+  if (hasSplit) return;
+  if (!autoplayFinished) return;
+
   hasSplit = true;
-  document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
+
+  // 🔒 On bloque le scroll pendant toute la durée du split/reveal
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  const set5 = document.getElementById('set5');
+  if (set5) {
+    set5.classList.add('split');
+  }
+
+  revealWelcomeSection();
+
   setTimeout(() => {
-    document.getElementById('maddamaReveal').classList.add('revealed');
-  }, 400);
-  setTimeout(() => {
-    document.body.classList.remove('locked');
+    unlockScroll(); // ne débloque qu'après l'animation complète
   }, 1600);
 }
 
+// INITIALISATION
+showSet(currentIndex);
+startAutoplay();
+
+// ==========================================================
+// ELEMENTS PARTAGÉS
+// ==========================================================
 const blackRectContainer = document.querySelector('.black-rect-container');
 const blackRectContent = document.querySelector('.black-rect-content');
 const imageWrapper = document.querySelector('#imageWrapper');
@@ -2608,7 +2536,27 @@ let carouselScrollDelta = 0;
 let carouselFinished = false;
 
 // ==========================================================
-// SKIP INTRO SI ARRIVÉE AVEC UNE ANCRE (ex: index-fr.html#about-hero)
+// RESET STYLES INLINE SUR MOBILE
+// ==========================================================
+function resetInlineStylesForMobile() {
+  if (!isMobile()) return;
+  [blackRectContainer, blackRectContent, imageWrapper, blackRectSlideup, blackRectSlideup2].forEach(el => {
+    if (el) {
+      el.style.left = '';
+      el.style.top = '';
+      el.style.bottom = '';
+      el.style.opacity = '';
+    }
+  });
+  body.style.overflow = 'auto';
+  html.style.overflow = 'auto';
+  document.body.classList.remove('locked');
+}
+
+window.addEventListener('resize', resetInlineStylesForMobile);
+
+// ==========================================================
+// SKIP INTRO SI ARRIVEE AVEC UNE ANCRE
 // ==========================================================
 if (window.location.hash === '#about-hero') {
   clearInterval(autoplayTimer);
@@ -2627,20 +2575,30 @@ if (window.location.hash === '#about-hero') {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
-  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
-  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  }
 
   window.addEventListener('load', () => {
     setTimeout(() => {
@@ -2651,9 +2609,6 @@ if (window.location.hash === '#about-hero') {
   });
 }
 
-// ==========================================================
-// SKIP INTRO SI ARRIVÉE AVEC #welcomeSection (juste après l'animation des 5 sets)
-// ==========================================================
 if (window.location.hash === '#welcomeSection') {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -2671,9 +2626,15 @@ if (window.location.hash === '#welcomeSection') {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
   body.style.overflow = 'auto';
   html.style.overflow = 'auto';
@@ -2685,9 +2646,6 @@ if (window.location.hash === '#welcomeSection') {
   });
 }
 
-// ==========================================================
-// SKIP INTRO SI ARRIVÉE AVEC #testimonials
-// ==========================================================
 if (window.location.hash === '#testimonials') {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -2705,20 +2663,30 @@ if (window.location.hash === '#testimonials') {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
-  if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
-  if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) blackRectSlideup2.style.bottom = '0vh';
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
+    if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
+  }
 
   window.addEventListener('load', () => {
     setTimeout(() => {
@@ -2729,6 +2697,45 @@ if (window.location.hash === '#testimonials') {
   });
 }
 
+// ==========================================================
+// DECLENCHEUR DU SPLIT AU SCROLL / SWIPE (DESKTOP + MOBILE)
+// ==========================================================
+// Desktop : molette
+window.addEventListener('wheel', (e) => {
+  if (hasSplit) return;
+  if (!autoplayFinished) return;
+  triggerSplitAndReveal();
+}, { passive: true });
+
+// Mobile : swipe vers le haut
+let touchStartY = null;
+
+window.addEventListener('touchstart', (e) => {
+  if (hasSplit) return;
+  if (!autoplayFinished) return;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+  if (hasSplit) return; // une fois splité, on laisse le scroll normal reprendre
+  if (!autoplayFinished) return;
+
+  e.preventDefault(); // empêche le scroll physique tant qu'on n'a pas splité
+
+  if (touchStartY === null) return;
+
+  const currentY = e.touches[0].clientY;
+  const delta = touchStartY - currentY;
+
+  if (delta > 15) {
+    triggerSplitAndReveal();
+    touchStartY = null;
+  }
+}, { passive: false }); // ⚠️ obligatoire pour que preventDefault() fonctionne
+
+// ==========================================================
+// SCROLL HIJACKING DESKTOP (SEULEMENT SI !MOBILE)
+// ==========================================================
 function isContentFullyVisible() {
   if (!symbolElement) return false;
   const symbolRect = symbolElement.getBoundingClientRect();
@@ -2736,153 +2743,143 @@ function isContentFullyVisible() {
   return bottomOfContent <= window.innerHeight;
 }
 
-window.addEventListener('wheel', (e) => {
-  if (!hasSplit) return;
+if (!isMobile()) {
+  window.addEventListener('wheel', (e) => {
+    if (!hasSplit) return;
 
-  if (!contentFullyVisible) {
-    if (isContentFullyVisible()) {
-      contentFullyVisible = true;
-    }
-    return;
-  }
-
-  if (contentFullyVisible && !scrollLocked && !animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
-
-    if (e.deltaY < 0 && window.scrollY > 10) {
+    if (!contentFullyVisible) {
+      if (isContentFullyVisible()) {
+        contentFullyVisible = true;
+      }
       return;
     }
 
-    e.preventDefault();
-
-    scrollLocked = true;
-    body.style.overflow = 'hidden';
-    html.style.overflow = 'hidden';
-    animationStarted = true;
-    return;
-  }
-
-  // ÉTAPE 1 : black-rect
-  if (animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
-    e.preventDefault();
-    animationScrollDelta += e.deltaY;
-    animationScrollDelta = Math.max(0, Math.min(animationScrollDelta, 2000));
-    const progress = animationScrollDelta / 2000;
-    const leftValue = 100 - (progress * 100);
-    blackRectContainer.style.left = leftValue + '%';
-    blackRectContent.style.left = leftValue + '%';
-
-    if (progress >= 1) {
-      animationStarted = false;
-      imageAnimationStarted = true;
-      imageScrollDelta = 0;
-    }
-
-    if (progress <= 0 && e.deltaY < 0) {
-      scrollLocked = false;
-      animationStarted = false;
-      body.style.overflow = 'auto';
-      html.style.overflow = 'auto';
-    }
-    return;
-  }
-
-  // ÉTAPE 2 : image
-  if (imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
-    e.preventDefault();
-    imageScrollDelta += e.deltaY;
-    imageScrollDelta = Math.max(0, Math.min(imageScrollDelta, 2000));
-    const progress = imageScrollDelta / 2000;
-    imageWrapper.style.opacity = progress;
-    blackRectSlideup.style.top = (100 - (progress * 100)) + 'vh';
-
-    if (progress >= 1) {
-      imageAnimationStarted = false;
-      carouselAnimationStarted = true;
-      carouselScrollDelta = 0;
-    }
-
-    if (progress <= 0 && e.deltaY < 0) {
-      imageAnimationStarted = false;
-      animationStarted = true;
-      animationScrollDelta = 2000;
-    }
-    return;
-  }
-
-  // ÉTAPE 3 : apparition de slideup-2 (testimonials + ambition/CTA)
-  if (carouselAnimationStarted) {
-    e.preventDefault();
-    carouselScrollDelta += e.deltaY;
-    carouselScrollDelta = Math.max(0, Math.min(carouselScrollDelta, 2000));
-    const progress = carouselScrollDelta / 2000;
-    blackRectSlideup2.style.bottom = (-200 + (progress * 200)) + 'vh';
-
-    if (progress > 0) {
-      ambitionSymbolTop.classList.add('visible');
-      ambitionSymbolBottom.classList.add('visible');
-    } else {
-      ambitionSymbolTop.classList.remove('visible');
-      ambitionSymbolBottom.classList.remove('visible');
-    }
-
-    if (progress >= 1) {
-      carouselAnimationStarted = false;
-      carouselFinished = true;
-      scrollLocked = false;
-      blackRectSlideup2.scrollTop = 0;
+    if (contentFullyVisible && !scrollLocked && !animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+      if (e.deltaY < 0 && window.scrollY > 10) {
+        return;
+      }
+      e.preventDefault();
+      scrollLocked = true;
       body.style.overflow = 'hidden';
       html.style.overflow = 'hidden';
+      animationStarted = true;
+      return;
     }
 
-    if (progress <= 0 && e.deltaY < 0) {
-      carouselAnimationStarted = false;
-      imageAnimationStarted = true;
-      imageScrollDelta = 2000;
-      carouselFinished = false;
-    }
-    return;
-  }
-
-  // ÉTAPE 4 : scroll interne natif dans slideup-2 (testimonials + ambition/CTA)
-  if (carouselFinished) {
-    const atTop = blackRectSlideup2.scrollTop <= 0;
-    const atBottom = blackRectSlideup2.scrollTop + blackRectSlideup2.clientHeight >= blackRectSlideup2.scrollHeight - 2;
-
-    if (e.deltaY < 0 && atTop) {
+    // ETAPE 1 : black-rect
+    if (animationStarted && !imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
       e.preventDefault();
-      carouselFinished = false;
-      carouselAnimationStarted = true;
-      carouselScrollDelta = 1990;
+      animationScrollDelta += e.deltaY;
+      animationScrollDelta = Math.max(0, Math.min(animationScrollDelta, 2000));
+      const progress = animationScrollDelta / 2000;
+      const leftValue = 100 - (progress * 100);
+      blackRectContainer.style.left = leftValue + '%';
+      blackRectContent.style.left = leftValue + '%';
+
+      if (progress >= 1) {
+        animationStarted = false;
+        imageAnimationStarted = true;
+        imageScrollDelta = 0;
+      }
+
+      if (progress <= 0 && e.deltaY < 0) {
+        scrollLocked = false;
+        animationStarted = false;
+        body.style.overflow = 'auto';
+        html.style.overflow = 'auto';
+      }
       return;
     }
 
-    if (e.deltaY > 0 && atBottom) {
-      body.style.overflow = 'auto';
-      html.style.overflow = 'auto';
+    // ETAPE 2 : image
+    if (imageAnimationStarted && !carouselAnimationStarted && !carouselFinished) {
+      e.preventDefault();
+      imageScrollDelta += e.deltaY;
+      imageScrollDelta = Math.max(0, Math.min(imageScrollDelta, 2000));
+      const progress = imageScrollDelta / 2000;
+      imageWrapper.style.opacity = progress;
+      blackRectSlideup.style.top = (100 - (progress * 100)) + 'vh';
+
+      if (progress >= 1) {
+        imageAnimationStarted = false;
+        carouselAnimationStarted = true;
+        carouselScrollDelta = 0;
+      }
+
+      if (progress <= 0 && e.deltaY < 0) {
+        imageAnimationStarted = false;
+        animationStarted = true;
+        animationScrollDelta = 2000;
+      }
       return;
     }
-    // sinon on laisse le scroll natif agir DANS blackRectSlideup2
-    return;
-  }
-}, { passive: false });
 
-if (!window.location.hash) {
-  if (blackRectContainer) {
-    blackRectContainer.style.left = '100%';
-  }
-  if (blackRectContent) {
-    blackRectContent.style.left = '100%';
-  }
-  if (blackRectSlideup) {
-    blackRectSlideup.style.top = '100vh';
-  }
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '-200vh';
+    // ETAPE 3 : slideup-2 (testimonials + ambition/CTA)
+    if (carouselAnimationStarted) {
+      e.preventDefault();
+      carouselScrollDelta += e.deltaY;
+      carouselScrollDelta = Math.max(0, Math.min(carouselScrollDelta, 2000));
+      const progress = carouselScrollDelta / 2000;
+      blackRectSlideup2.style.bottom = (-200 + (progress * 200)) + 'vh';
+
+      if (progress > 0) {
+        ambitionSymbolTop.classList.add('visible');
+        ambitionSymbolBottom.classList.add('visible');
+      } else {
+        ambitionSymbolTop.classList.remove('visible');
+        ambitionSymbolBottom.classList.remove('visible');
+      }
+
+      if (progress >= 1) {
+        carouselAnimationStarted = false;
+        carouselFinished = true;
+        scrollLocked = false;
+        blackRectSlideup2.scrollTop = 0;
+        body.style.overflow = 'hidden';
+        html.style.overflow = 'hidden';
+      }
+
+      if (progress <= 0 && e.deltaY < 0) {
+        carouselAnimationStarted = false;
+        imageAnimationStarted = true;
+        imageScrollDelta = 2000;
+        carouselFinished = false;
+      }
+      return;
+    }
+
+    // ETAPE 4 : scroll interne dans slideup-2
+    if (carouselFinished) {
+      const atTop = blackRectSlideup2.scrollTop <= 0;
+      const atBottom = blackRectSlideup2.scrollTop + blackRectSlideup2.clientHeight >= blackRectSlideup2.scrollHeight - 2;
+
+      if (e.deltaY < 0 && atTop) {
+        e.preventDefault();
+        carouselFinished = false;
+        carouselAnimationStarted = true;
+        carouselScrollDelta = 1990;
+        return;
+      }
+
+      if (e.deltaY > 0 && atBottom) {
+        body.style.overflow = 'auto';
+        html.style.overflow = 'auto';
+        return;
+      }
+      return;
+    }
+  }, { passive: false });
+
+  if (!window.location.hash) {
+    if (blackRectContainer) blackRectContainer.style.left = '100%';
+    if (blackRectContent) blackRectContent.style.left = '100%';
+    if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+    if (blackRectSlideup2) blackRectSlideup2.style.bottom = '-200vh';
   }
 }
 
 // ==========================================================
-// NAVIGATION HEADER : goToHome + reset vers l'état welcome
+// NAVIGATION HEADER
 // ==========================================================
 function resetToWelcomeState() {
   clearInterval(autoplayTimer);
@@ -2901,20 +2898,28 @@ function resetToWelcomeState() {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
+
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
 
   body.style.overflow = 'auto';
   html.style.overflow = 'auto';
 
-  if (blackRectContainer) blackRectContainer.style.left = '100%';
-  if (blackRectContent) blackRectContent.style.left = '100%';
-  if (imageWrapper) imageWrapper.style.opacity = 0;
-  if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '-200vh';
-    blackRectSlideup2.scrollTop = 0;
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '100%';
+    if (blackRectContent) blackRectContent.style.left = '100%';
+    if (imageWrapper) imageWrapper.style.opacity = 0;
+    if (blackRectSlideup) blackRectSlideup.style.top = '100vh';
+    if (blackRectSlideup2) {
+      blackRectSlideup2.style.bottom = '-200vh';
+      blackRectSlideup2.scrollTop = 0;
+    }
   }
   if (ambitionSymbolTop) ambitionSymbolTop.classList.remove('visible');
   if (ambitionSymbolBottom) ambitionSymbolBottom.classList.remove('visible');
@@ -2922,7 +2927,7 @@ function resetToWelcomeState() {
 
 function goToHome(e) {
   e.preventDefault();
-  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
 
   if (isIndexPage) {
     resetToWelcomeState();
@@ -2931,13 +2936,10 @@ function goToHome(e) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   } else {
-    window.location.href = 'index-fr.html#welcomeSection';
+    window.location.href = 'index.html#welcomeSection';
   }
 }
 
-// ==========================================================
-// NAVIGATION HEADER : goToAboutHero + reset vers l'état about-hero
-// ==========================================================
 function resetToAboutHeroState() {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -2955,28 +2957,38 @@ function resetToAboutHeroState() {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '0vh';
-    blackRectSlideup2.scrollTop = 0;
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
+
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) {
+      blackRectSlideup2.style.bottom = '0vh';
+      blackRectSlideup2.scrollTop = 0;
+    }
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    body.style.overflow = 'auto';
+    html.style.overflow = 'auto';
   }
   if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
   if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
-
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
 }
 
 function goToAboutHero(e) {
   e.preventDefault();
-  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
 
   if (isIndexPage) {
     resetToAboutHeroState();
@@ -2985,13 +2997,10 @@ function goToAboutHero(e) {
       if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
     }, 50);
   } else {
-    window.location.href = 'index-fr.html#about-hero';
+    window.location.href = 'index.html#about-hero';
   }
 }
 
-// ==========================================================
-// NAVIGATION HEADER : goToTestimonials + reset vers l'état testimonials
-// ==========================================================
 function resetToTestimonialsState() {
   clearInterval(autoplayTimer);
   autoplayFinished = true;
@@ -3009,28 +3018,38 @@ function resetToTestimonialsState() {
 
   document.body.classList.remove('locked');
   document.getElementById('set5').classList.add('split');
-  document.getElementById('welcomeSection').classList.add('bg-white');
-  document.getElementById('welcomeTo').classList.add('visible');
-  document.getElementById('maddamaReveal').classList.add('revealed');
 
-  if (blackRectContainer) blackRectContainer.style.left = '0%';
-  if (blackRectContent) blackRectContent.style.left = '0%';
-  if (imageWrapper) imageWrapper.style.opacity = 1;
-  if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
-  if (blackRectSlideup2) {
-    blackRectSlideup2.style.bottom = '0vh';
-    blackRectSlideup2.scrollTop = 0;
+  const welcomeSection = document.getElementById('welcomeSection');
+  if (welcomeSection) {
+    welcomeSection.classList.add('bg-white');
+    const welcomeTo = welcomeSection.querySelector('.welcome-to');
+    const maddamaReveal = welcomeSection.querySelector('.maddama-reveal');
+    if (welcomeTo) welcomeTo.classList.add('visible');
+    if (maddamaReveal) maddamaReveal.classList.add('revealed');
+  }
+
+  if (!isMobile()) {
+    if (blackRectContainer) blackRectContainer.style.left = '0%';
+    if (blackRectContent) blackRectContent.style.left = '0%';
+    if (imageWrapper) imageWrapper.style.opacity = 1;
+    if (blackRectSlideup) blackRectSlideup.style.top = '0vh';
+    if (blackRectSlideup2) {
+      blackRectSlideup2.style.bottom = '0vh';
+      blackRectSlideup2.scrollTop = 0;
+    }
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+  } else {
+    body.style.overflow = 'auto';
+    html.style.overflow = 'auto';
   }
   if (ambitionSymbolTop) ambitionSymbolTop.classList.add('visible');
   if (ambitionSymbolBottom) ambitionSymbolBottom.classList.add('visible');
-
-  body.style.overflow = 'hidden';
-  html.style.overflow = 'hidden';
 }
 
 function goToTestimonials(e) {
   e.preventDefault();
-  const isIndexPage = window.location.pathname.endsWith('index-fr.html') || window.location.pathname.endsWith('/');
+  const isIndexPage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
 
   if (isIndexPage) {
     resetToTestimonialsState();
@@ -3039,10 +3058,30 @@ function goToTestimonials(e) {
       if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
     }, 50);
   } else {
-    window.location.href = 'index-fr.html#testimonials';
+    window.location.href = 'index.html#testimonials';
   }
 }
 
+function switchLanguage(e) {
+  e.preventDefault();
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
+  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+  let targetFile;
+
+  if (fileName.includes('-fr.html')) {
+    targetFile = fileName.replace('-fr.html', '.html');
+  } else {
+    targetFile = fileName.replace('.html', '-fr.html');
+  }
+
+  window.location.href = targetFile + currentHash;
+}
+
+// ==========================================================
+// TESTIMONIALS CAROUSEL
+// ==========================================================
 const testimonials = [
   {
     quote: `"J'ai eu le privilège de travailler avec Alice en tant que planneur stratégique, et je tiens à souligner la qualité exceptionnelle de son travail. Son approche stratégique est toujours juste et approfondie. Alice possède une capacité unique à analyser les situations avec finesse et à développer idées qui font la différence.
@@ -3059,7 +3098,7 @@ Enfin, je tiens à souligner la disponibilité constante d'Alice. Elle fait preu
     stat1Sub: "Directrice Conseil",
     stat2Number: "KEEMIA",
     stat2Label: "Shopper agency",
-    stat2Sub: "+100 collaborateurs"
+    stat2Sub: "Experts en Activation"
   },
   {
     quote: `"Je suis ravi d'écrire cette lettre pour recommander Alice Bronchain, une planneuse stratégique exceptionnelle dont les compétences et le professionnalisme dépassent constamment les attentes.
@@ -3113,7 +3152,7 @@ Avec Alice à mes côtés, je sais que nous allons non seulement prendre beaucou
     stat1Label: "PLESSIER",
     stat1Sub: "CEO",
     stat2Number: "LABBRAND FRANCE",
-    stat2Label: "Agence de naming",
+    stat2Label: "Agence de branding",
     stat2Sub: "Mondialement connue"
   }
 ];
@@ -3129,9 +3168,22 @@ const stat1SubEl = document.getElementById('stat1Sub');
 const stat2NumberEl = document.getElementById('stat2Number');
 const stat2LabelEl = document.getElementById('stat2Label');
 const stat2SubEl = document.getElementById('stat2Sub');
+const testimonialDotsEl = document.getElementById('testimonialDots');
 
 function adjustQuoteFontSize(el) {
   const length = el.textContent.length;
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    if (length < 300) el.style.fontSize = "15px";
+    else if (length < 600) el.style.fontSize = "14px";
+    else if (length < 900) el.style.fontSize = "13px";
+    else if (length < 1300) el.style.fontSize = "12px";
+    else el.style.fontSize = "9px";
+    el.style.fontWeight = "300";
+    el.style.lineHeight = "1.3";
+    return;
+  }
 
   if (length < 300) {
     el.style.fontSize = "24px";
@@ -3144,6 +3196,28 @@ function adjustQuoteFontSize(el) {
   } else {
     el.style.fontSize = "15px";
   }
+}
+
+function renderDots() {
+  if (!testimonialDotsEl) return;
+  testimonialDotsEl.innerHTML = '';
+  testimonials.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'testimonial-dot' + (i === currentTestimonialIndex ? ' active' : '');
+    dot.setAttribute('aria-label', `Testimonial ${i + 1}`);
+    dot.addEventListener('click', () => {
+      if (i !== currentTestimonialIndex) changeTestimonial(i);
+    });
+    testimonialDotsEl.appendChild(dot);
+  });
+}
+
+function updateActiveDot() {
+  if (!testimonialDotsEl) return;
+  const dots = testimonialDotsEl.querySelectorAll('.testimonial-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('active', i === currentTestimonialIndex);
+  });
 }
 
 function renderTestimonial(index) {
@@ -3162,6 +3236,8 @@ function renderTestimonial(index) {
   stat2NumberEl.textContent = t.stat2Number;
   stat2LabelEl.textContent = t.stat2Label;
   stat2SubEl.textContent = t.stat2Sub;
+
+  updateActiveDot();
 }
 
 function changeTestimonial(newIndex) {
@@ -3193,64 +3269,79 @@ if (prevBtn) {
     changeTestimonial(newIndex);
   });
 }
-renderTestimonial(currentTestimonialIndex);
 
-function switchLanguage(e) {
-  e.preventDefault();
-  const currentPath = window.location.pathname;
-  const currentHash = window.location.hash;
-  const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+// ==========================================================
+// SWIPE TACTILE MOBILE — TESTIMONIALS
+// ==========================================================
+(function setupSwipe() {
+  const wrap = document.querySelector('.testimonial-photo-wrap');
+  if (!wrap) return;
 
-  let targetFile;
+  let startX = 0, startY = 0, startT = 0;
+  const THRESHOLD = 50;   // distance mini horizontale (px)
+  const RESTRAINT = 60;   // tolérance verticale (px)
+  const TIME_MAX = 600;   // durée max du geste (ms)
 
-  if (fileName.includes('-fr.html')) {
-    // On est en FR, on repasse en EN
-    targetFile = fileName.replace('-fr.html', '.html');
-  } else {
-    // On est en EN, on passe en FR
-    targetFile = fileName.replace('.html', '-fr.html');
-  }
-
-  window.location.href = targetFile + currentHash;
-}
-
-// ============================================
-// SWIPE TACTILE POUR TESTIMONIALS (MOBILE)
-// ============================================
-
-(function() {
-  const photoWrap = document.querySelector('.testimonial-photo-wrap');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-
-  if (!photoWrap || !prevBtn || !nextBtn) return;
-
-  let touchStartX = 0;
-  let touchEndX = 0;
-  const SWIPE_THRESHOLD = 50; // distance minimale en px pour valider un swipe
-
-  photoWrap.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
+  wrap.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startT = Date.now();
   }, { passive: true });
 
-  photoWrap.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipeGesture();
-  }, { passive: true });
+  wrap.addEventListener('touchmove', (e) => {
+    if (e.cancelable) e.preventDefault();
+  }, { passive: false });
 
-  function handleSwipeGesture() {
-    const swipeDistance = touchEndX - touchStartX;
+  wrap.addEventListener('touchend', (e) => {
+    const t = e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    const dt = Date.now() - startT;
 
-    if (Math.abs(swipeDistance) < SWIPE_THRESHOLD) return; // swipe trop court, on ignore
+    if (dt > TIME_MAX) return;
+    if (Math.abs(dx) < THRESHOLD) return;
+    if (Math.abs(dy) > RESTRAINT) return;
 
-    if (swipeDistance > 0) {
-      // swipe vers la droite → témoignage précédent
-      prevBtn.click();
+    if (dx < 0) {
+      const newIndex = (currentTestimonialIndex + 1) % testimonials.length;
+      changeTestimonial(newIndex);
     } else {
-      // swipe vers la gauche → témoignage suivant
-      nextBtn.click();
+      const newIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+      changeTestimonial(newIndex);
     }
-  }
+  }, { passive: true });
 })();
 
+renderDots();
+renderTestimonial(currentTestimonialIndex);
+
+// ==========================================================
+// MENUS MOBILES
+// ==========================================================
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const panel = document.getElementById('mobileMenuPanel');
+  const icon = toggle ? toggle.querySelector('.toggle-icon') : null;
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () {
+      const isOpen = panel.classList.toggle('active');
+      toggle.classList.toggle('open', isOpen);
+      icon.textContent = isOpen ? '×' : '+';
+    });
+
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.classList.remove('active');
+        toggle.classList.remove('open');
+        icon.textContent = '+';
+      });
+    });
+  }
+});
+
 </script>
+</body>
+</html>
